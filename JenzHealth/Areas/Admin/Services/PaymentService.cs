@@ -693,9 +693,15 @@ namespace WebApp.Areas.Admin.Services
         }
         public List<string> GetBillNumberAutoComplete(string term)
         {
-            List<string> users;
-            users = _db.Billings.Where(x => !x.IsDeleted && (x.InvoiceNumber.StartsWith(term) || x.InvoiceNumber.EndsWith(term))).Select(b => b.InvoiceNumber).Distinct().Take(10).ToList();
-            return users;
+            List<string> list;
+            list = _db.Billings.Where(x => !x.IsDeleted && (x.InvoiceNumber.StartsWith(term) || x.InvoiceNumber.EndsWith(term))).Select(b => b.InvoiceNumber).Distinct().Take(10).ToList();
+            return list;
+        }
+        public List<string> GetRecieptNumberAutoComplete(string term)
+        {
+            List<string> list;
+            list = _db.CashCollections.Where(x => !x.IsCancelled && !x.IsDeleted && (x.PaymentReciept.StartsWith(term) || x.PaymentReciept.EndsWith(term))).Select(b => b.PaymentReciept).Distinct().Take(10).ToList();
+            return list;
         }
     }
 

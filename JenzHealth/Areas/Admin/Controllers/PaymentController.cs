@@ -357,6 +357,11 @@ namespace WebApp.Areas.Admin.Controllers
             var response = _paymentService.GetBillNumberAutoComplete(term);
             return Json(response, JsonRequestBehavior.AllowGet);
         }
+        public JsonResult GetRecieptNumberAutoComplete(string term)
+        {
+            var response = _paymentService.GetRecieptNumberAutoComplete(term);
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
         #endregion
 
     }

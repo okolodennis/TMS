@@ -41,7 +41,7 @@
                             <div class="form-group col-md-8">
                                 <label for="socialGitHub">Payment Reciept</label>
                                 <div class="input-group input-group-seamless">
-                                    @Html.EditorFor(model => model.PaymentReciept, new { htmlAttributes = new { @class = "form-control", placeholder = "Enter payment reciept", required = true } })
+                                    @Html.EditorFor(model => model.PaymentReciept, new { htmlAttributes = new { @class = "form-control RecieptNumberAutoComplete", autocomplete = "off", placeholder = "Enter payment reciept", required = true } })
                                     <div class="invalid-feedback">
                                         Payment reciept required
                                     </div>
@@ -155,5 +155,6 @@
     </div>
 </div>
 @section Scripts{
+    <script src="~/Scripts/jquery.autocomplete.js"></script>
     <script src="~/Areas/Admin/Scripts/RecieptCancellations.js"></script>
 }

@@ -32,7 +32,7 @@
                                             <i class="material-icons">bloodtype</i>
                                         </div>
                                     </div>
-                                    @Html.EditorFor(model => model.BillNumber, new { htmlAttributes = new { @class = "form-control", placeholder = "Enter bill number" } })
+                                    @Html.EditorFor(model => model.BillNumber, new { htmlAttributes = new { @class = "form-control BillNumberAutoComplete", autocomplete = "off", placeholder = "Enter bill number" } })
                                 </div>
                             </div>
                             <div class="form-group col-md-4">
@@ -90,76 +90,76 @@
                             foreach (var row in ViewBag.TableData)
                             {
                                 counter++;
-                                        <tr>
-                                            <td>@counter</td>
-                                            <td>@row.BillNumber</td>
-                                            <td>@row.CustomerName</td>
-                                            <td>
-                                                @if (row.HasCompletedPayment)
-                                                {
-                                                    <i class='fa fa-check fa-2x text-success'></i>
-                                                }
-                                                else
-                                                { <i class='fa fa-times fa-2x text-danger'></i>}
-                                            </td>
-                                            <td>
-                                                @if (row.IsClothReady)
-                                                {
-                                                    <i class='fa fa-check fa-2x text-success'></i>
-                                                }
-                                                else
-                                                { <i class='fa fa-times fa-2x text-danger'></i>}
-                                            </td>
-                                            <td>
-                                                @if (row.ClothCollected)
-                                                {
-                                                    <i class='fa fa-check fa-2x text-success'></i>
-                                                }
-                                                else
-                                                {
-                                                    <i class='fa fa-times fa-2x text-danger'></i>
-                                                }
-                                            </td>
-                                            @{
-                                                if (row.ClothCollectedBy == null)
-                                                {
-                                                    <td>-</td>
+                                <tr>
+                                    <td>@counter</td>
+                                    <td>@row.BillNumber</td>
+                                    <td>@row.CustomerName</td>
+                                    <td>
+                                        @if (row.HasCompletedPayment)
+                                        {
+                                            <i class='fa fa-check fa-2x text-success'></i>
+                                        }
+                                        else
+                                        { <i class='fa fa-times fa-2x text-danger'></i>}
+                                    </td>
+                                    <td>
+                                        @if (row.IsClothReady)
+                                        {
+                                            <i class='fa fa-check fa-2x text-success'></i>
+                                        }
+                                        else
+                                        { <i class='fa fa-times fa-2x text-danger'></i>}
+                                    </td>
+                                    <td>
+                                        @if (row.ClothCollected)
+                                        {
+                                            <i class='fa fa-check fa-2x text-success'></i>
+                                        }
+                                        else
+                                        {
+                                            <i class='fa fa-times fa-2x text-danger'></i>
+                                        }
+                                    </td>
+                                    @{
+                                        if (row.ClothCollectedBy == null)
+                                        {
+                                            <td>-</td>
 
-                                                }
-                                                else
-                                                {
-                                                    <td>@row.ClothCollectedBy</td>
+                                        }
+                                        else
+                                        {
+                                            <td>@row.ClothCollectedBy</td>
 
-                                                }
+                                        }
+                                    }
+
+                                    @{
+                                        if (row.ClothCollectedOn == null)
+                                        {
+                                            <td>-</td>
+
+                                        }
+                                        else
+                                        {
+                                            <td>@row.ClothCollectedOn</td>
+
+                                        }
+                                    }
+                                    <td>
+                                        @{
+                                            if (!row.ClothCollected && row.HasCompletedPayment && row.IsClothReady)
+                                            {
+                                                <button type="button" class="btn btn-white" data-toggle="modal" data-target="#ClothCollection" onclick="GetDetails('@row.BillNumber')" title="Click to view more">
+                                                    Collect
+                                                    <i class="material-icons">&#xE5CA;</i>
+                                                </button>
                                             }
-
-                                            @{
-                                                if (row.ClothCollectedOn == null)
-                                                {
-                                                    <td>-</td>
-
-                                                }
-                                                else
-                                                {
-                                                    <td>@row.ClothCollectedOn</td>
-
-                                                }
-                                            }
-                                        <td>
-                                            @{
-                                                if (!row.ClothCollected && row.HasCompletedPayment && row.IsClothReady)
-                                                {
-                                                    <button type="button" class="btn btn-white" data-toggle="modal" data-target="#ClothCollection" onclick="GetDetails('@row.BillNumber')" title="Click to view more">
-                                                        Collect
-                                                        <i class="material-icons">&#xE5CA;</i>
-                                                    </button>
-                                                }
-                                                }
-                                                </td>
-                                        </tr>
-                                                        }
-                                                    }
-                                                }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
                 </tbody>
             </table>
         </div>
@@ -167,6 +167,7 @@
 </div>
 @Html.Partial("_ClothCollector")
 @section Scripts{
+    <script src="~/Scripts/jquery.autocomplete.js"></script>
     <script src="~/Areas/Admin/Scripts/Preparations.js"></script>
     <script src="~/Areas/Admin/Scripts/ViewRequestTracker.js"></script>
 }

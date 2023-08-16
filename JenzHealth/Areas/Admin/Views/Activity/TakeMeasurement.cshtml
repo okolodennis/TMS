@@ -24,7 +24,7 @@
                             <div class="form-group col-md-8">
                                 <label for="socialGitHub">Bill Number</label>
                                 <div class="input-group input-group-seamless">
-                                    @Html.EditorFor(model => model.BillNumber, new { htmlAttributes = new { @class = "form-control BillNumberAutoComplete", placeholder = "Enter bill number", required = true } })
+                                    @Html.EditorFor(model => model.BillNumber, new { htmlAttributes = new { @class = "form-control BillNumberAutoComplete", placeholder = "Enter bill number", autocomplete = "off", required = true } })
                                     <div class="invalid-feedback">
                                         Bill number required
                                     </div>
