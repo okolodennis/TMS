@@ -33,5 +33,6 @@ namespace WebApp.Areas.Admin.Interfaces
         User GetCurrentUser();
         List<string> GetUserAutoComplete(string term);
         bool CheckIfUsernameExist(string term);
+        List<string> GetTailorAutoComplete(string term);
     }
 }

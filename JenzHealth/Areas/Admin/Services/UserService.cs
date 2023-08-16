@@ -294,10 +294,16 @@ namespace WebApp.Areas.Admin.Services
             return _db.Users.FirstOrDefault(x => x.Id == userID);
         }
 
-        public List<string> GetUserAutoComplete(string term)
+        public List<string> GetTailorAutoComplete(string term)
         {
             List<string> users;
             users = _db.Users.Where(x => !x.IsDeleted && x.IsActive && x.RoleID == 3 && (x.Username.StartsWith(term) || x.Firstname.StartsWith(term) || x.Lastname.StartsWith(term))).Select(b => b.Username).ToList();
+            return users;
+        }
+        public List<string> GetUserAutoComplete(string term)
+        {
+            List<string> users;
+            users = _db.Users.Where(x => !x.IsDeleted && x.IsActive  && (x.Username.StartsWith(term) || x.Firstname.StartsWith(term) || x.Lastname.StartsWith(term))).Select(b => b.Username).ToList();
             return users;
         }
         public bool CheckIfUsernameExist(string term)

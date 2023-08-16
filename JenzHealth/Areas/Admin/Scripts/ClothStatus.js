@@ -118,7 +118,7 @@ $(function () {
         events: {
             search: function (qry, callback) {
                 $.ajax({
-                    url: "/Admin/User/GetUserAutoComplete",
+                    url: "/Admin/User/GetTailorAutoComplete",
                     type: "POST",
                     dataType: "json",
                     data: { term: qry },

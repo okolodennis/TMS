@@ -38,3 +38,24 @@ function CloseShift(id) {
         }
     })
 }
+
+
+$(function () {
+    $(".UserAutoComplete").autoComplete({
+        resolver: "custom",
+        events: {
+            search: function (qry, callback) {
+                $.ajax({
+                    url: "/Admin/User/GetUserAutoComplete",
+                    type: "POST",
+                    dataType: "json",
+                    data: { term: qry },
+                }).done(function (res) {
+                    callback(res)
+                });
+            }
+        },
+        minLength: 1
+    });
+
+})

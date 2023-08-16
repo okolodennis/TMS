@@ -265,5 +265,10 @@ namespace WebApp.Areas.Admin.Controllers
             var response = _userService.CheckIfUsernameExist(term);
             return Json(response, JsonRequestBehavior.AllowGet);
         }
+        public JsonResult GetTailorAutoComplete(string term)
+        {
+            var response = _userService.GetTailorAutoComplete(term);
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
     }
 }
