@@ -23,7 +23,7 @@
                         <div class="form-group col-md-8">
                             <label for="socialGitHub">Search by:</label>
                             <div class="input-group input-group-seamless">
-                                @Html.EditorFor(model => model.BillInvoiceNumber, new { htmlAttributes = new { @class = "form-control", placeholder = "Enter Invoice Number", id = "Searchby", required = true } })
+                                @Html.EditorFor(model => model.BillInvoiceNumber, new { htmlAttributes = new { @class = "form-control BillNumberAutoComplete", placeholder = "Enter Invoice Number", id = "Searchby", required = true } })
                                 <div class="invalid-feedback">
                                     Invoice Number required
                                 </div>
@@ -163,5 +163,6 @@
     </div>
 </div>
 @section Scripts{
+    <script src="~/Scripts/jquery.autocomplete.js"></script>
     <script src="~/Areas/Admin/Scripts/PartPayments.js"></script>
 }

@@ -34,5 +34,6 @@ namespace WebApp.Areas.Admin.Interfaces
         decimal GetTotalPaidBillAmount(string billnumber);
         bool CheckIfPaymentIsCompleted(string billnumber);
         SharedRevenueReportVM GetSharedRevenueReport(SharedRevenueReportVM vmodel);
+        List<string> GetBillNumberAutoComplete(string term);
     }
 }

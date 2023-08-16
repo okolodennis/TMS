@@ -352,6 +352,11 @@ namespace WebApp.Areas.Admin.Controllers
             var status = _paymentService.MapPartPayment(vmodel);
             return Json(status, JsonRequestBehavior.AllowGet);
         }
+        public JsonResult GetBillNumberAutoComplete(string term)
+        {
+            var response = _paymentService.GetBillNumberAutoComplete(term);
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
         #endregion
 
     }

@@ -691,6 +691,12 @@ namespace WebApp.Areas.Admin.Services
             else
                 return true;
         }
+        public List<string> GetBillNumberAutoComplete(string term)
+        {
+            List<string> users;
+            users = _db.Billings.Where(x => !x.IsDeleted && (x.InvoiceNumber.StartsWith(term) || x.InvoiceNumber.EndsWith(term))).Select(b => b.InvoiceNumber).Distinct().Take(10).ToList();
+            return users;
+        }
     }
 
 }

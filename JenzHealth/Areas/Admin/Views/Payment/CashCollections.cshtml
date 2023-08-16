@@ -50,7 +50,7 @@
                             <div class="form-group col-md-8" id="InvoiceDiv" style="display:none">
                                 <label for="socialGitHub">Invoice Number</label>
                                 <div class="input-group input-group-seamless">
-                                    @Html.EditorFor(model => model.BillInvoiceNumber, new { htmlAttributes = new { @class = "form-control", placeholder = "Enter Invoice Number", required = true } })
+                                    @Html.EditorFor(model => model.BillInvoiceNumber, new { htmlAttributes = new { @class = "form-control BillNumberAutoComplete", placeholder = "Enter Invoice Number", required = true } })
                                     <div class="invalid-feedback">
                                         Invoice Number required
                                     </div>

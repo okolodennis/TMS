@@ -209,3 +209,22 @@ function Delete(e) {
     e.parentElement.parentElement.remove();
     toastr.success("Record removed", { showDuration: 500 });
 };
+
+$(function () {
+    $(".BillNumberAutoComplete").autoComplete({
+        resolver: "custom",
+        events: {
+            search: function (qry, callback) {
+                $.ajax({
+                    url: "/Admin/Payment/GetBillNumberAutoComplete",
+                    type: "POST",
+                    dataType: "json",
+                    data: { term: qry },
+                }).done(function (res) {
+                    callback(res)
+                });
+            }
+        },
+        minLength: 1
+    });
+});
