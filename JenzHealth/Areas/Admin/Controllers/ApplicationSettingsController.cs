@@ -105,7 +105,7 @@ namespace WebApp.Areas.Admin.Controllers
         [HttpPost]
         public ActionResult ManageClothTypeMeasurements(ClothTypeMeasurementVM vmodel)
         {
-            ViewBag.ClothTypeMeasurements = _settingService.GetClothTypeMeasurement();
+            ViewBag.ClothTypeMeasurements = _settingService.GetClothTypeMeasurement(vmodel);
             ViewBag.Measurement = new SelectList(db.Measurements.Where(x => x.IsDeleted == false), "Id", "Name");
             ViewBag.ClothType = new SelectList(db.ClothTypes.Where(x => x.IsDeleted == false), "Id", "Name");
             return View();
@@ -203,7 +203,7 @@ namespace WebApp.Areas.Admin.Controllers
         }
         public JsonResult GetClothTypeAutoComplete(string term)
         {
-            var response = _settingService.GetClothTypeAutoComplete(term);
+            var response =_settingService.GetClothTypeAutoComplete(term);
             return Json(response, JsonRequestBehavior.AllowGet);
         }
         // Measurement
@@ -262,5 +262,88 @@ namespace WebApp.Areas.Admin.Controllers
         }
 
 
+        // SettlementSetup 
+        public ActionResult ManageSettlementSetup(bool? Added, bool? Editted)
+        {
+            if (!Nav.CheckAuthorization(Request.Url.AbsolutePath))
+            {
+                throw new UnauthorizedAccessException();
+            }
+            if (Added == true)
+            {
+                ViewBag.ShowAlert = true;
+                TempData["AlertType"] = "alert-success";
+                TempData["AlertMessage"] = "SettlementSetup added successfully.";
+            }
+            if (Editted == true)
+            {
+                ViewBag.ShowAlert = true;
+                TempData["AlertType"] = "alert-success";
+                TempData["AlertMessage"] = "SettlementSetup updated successfully.";
+            }
+            ViewBag.Tailor = new SelectList(db.Users.Where(x => x.IsDeleted == false && x.RoleID == 3), "Id", "Username");
+            ViewBag.ClothType = new SelectList(db.ClothTypes.Where(x => x.IsDeleted == false), "Id", "Name");
+            return View();
+        }
+        [HttpPost]
+        public ActionResult ManageSettlementSetup(SettlementSetupVM vmodel)
+        {
+            ViewBag.SettlementSetup = _settingService.GetSettlementSetup(vmodel);
+            ViewBag.Tailor = new SelectList(db.Users.Where(x => x.IsDeleted == false && x.RoleID == 3), "Id", "Username");
+            ViewBag.ClothType = new SelectList(db.ClothTypes.Where(x => x.IsDeleted == false), "Id", "Name");
+            return View();
+        }
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult CreateSettlementSetup(SettlementSetupVM vmodel)
+        {
+            bool hasSaved = false;
+            if (ModelState.IsValid)
+            {
+                hasSaved = _settingService.CreateSettlementSetup(vmodel);
+            }
+            return RedirectToAction("ManageSettlementSetup", new { Added = hasSaved });
+        }
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult EditSettlementSetup(SettlementSetupVM vmodel)
+        {
+            bool hasSaved = false;
+            if (ModelState.IsValid)
+            {
+                hasSaved = _settingService.EditSettlementSetup(vmodel);
+            }
+            return RedirectToAction("ManageSettlementSetup", new { Editted = hasSaved });
+        }
+        public JsonResult GetSettlementSetup(int id)
+        {
+             var model = _settingService.GetSettlementSetup(id);
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult DeleteSettlementSetup(int id)
+        {
+            var model = _settingService.DeleteSettlementSetup(id);
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult CheckIfClothTypeExist(string term)
+        {
+            var response = _settingService.CheckIfClothTypeExist(term);
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult CheckIfMeasurementExist(string term)
+        {
+            var response = _settingService.CheckIfMeasurementExist(term);
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult CheckIfClothTypeMeasurementExist(int clothtype, int measurement)
+        {
+            var response = _settingService.CheckIfClothTypeMeasurementExist(clothtype, measurement);
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult CheckIfSettlementSetupExist(int clothtype, int tailor)
+        {
+            var response = _settingService.CheckIfSettlementSetupExist(clothtype, tailor);
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
     }
 }

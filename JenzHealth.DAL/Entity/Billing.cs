@@ -23,9 +23,13 @@ namespace WebApp.DAL.Entity
         public int Quantity { get; set; }
         public decimal GrossAmount { get; set; }
         public string InvoiceNumber { get; set; }
+        public string CollectedBy { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime DateCreated { get; set; }
-
+        public DateTime? DateCollected { get; set; }
+        public int? IssuerID { get; set; }
+        [ForeignKey("IssuerID")]
+        public User Issuer { get; set; }
         [ForeignKey("ClothTypeID")]
         public ClothType ClothType { get; set; }
         [ForeignKey("ServiceID")]

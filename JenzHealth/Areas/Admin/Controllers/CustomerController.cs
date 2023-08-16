@@ -67,7 +67,7 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 ViewBag.ShowAlert = true;
                 TempData["AlertType"] = "alert-success";
-                TempData["AlertMessage"] = "Customer with unique ID -  "+  uID +"   - added successfully.";
+                TempData["AlertMessage"] = "Customer with unique ID -  " + uID + "   - added successfully.";
             }
             if (Editted == true)
             {
@@ -121,31 +121,10 @@ namespace WebApp.Areas.Admin.Controllers
             var model = _customerService.DeleteCustomer(id);
             return Json(model, JsonRequestBehavior.AllowGet);
         }
-
-        //Take Measurement
-
-
-        public ActionResult TakeMeasurement(bool? Saved)
+        public JsonResult GetCustomerOrPhoneAutoComplete(string term)
         {
-            if (!Nav.CheckAuthorization(Request.Url.AbsolutePath))
-            {
-                throw new UnauthorizedAccessException();
-            }
-            if (Saved == true)
-            {
-                ViewBag.ShowAlert = true;
-                TempData["AlertType"] = "alert-success";
-                TempData["AlertMessage"] = "Saved successfully.";
-            }
-            ViewBag.GenderList = new SelectList(CustomData.GenderList, "Value", "Text");
-            ViewBag.ClothType = new SelectList(db.ClothTypes.Where(x => x.IsDeleted == false), "Id", "Name");
-            return View();
-        }
-        [HttpPost]
-        public ActionResult TakeMeasurement(TakeMeasurementVM vmodel)
-        {
-            var status = _customerService.TakeMeasurement(vmodel);
-            return RedirectToAction("DepositeCollections", new { Saved = status });
+            var response = _customerService.GetCustomerOrPhoneAutoComplete(term);
+            return Json(response, JsonRequestBehavior.AllowGet);
         }
     }
 }

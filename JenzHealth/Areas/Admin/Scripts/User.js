@@ -171,3 +171,50 @@ function Activate(ID) {
         }
     })
 }
+function checkIfUsernameExist() {
+    var username = $("#Username1").val();
+    
+    $.ajax({
+        url: "/User/CheckIfUsernameExist?term=" + username,
+        type: "Get",
+        contentType: "application/json;charset=UTF-8",
+        dataType: "json",
+        success: function (data) {
+            if (data) {
+
+                $("#UserNameExit").html("Username already exist !").css("color", "red");
+                $("#btnSubmit").attr("disabled", true);
+            }
+            else {
+                $("#UserNameExit").html("").css("color", "green");
+                $("#btnSubmit").attr("disabled", false);
+            }
+        },
+        error: function () {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Error',
+                showConfirmButton: false,
+                timer: 1500
+            })
+        }
+    })
+};
+
+function validatePassword() {
+
+    var password = $("#Password").val();
+    var confirmPassword = $("#PasswordSalt").val();
+    if (password != confirmPassword) {
+        $("#CheckPasswordMatch").html("Password does not match !").css("color", "red");
+        $("#btnSubmit").attr("disabled", true);
+    }
+    else {
+        $("#CheckPasswordMatch").html("Password match !").css("color", "green");
+        $("#btnSubmit").attr("disabled", false);
+    }
+
+};
+
+

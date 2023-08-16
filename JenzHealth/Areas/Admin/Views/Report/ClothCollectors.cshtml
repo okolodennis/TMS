@@ -1,12 +1,12 @@
-﻿@model WebApp.Areas.Admin.ViewModels.Report.RequestTrackerVM
+﻿@model WebApp.Areas.Admin.ViewModels.ClocthCollectionVM
 @{
-    ViewBag.Title = "Lab Result Collection Report";
+    ViewBag.Title = "Cloth Collection";
 }
 <!-- Page Header -->
 <div class="page-header row no-gutters py-4">
     <div class="col-12 col-sm-11 text-center text-sm-left mb-0">
-        <span class="text-uppercase page-subtitle">Report management</span>
-        <h3 class="page-title">Request Tracker</h3>
+        <span class="text-uppercase page-subtitle">Activity management</span>
+        <h3 class="page-title">Cloth Collection</h3>
     </div>
     <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
         <button type="button" id="close" class="btn btn-white fa-pull-right" title="Click to close all">close</button>
@@ -17,11 +17,11 @@
         <div class="card card-small mb-4">
             <div class="card-header border-bottom">
                 <h6 class="m-0">
-                    Request Tracker Reports
+                    Cloth Collection
                 </h6>
                 <br />
                 <div class="m-0">
-                    @using (Html.BeginForm("RequestTracker", "Report", FormMethod.Post, new { area = "Admin", @class = "validate", novalidate = true }))
+                    @using (Html.BeginForm("ClothCollectors", "Report", FormMethod.Post, new { area = "Admin", @class = "validate", novalidate = true }))
                     {
                         <div class="row">
                             <div class="form-group col-md-8">
@@ -73,12 +73,11 @@
                     <tr>
                         <th scope="col">S/N</th>
                         <th scope="col">Bill Number</th>
-                        <th scope="col">Patient Name</th>
-                        <th scope="col">Has Completed Payment</th>
-                        <th scope="col">Sample Collected</th>
-                        <th scope="col">Sample Collected By</th>
-                        <th scope="col">Sample Collected On</th>
-                        <th scope="col"></th>
+                        <th scope="col">Customer Name</th>
+                        <th scope="col">Cloth</th>
+                        @*<th scope="col">Quantity</th>*@
+                        <th scope="col">Collector</th>
+                        <th scope="col">Date Collected</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -86,38 +85,16 @@
                         if (ViewBag.TableData != null)
                         {
                             var counter = 0;
-                            foreach (var row in ViewBag.TableData)
+                            foreach (var row in ViewBag.DistinctBills)
                             {
                                 counter++;
                                 <tr>
                                     <td>@counter</td>
                                     <td>@row.BillNumber</td>
-                                    <td>@row.PatientName</td>
-                                    <td>
-                                        @if (row.HasCompletedPayment)
-                                        {
-                                            <i class='fa fa-check fa-2x text-success'></i>
-                                        }
-                                        else
-                                        { <i class='fa fa-times fa-2x text-danger'></i>}
-                                    </td>
-                                    <td>
-                                        @if (row.SampleCollected)
-                                        {
-                                            <i class='fa fa-check fa-2x text-success'></i>
-                                        }
-                                        else
-                                        {
-                                            <i class='fa fa-times fa-2x text-danger'></i>
-                                        }
-                                    </td>
-                                    <td>@row.SampleCollectedBy</td>
-                                    <td>@row.SampleCollectedOn.ToLongDateString()</td>
-                                    <td>
-                                        <button type="button" class="btn btn-white" data-toggle="modal" data-target="#ViewMore" onclick="GetDetails('@row.BillNumber')" title="Click to view more">
-                                            <i class="material-icons">&#xE5CA;</i> View More
-                                        </button>
-                                    </td>
+                                    <td>@row.CustomerName</td>
+                                    <td>@row.ClothType</td>
+                                    <td>@row.CollectorName</td>
+                                    <td>@row.DateCollected</td>
                                 </tr>
                             }
                         }
@@ -127,9 +104,7 @@
         </div>
     </div>
 </div>
-@Html.Partial("_ViewRequestTracker")
 @section Scripts{
     <script src="~/Areas/Admin/Scripts/Preparations.js"></script>
-    <script src="~/Areas/Admin/Scripts/ViewRequestTracker.js"></script>
 }
 

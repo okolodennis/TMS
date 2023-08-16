@@ -9,6 +9,5 @@ namespace WebApp.Areas.Admin.Interfaces
 {
     public interface IReportService
     {
-        List<RequestTrackerVM> TrackRequest(RequestTrackerVM vmodel);
     }
 }

@@ -52,12 +52,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entity\AntiBiotic.cs" />
+    <Compile Include="Entity\AssignedTailorToBilledCloth.cs" />
+    <Compile Include="Entity\SettlementSetup.cs" />
     <Compile Include="Entity\JobAssignment.cs" />
     <Compile Include="Entity\Booking.cs" />
     <Compile Include="Entity\Billing.cs" />
-    <Compile Include="Entity\LabResultCollection.cs" />
+    <Compile Include="Entity\MeasurementCollection.cs" />
     <Compile Include="Entity\PaymentStorage.cs" />
     <Compile Include="Entity\CashCollection.cs" />
+    <Compile Include="Entity\ResultApproval.cs" />
     <Compile Include="Entity\TakeMeasurement.cs" />
     <Compile Include="Entity\Measurement.cs" />
     <Compile Include="Entity\Customer.cs" />

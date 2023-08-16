@@ -143,9 +143,12 @@
     <Content Include="Areas\Admin\Scripts\AntiBiotic.js" />
     <Content Include="Areas\Admin\Scripts\Billings.js" />
     <Content Include="Areas\Admin\Scripts\CashCollections.js" />
+    <Content Include="Areas\Admin\Scripts\SettlementSetup.js" />
     <Content Include="Areas\Admin\Scripts\Compute.js" />
     <Content Include="Areas\Admin\Scripts\ComputeNonTemplated.js" />
     <Content Include="Areas\Admin\Scripts\Customer.js" />
+    <Content Include="Areas\Admin\Scripts\ClothStatus.js" />
+    <Content Include="Areas\Admin\Scripts\LabPreparation.js" />
     <Content Include="Areas\Admin\Scripts\TakeMeasurement.js" />
     <Content Include="Areas\Admin\Scripts\Deposite.js" />
     <Content Include="Areas\Admin\Scripts\ClothType.js" />
@@ -166,14 +169,17 @@
     <Content Include="Areas\Admin\Scripts\Specimen.js" />
     <Content Include="Areas\Admin\Scripts\SpecimenCollections.js" />
     <Content Include="Areas\Admin\Scripts\Template.js" />
+    <Content Include="Areas\Admin\Scripts\SharedRevenueReport.js" />
     <Content Include="Areas\Admin\Scripts\Transaction.js" />
     <Content Include="Areas\Admin\Scripts\TransactionDetails.js" />
     <Content Include="Areas\Admin\Scripts\User.js" />
     <Content Include="Areas\Admin\Scripts\Vendor.js" />
+    <Content Include="Areas\Admin\Scripts\ViewRequestTracker.js" />
     <Content Include="Areas\Admin\Scripts\Waivers.js" />
     <Content Include="Content\css\all.css" />
     <Content Include="Content\css\bootstrap.min.css" />
     <Content Include="Content\css\extras.1.3.1.min.css" />
+    <Content Include="Content\css\fontawesome.min.css" />
     <Content Include="Content\css\jquery-step.css" />
     <Content Include="Content\css\jquery.autocomplete.css" />
     <Content Include="Content\css\responsive.dataTables.min.css" />
@@ -181,10 +187,16 @@
     <Content Include="Content\css\toastr.css" />
     <Content Include="Content\fonts\font.css" />
     <Content Include="Content\images\background.jpg" />
+    <Content Include="Content\images\background_tailor.jpg" />
+    <Content Include="Content\images\background_tailor1.jpg" />
+    <Content Include="Content\images\labLogo.jpg" />
     <Content Include="Content\images\Labrole.jpg" />
+    <Content Include="Content\images\LoginBody.jpg" />
     <Content Include="Content\images\Logo.jpg" />
     <Content Include="Content\images\Spinner.gif" />
+    <Content Include="Content\images\tailor_logo.jpg" />
     <Content Include="Content\images\user.png" />
+    <Content Include="Content\images\WaterMark.jpg" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\Ajax.jquery.min.js" />
     <Content Include="Scripts\app-analytics-overview.1.3.1.min.js" />
@@ -300,17 +312,25 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\NoCacheConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Areas\Admin\Components\Nav.cs" />
+    <Compile Include="Areas\Admin\Controllers\ActivityController.cs" />
+    <Compile Include="Areas\Admin\Interfaces\IActivityService.cs" />
     <Compile Include="Areas\Admin\Interfaces\IReportService.cs" />
+    <Compile Include="Areas\Admin\Services\ActivityService.cs" />
     <Compile Include="Areas\Admin\Services\ReportService.cs" />
+    <Compile Include="Areas\Admin\ViewModels\BilledClothes.cs" />
+    <Compile Include="Areas\Admin\ViewModels\SettlementSetupVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\ClothTypeMeasurementVM.cs" />
-    <Compile Include="Areas\Admin\ViewModels\LabResultCollectionVM.cs" />
+    <Compile Include="Areas\Admin\ViewModels\ClocthCollectionVM.cs" />
+    <Compile Include="Areas\Admin\ViewModels\ClothStatusVM.cs" />
+    <Compile Include="Areas\Admin\ViewModels\MeasurementSetupVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\Report\RequestTrackerVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\ResultApprovalVM.cs" />
-    <Compile Include="Areas\Admin\ViewModels\TakeMeasurementVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\MeasurementVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\Report\BillDetailsVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\Report\SettingsDataSetVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\ClothTypeVM.cs" />
+    <Compile Include="Areas\Admin\ViewModels\SharedRevenueReportVM.cs" />
     <Compile Include="BillingDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -363,7 +383,6 @@
     <Compile Include="App_Start\URIHandler.cs" />
     <Compile Include="App_Start\WhiteSpaceFilterAttribute.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
-    <Compile Include="Areas\Admin\Components\Nav.cs" />
     <Compile Include="Areas\Admin\Controllers\ApplicationSettingsController.cs" />
     <Compile Include="Areas\Admin\Controllers\CustomerController.cs" />
     <Compile Include="Areas\Admin\Controllers\ErrorController.cs" />
@@ -522,10 +541,18 @@
     <Content Include="Areas\Admin\Views\ApplicationSettings\_EditClothTypeMeasurement.cshtml" />
     <Content Include="Areas\Admin\Views\ApplicationSettings\ManageClothTypeMeasurements.cshtml" />
     <Content Include="Areas\Admin\Views\ApplicationSettings\_CreateClothTypeMeasurement.cshtml" />
-    <Content Include="Areas\Admin\Views\Customer\TakeMeasurement.cshtml" />
-    <Content Include="Areas\Admin\Views\Report\LabResultCollectors.cshtml" />
-    <Content Include="Areas\Admin\Views\Report\RequestTracker.cshtml" />
-    <Content Include="Areas\Admin\Views\Report\_ViewRequestTracker.cshtml" />
+    <Content Include="Areas\Admin\Views\Activity\TakeMeasurement.cshtml" />
+    <Content Include="Areas\Admin\Views\Report\ClothCollectors.cshtml" />
+    <Content Include="Areas\Admin\Views\Activity\RequestTracker.cshtml" />
+    <Content Include="Areas\Admin\Views\Activity\_ViewRequestTracker.cshtml" />
+    <Content Include="Areas\Admin\Views\Activity\ComputeMeasurement.cshtml" />
+    <Content Include="Areas\Admin\Views\Laboratory\ResultApproval.cshtml" />
+    <Content Include="Areas\Admin\Views\Activity\ClothStatus.cshtml" />
+    <Content Include="Areas\Admin\Views\Activity\_ClothCollector.cshtml" />
+    <Content Include="Areas\Admin\Views\ApplicationSettings\ManageSettlementSetup.cshtml" />
+    <Content Include="Areas\Admin\Views\ApplicationSettings\_CreateSettlementSetup.cshtml" />
+    <Content Include="Areas\Admin\Views\ApplicationSettings\_EditSettlementSetup.cshtml" />
+    <Content Include="Areas\Admin\Views\Report\SharedRevenueReport.cshtml" />
     <None Include="BillingDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>BillingDataSet.Designer.cs</LastGenOutput>
@@ -661,8 +688,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Areas\Admin\Reports\Laboratory\TemplatedLabResult.rdlc" />
     <EmbeddedResource Include="Areas\Admin\Reports\Laboratory\NonTemplatedLabResult.rdlc" />
-    <EmbeddedResource Include="Areas\Admin\Reports\Payment\PaymentReciept.rdlc" />
-    <EmbeddedResource Include="Areas\Admin\Reports\Payment\BillInvoice.rdlc" />
+    <EmbeddedResource Include="Areas\Admin\Reports\Payment\PaymentReciept.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\Admin\Reports\Payment\BillInvoice.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

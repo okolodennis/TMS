@@ -56,7 +56,7 @@ namespace WebApp.Areas.Admin.Services
             bool HasSaved = false;
             User model = new User()
             {
-                Username = vmodel.Username,
+                Username = vmodel.Username1,
                 Firstname = vmodel.Firstname,
                 Lastname = vmodel.Lastname,
                 Email = vmodel.Email,
@@ -292,6 +292,18 @@ namespace WebApp.Areas.Admin.Services
                 System.Web.HttpContext.Current.Response.Redirect("/Account/Login");
             }
             return _db.Users.FirstOrDefault(x => x.Id == userID);
+        }
+
+        public List<string> GetUserAutoComplete(string term)
+        {
+            List<string> users;
+            users = _db.Users.Where(x => !x.IsDeleted && x.IsActive && x.RoleID == 3 && (x.Username.StartsWith(term) || x.Firstname.StartsWith(term) || x.Lastname.StartsWith(term))).Select(b => b.Username).ToList();
+            return users;
+        }
+        public bool CheckIfUsernameExist(string term)
+        {
+            var exist = _db.Users.Any(x =>x.Username == term);
+            return exist;
         }
     }
 }

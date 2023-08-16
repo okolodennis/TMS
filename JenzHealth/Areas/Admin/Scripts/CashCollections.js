@@ -1,5 +1,4 @@
-﻿
-$("input[name='CollectionType']").change(function () {
+﻿$("input[name='CollectionType']").change(function () {
     if ($("input[name='CollectionType']:checked").val() == "BILLED") {
         $("#CustomerIDDiv").hide();
         $("#InvoiceDiv").show();
@@ -60,6 +59,7 @@ $("input[name='CollectionType']").change(function () {
 })
 $(window).ready(function () {
     // Set  Customer Type
+   
     var radios = $(".Status");
     $.each(radios, function (i, radio) {
         if (radio.id == "BILLED") {
@@ -70,24 +70,46 @@ $(window).ready(function () {
         }
     })
 
+   
+
     if ($("input[name='CollectionType']:checked").val() == "BILLED") {
         $("#CustomerIDDiv").hide();
         $("#InvoiceDiv").show();
+        $("#PaymentModeDiv").show();
     }
     else if ($("input[name='CollectionType']:checked").val() == "UNBILLED") {
         $("#CustomerIDDiv").show();
         $("#InvoiceDiv").hide();
+        $("#PaymentModeDiv").hide();
     } else {
         $("#CustomerIDDiv").hide();
         $("#InvoiceDiv").hide();
+        $("#PaymentModeDiv").hide();
     }
+});
+
+
+$("#FinalPayment").click(function (e) {
+    if ($("#FinalPayment").is(":checked")) {
+        $("#Deposit").prop("checked", false);
+    }
+    $("#AmountToDepositDiv").hide();
+    $("#FinishBtn").html("Pay Now")
+});
+
+$("#Deposit").click(function (e) {
+    if ($("#Deposit").is(":checked")) {
+        $("#FinalPayment").prop("checked", false);
+    }
+    $("#AmountToDepositDiv").show();
+    $("#FinishBtn").html("Deposit")
 });
 
 $("#SearchCustomer").click(function (e) {
     e.preventDefault();
     e.stopPropagation();
 
-
+    $("#FinishBtn").prop("disabled", false);
 
     let searchby = $("input[name='CollectionType']:checked").val();
     if (searchby == "UNBILLED") {
@@ -197,7 +219,7 @@ $("#SearchCustomer").click(function (e) {
                             $("#ServiceBody").empty()
                             $.each(datas, function (i, data) {
                                 let html = "";
-                                html = "<tr id='" + data.Id + "' ><td><button class='btn btn-danger' disabled onclick='Delete(this)'>Remove</button></td><td>" + data.ServiceName + "</td><td><input type='number' value=" + data.Quantity + " class='form-control quantity-" + data.Id + "' onchange='UpdateAmount(this)' onkeyup='UpdateAmount(this)' /></td><td class='sellingprice-" + data.Id + "' data-id='" + data.SellingPrice + "'>" + data.SellingPriceString + "</td><td><strong class='gross-" + data.Id + " gross'>₦00.00</strong></td></tr>";
+                                html = "<tr id='" + data.Id + "' ><td><button class='btn btn-danger' disabled onclick='Delete(this)'>Remove</button></td><td>" + data.ServiceName + "</td><td><input type='number' disabled value=" + data.Quantity + " class='form-control quantity-" + data.Id + "' onchange='UpdateAmount(this)' onkeyup='UpdateAmount(this)' /></td><td class='sellingprice-" + data.Id + "' data-id='" + data.SellingPrice + "'>" + data.SellingPriceString + "</td><td><strong class='gross-" + data.Id + " gross'>₦00.00</strong></td></tr>";
                                 $("#ServiceBody").append(html);
                                 $("#ServiceName").val("");
                                 CalculateGrossAmount(data.Quantity, data.SellingPrice, data.Id);
@@ -207,6 +229,7 @@ $("#SearchCustomer").click(function (e) {
                             var waiveamount = $("#WaiveAmount").html();
                             var paidamount = $("#PaidAmount").html();
                             var balanceAmount = (ConvertToDecimal(netamount) - ConvertToDecimal(waiveamount)) - ConvertToDecimal(paidamount);
+
 
                             $("#BalanceAmount").html("₦" + numberWithCommas(balanceAmount) + ".00");
                         },
@@ -302,6 +325,8 @@ $("#SearchCustomer").click(function (e) {
 
 
                     e.target.innerHTML = "Search"
+                   
+
                 },
                 error: function (err) {
                     toastr.error(err.responseText, "An Error Occurred", { showDuration: 500 })
@@ -327,38 +352,52 @@ function AddService(servicename) {
         dataType: "json",
         success: function (response) {
             let html = "";
-            html = "<tr id='" + response.Id + "' ><td><button class='btn btn-danger' onclick='Delete(this)'>Remove</button></td><td>" + response.Name + "</td><td><input type='number' value='1' class='form-control quantity-" + response.Id + "' onchange='UpdateAmount(this)' onkeyup='UpdateAmount(this)' /></td><td class='sellingprice-" + response.Id + "' data-id='" + response.SellingPrice + "'>" + response.SellingPriceString + "</td><td><strong class='gross-" + response.Id + " gross'>₦00.00</strong></td></tr>";
+            html = "<tr id='" + response.Id + "' ><td><button class='btn btn-danger' onclick='Delete(this)'>Remove</button></td><td class='clothType'>" + response.Name + "</td><td><input type='number' value='1' class='form-control quantity-" + response.Id + "' onchange='UpdateAmount(this)' onkeyup='UpdateAmount(this)' /></td><td class='sellingprice-" + response.Id + "' data-id='" + response.CostPrice + "'>" + response.CostPriceString + "</td><td><strong class='gross-" + response.Id + " gross'>₦00.00</strong></td></tr>";
             $("#ServiceBody").append(html);
             $("#ServiceName").val("");
-            CalculateGrossAmount(1, response.SellingPrice, response.Id);
+            CalculateGrossAmount(1, response.CostPrice, response.Id);
             updateNetAmount();
             UpdateBalanceAmount();
-            e.target.innerHTML = "Add"
+            //e.target.innerHTML = "Add";
         },
         error: function (err) {
-            toastr.error(err.responseText, "An Error Occurred", { showDuration: 500 })
-            e.target.innerHTML = "Add"
+           // toastr.error(err.responseText, "An Error Occurred", { showDuration: 500 })
+           // e.target.innerHTML = "Add";
         }
     });
 
 }
 
-$("#ServiceName").on("blur",function (e) {
-    var servicename = $("#ServiceName").val();
 
+$("#ServiceName").on("blur", function () {
+    var servicename = $("#ServiceName").val();
     if (servicename === "") {
         $("#ServiceName").addClass("is-invalid");
     }
     else {
+        $(".dataTables_empty").addClass("d-none");
         $("#ServiceName").removeClass("is-invalid");
-        e.target.innerHTML = "Adding...";
 
         setTimeout(function () {
-            servicename = $("#ServiceName").val();
-            AddService(servicename);
+            var isClothTypeExist = false;
+            $('#ServiceBody .clothType').each(function () {
+                var clothtype = $(this).html();
+                servicename = $("#ServiceName").val();
+
+                if (clothtype == servicename)
+                    isClothTypeExist = true;
+            });
+            if (!isClothTypeExist) {
+                servicename = $("#ServiceName").val();
+                AddService(servicename);
+            }
+            else {
+                toastr.success(servicename + " has already been added", { showDuration: 500 });
+            }
         }, 200);
     }
-})
+});
+
 $("#FinishBtn").click(function () {
     var valName = $("input[name='CustomerName']").val();
     var valAge = $("input[name='CustomerAge']").val();
@@ -372,85 +411,122 @@ $("#FinishBtn").click(function () {
 
     }
     else {
+        var amountToPay = ConvertToDecimal($("#BalanceAmount").html());
+        var amountToDeposit = ConvertToDecimal($("#AmountToDepositString").val());
+        if (amountToPay == 0) {
 
-        $("input[name='CustomerName']").removeClass("is-invalid");
-        $("input[name='CustomerAge']").removeClass("is-invalid");
-        $("#genderFll").removeClass("is-invalid");
-        $("input[name='CustomerPhoneNumber']").removeClass("is-invalid");
-        Swal.fire({
-            title: 'Confirmation',
-            text: "Are you sure, you want to proceed with this operation?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, proceed!'
-        }).then((result) => {
-            if (result.value) {
-                let serviceArr = [];
+            Swal.fire({
+                title: 'Payment Completed',
+                showCancelButton: false,
+                confirmButtonText: 'Payment has already been completed',
+                showLoaderOnConfirm: true,
+            }).then((result) => {
+           
+            })
+        }
+        else if ($("#Deposit").is(":checked") && amountToDeposit == 0) {
+            Swal.fire({
+                title: 'Empty Deposit Amount',
+                showCancelButton: false,
+                confirmButtonText: 'Please enter amount to deposit',
+                showLoaderOnConfirm: true,
+            }).then((result) => {
 
-                let data = {
-                    BillInvoiceNumber: $("#BillInvoiceNumber").val(),
-                    CollectionType: $("input[name='CollectionType']:checked").val(),
-                    CustomerName: $("input[name='CustomerName']").val() == undefined ? $("#Customername")[0].innerText : $("input[name='CustomerName']").val(),
-                    CustomerUniqueID: $("#CustomerUniqueID").val(),
-                    CustomerAge: $("input[name='CustomerAge']").val() == undefined ? $("#Customerage")[0].innerText : $("input[name='CustomerAge']").val(),
-                    CustomerGender: $("#genderFll").val() == undefined ? $("#Customergender")[0].innerText : $("#genderFll").val(),
-                    CustomerPhoneNumber: $("input[name='CustomerPhoneNumber']").val() == undefined ? $("#Customerphonenumber")[0].innerText : $("input[name='CustomerPhoneNumber']").val(),
-                    AmountPaid: $("input[name='CollectionType']:checked").val() != "BILLED" ? ConvertToDecimal($("#BalanceAmount").html()) : 0,
-                    WaivedAmount: ConvertToDecimal($("#WaiveAmount").html()),
-                    NetAmount: ConvertToDecimal($("#NetAmount").html()),
-                    PaymentType: $("#PaymentType").val(),
-                    PartPaymentID: $("#installmentdrp").val(),
-                    TransactionReferenceNumber: $("#TransactionReferenceNumber").val()
-                };
+            })
+        }
+        else if (amountToDeposit > amountToPay)
+        {
+            Swal.fire({
+                title: 'Deposit Amount Exceeded',
+                showCancelButton: false,
+                confirmButtonText: 'Deposit amount is more than the amount to pay',
+                showLoaderOnConfirm: true,
+            }).then((result) => {
 
-                var table = $("#ServiceBody")[0].children;
-                $.each(table, function (i, tr) {
-                    let serviceObj = {};
-                    serviceObj.ServiceID = tr.id;
-                    serviceObj.Quantity = $(".quantity-" + tr.id).val();
-                    serviceObj.GrossAmount = ConvertToDecimal(tr.children[3].innerText);
-                    serviceArr.push(serviceObj);
-                });
-                // Send ajax call to server
-                $.ajax({
-                    url: 'CashCollections',
-                    method: 'Post',
-                    dataType: "json",
-                    data: { vmodel: data, serviceList: serviceArr },
-                    success: function (response) {
-                        if (response.PaymentReciept != null) {
-                            Swal.fire({
-                                title: 'Cash collected successfully',
-                                showCancelButton: false,
-                                confirmButtonText: 'Print payment receipt',
-                                showLoaderOnConfirm: true,
-                            }).then((result) => {
-                                if (result.value) {
-                                    let reportUrl = '/Admin/Report/PaymentReciept?recieptnumber=' + response.PaymentReciept + '&billnumber=' + response.BillInvoiceNumber;
-                                    window.open(reportUrl, 'blank');
-                                    location.href = "CashCollections?Saved=true";
-                                } else if (
-                                    result.dismiss === Swal.DismissReason.cancel
-                                ) {
-                                    location.href = "CashCollections?Saved=true";
-                                }
-                            })
+            })
+        }
+        else {
+            $("input[name='CustomerName']").removeClass("is-invalid");
+            $("input[name='CustomerAge']").removeClass("is-invalid");
+            $("#genderFll").removeClass("is-invalid");
+            $("input[name='CustomerPhoneNumber']").removeClass("is-invalid");
+            Swal.fire({
+                title: 'Confirmation',
+                text: "Are you sure, you want to proceed with this operation?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, proceed!'
+            }).then((result) => {
+                if (result.value) {
+                    let serviceArr = [];
+
+                    let data = {
+                        BillInvoiceNumber: $("#BillInvoiceNumber").val(),
+                        CollectionType: $("input[name='CollectionType']:checked").val(),
+                        CustomerName: $("input[name='CustomerName']").val() == undefined ? $("#Customername")[0].innerText : $("input[name='CustomerName']").val(),
+                        CustomerUniqueID: $("#CustomerUniqueID").val(),
+                        CustomerAge: $("input[name='CustomerAge']").val() == undefined ? $("#Customerage")[0].innerText : $("input[name='CustomerAge']").val(),
+                        CustomerGender: $("#genderFll").val() == undefined ? $("#Customergender")[0].innerText : $("#genderFll").val(),
+                        CustomerPhoneNumber: $("input[name='CustomerPhoneNumber']").val() == undefined ? $("#Customerphonenumber")[0].innerText : $("input[name='CustomerPhoneNumber']").val(),
+                        AmountPaid:  ConvertToDecimal($("#BalanceAmount").html()),
+                       // AmountPaid: $("input[name='CollectionType']:checked").val() != "BILLED" ? ConvertToDecimal($("#BalanceAmount").html()) : ConvertToDecimal($("#BalanceAmount").html(),
+                        WaivedAmount: ConvertToDecimal($("#WaiveAmount").html()),
+                        NetAmount: ConvertToDecimal($("#NetAmount").html()),
+                        PaymentType: $("#PaymentType").val(),
+                        PartPaymentID: $("#installmentdrp").val(),
+                        TransactionReferenceNumber: $("#TransactionReferenceNumber").val(),
+                        AmountToDeposit: ConvertToDecimal($("#AmountToDepositString").val())
+                    };
+
+                    var table = $("#ServiceBody")[0].children;
+                    $.each(table, function (i, tr) {
+                        let serviceObj = {};
+                        serviceObj.ServiceID = tr.id;
+                        serviceObj.Quantity = $(".quantity-" + tr.id).val();
+                        serviceObj.GrossAmount = ConvertToDecimal(tr.children[3].innerText);
+                        serviceArr.push(serviceObj);
+                    });
+                    // Send ajax call to server
+                    $.ajax({
+                        url: 'CashCollections',
+                        method: 'Post',
+                        dataType: "json",
+                        data: { vmodel: data, serviceList: serviceArr },
+                        success: function (response) {
+                            if (response.PaymentReciept != null) {
+                                Swal.fire({
+                                    title: 'Cash collected successfully',
+                                    showCancelButton: false,
+                                    confirmButtonText: 'Print payment receipt',
+                                    showLoaderOnConfirm: true,
+                                }).then((result) => {
+                                    if (result.value) {
+                                        let reportUrl = '/Admin/Report/PaymentReciept?recieptnumber=' + response.PaymentReciept + '&billnumber=' + response.BillInvoiceNumber;
+                                        window.open(reportUrl, 'blank');
+                                        location.href = "CashCollections?Saved=true";
+                                    } else if (
+                                        result.dismiss === Swal.DismissReason.cancel
+                                    ) {
+                                        location.href = "CashCollections?Saved=true";
+                                    }
+                                })
+                            }
                         }
-                    }
-                })
-            }
-            else if (
-                result.dismiss === Swal.DismissReason.cancel
-            ) {
-                swalWithBootstrapButtons.fire(
-                    'Cancelled',
-                    'Cancelled :)',
-                    'error'
-                )
-            }
-        })
+                    })
+                }
+                else if (
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    Swal.fire(
+                        'Cancelled',
+                        'Cancelled :)',
+                        'error'
+                    )
+                }
+            })
+        }
     }
 })
 
@@ -521,4 +597,23 @@ document.addEventListener("keyup", function (e) {
     } else {
         e.target.classList.remove("is-invalid");
     }
+})
+$(function () {
+    $(".CustomerUnique").autoComplete({
+        resolver: "custom",
+        events: {
+            search: function (qry, callback) {
+                $.ajax({
+                    url: "/Admin/Customer/GetCustomerOrPhoneAutoComplete",
+                    type: "POST",
+                    dataType: "json",
+                    data: { term: qry },
+                }).done(function (res) {
+                    callback(res)
+                });
+            }
+        },
+        minLength: 1
+    });
+
 })

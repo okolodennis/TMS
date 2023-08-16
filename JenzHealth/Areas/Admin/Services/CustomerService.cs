@@ -7,22 +7,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
+
 namespace WebApp.Areas.Admin.Services
 {
     public class CustomerService : ICustomerService
     {
+
         /* Instancation of the database context model
       * and injecting some buisness layer services
       */
         #region Instanciation
         readonly DatabaseEntities _db;
+        readonly IPaymentService _paymentService;
         public CustomerService()
         {
             _db = new DatabaseEntities();
+            _paymentService = new PaymentService();
         }
         public CustomerService(DatabaseEntities db)
         {
             _db = db;
+            _paymentService = new PaymentService();
         }
         #endregion
 
@@ -39,8 +44,8 @@ namespace WebApp.Areas.Admin.Services
                 Lastname = b.Lastname,
                 CustomerUniqueID = b.CustomerUniqueID,
                 Gender = b.Gender,
-                DOB = b.DOB,
-                Religion = b.Religion,
+                DOB = DateTime.Now,
+               // Religion = b.Religion,
                 Address = b.Address,
                 PhoneNumber = b.PhoneNumber,
                 Email = b.Email
@@ -62,7 +67,7 @@ namespace WebApp.Areas.Admin.Services
                 Firstname = vmodel.Firstname,
                 CustomerUniqueID = customrUniqueNumberPrefix + (customerCount + 1).ToString("D6"),
                 Lastname = vmodel.Lastname,
-                DOB = vmodel.DOB,
+                DOB = DateTime.Now,
                 Email = vmodel.Email,
                 PhoneNumber = vmodel.PhoneNumber,
                 Address = vmodel.Address,
@@ -86,7 +91,7 @@ namespace WebApp.Areas.Admin.Services
                 Firstname = b.Firstname,
                 Lastname = b.Lastname,
                 Gender = b.Gender,
-                DOB = b.DOB,
+                DOB = DateTime.Now,
                 Religion = b.Religion,
                 Address = b.Address,
                 PhoneNumber = b.PhoneNumber,
@@ -106,7 +111,7 @@ namespace WebApp.Areas.Admin.Services
             model.PhoneNumber = vmodel.PhoneNumber;
             model.Gender = vmodel.Gender;
             model.Address = vmodel.Address;
-            model.DOB = vmodel.DOB;
+            model.DOB = DateTime.Now;
 
             _db.Entry(model).State = System.Data.Entity.EntityState.Modified;
             _db.SaveChanges();
@@ -137,7 +142,7 @@ namespace WebApp.Areas.Admin.Services
                 Firstname = b.Firstname,
                 Lastname = b.Lastname,
                 Gender = b.Gender,
-                DOB = b.DOB,
+                DOB = DateTime.Now,
                 Religion = b.Religion,
                 Address = b.Address,
                 PhoneNumber = b.PhoneNumber,
@@ -154,7 +159,7 @@ namespace WebApp.Areas.Admin.Services
                 Firstname = b.Firstname,
                 Lastname = b.Lastname,
                 Gender = b.Gender,
-                DOB = b.DOB,
+                DOB = DateTime.Now,
                 Religion = b.Religion,
                 Address = b.Address,
                 PhoneNumber = b.PhoneNumber,
@@ -162,31 +167,12 @@ namespace WebApp.Areas.Admin.Services
             }).FirstOrDefault();
             return model;
         }
-
-        //Take Measurement
-        public bool TakeMeasurement(TakeMeasurementVM vmodel)
+        public List<string> GetCustomerOrPhoneAutoComplete(string term)
         {
-          
-            var model = new TakeMeasurement()
-            {
-                CustomerUniqueID = vmodel.CustomerUniqueID,
-                CustomerID = _db.Customers.FirstOrDefault(x => x.CustomerUniqueID == vmodel.CustomerUniqueID).Id,
-                IsDeleted = false,
-                DateCreated = DateTime.Now,
-                ClothTypeID = vmodel.ClothTypeID,
-                Gender = vmodel.Gender,
-                Quantity = vmodel.Quantity,
-                CreatedByID = Global.AuthenticatedUserID
-            };
-            _db.TakeMeasurements.Add(model);
-
-            var updatesettings = _db.ApplicationSettings.FirstOrDefault();
-          //  updatesettings.DepositeCount = depositeCount;
-
-            _db.Entry(updatesettings).State = System.Data.Entity.EntityState.Modified;
-            _db.SaveChanges();
-
-            return true;
+            List<string> users;
+            users = _db.Customers.Where(x => !x.IsDeleted && (x.CustomerUniqueID.StartsWith(term) || x.PhoneNumber.StartsWith(term))).Select(b => b.CustomerUniqueID).ToList();
+            return users;
         }
+
     }
 }

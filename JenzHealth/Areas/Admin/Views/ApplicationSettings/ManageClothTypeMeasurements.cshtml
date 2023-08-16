@@ -1,12 +1,12 @@
 ﻿@model WebApp.Areas.Admin.ViewModels.ClothTypeMeasurementVM
 @{
-    ViewBag.Title = "Manage Cloth Type Measurement";
+    ViewBag.Title = "Cloth Type Measurement Setup";
 }
 <!-- Page Header -->
 <div class="page-header row no-gutters py-4">
     <div class="col-12 col-sm-11 text-center text-sm-left mb-0">
         <span class="text-uppercase page-subtitle">Settings</span>
-        <h3 class="page-title">Manage Cloth Type Measurements</h3>
+        <h3 class="page-title">Cloth Type Measurement Setup</h3>
     </div>
     <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
         <button type="button" id="close" class="btn btn-white fa-pull-right" title="Click to close all">close</button>
@@ -36,7 +36,7 @@
                                         <i class="material-icons">bloodtype</i>
                                     </div>
                                 </div>
-                                @Html.DropDownListFor(model => model.ClothTypeID, (IEnumerable<SelectListItem>)ViewBag.ClothType, "-- Select Cloth Type --", new { @class = "form-control", required = true })
+                                @Html.DropDownListFor(model => model.ClothTypeID, (IEnumerable<SelectListItem>)ViewBag.ClothType, "-- Select Cloth Type --", new { @class = "form-control" })
                                 <div class="invalid-feedback">
                                     ClothType required
                                 </div>
@@ -50,7 +50,7 @@
                                         <i class="material-icons">bloodtype</i>
                                     </div>
                                 </div>
-                                @Html.DropDownListFor(model => model.MeasurementID, (IEnumerable<SelectListItem>)ViewBag.Measurement, "-- Select Measurement --", new { @class = "form-control", required = true })
+                                @Html.DropDownListFor(model => model.MeasurementID, (IEnumerable<SelectListItem>)ViewBag.Measurement, "-- Select Measurement --", new { @class = "form-control" })
                             <div class="invalid-feedback">
                                 Measurement required
                             </div>
@@ -68,8 +68,7 @@
                 <table class="file-manager file-manager-list d-none table-responsive">
                     <thead class="bg-light">
                         <tr>
-                            <th scope="col" class="border-0">Name</th>
-                            <th scope="col" class="border-0">ClothType</th>
+                            <th scope="col" class="border-0">Cloth Type</th>
                             <th scope="col" class="border-0">Measurement</th>
                             <th scope="col" class="border-0">Actions</th>
                         </tr>
@@ -83,7 +82,6 @@
                                     foreach (var row in ViewBag.ClothTypeMeasurements)
                                     {
                                         <tr>
-                                            <td>@row.Name</td>
                                             <td>@row.ClothType</td>
                                             <td>@row.Measurement</td>
                                             <td>
@@ -111,7 +109,7 @@
     </div>
 </div>
 @section Scripts{
-    <script src="~/Areas/Admin/Scripts/ClothTypeMeasurements.js"></script>
+    <script src="~/Areas/Admin/Scripts/ClothTypeMeasurement.js"></script>
 }
 @Html.Partial("_EditClothTypeMeasurement")
 @Html.Partial("_CreateClothTypeMeasurement")

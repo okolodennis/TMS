@@ -16,6 +16,6 @@ namespace WebApp.Areas.Admin.Interfaces
         bool DeleteCustomer(int ID);
         CustomerVM GetCustomer(string unqiueID);
         CustomerVM SearchCustomerWithIDorPhoneNumber(string value);
-        bool TakeMeasurement(TakeMeasurementVM vmodel);
+        List<string> GetCustomerOrPhoneAutoComplete(string term);
     }
 }

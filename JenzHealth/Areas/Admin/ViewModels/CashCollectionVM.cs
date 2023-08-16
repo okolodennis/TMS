@@ -37,5 +37,7 @@ namespace WebApp.Areas.Admin.ViewModels
         public string ShiftNumber { get; set; }
         public decimal TotalAmountPaid { get; set; }
         public WaiveBy WaiveBy { get; set; }
+        public decimal AmountToDeposit { get; set; }
+        public string AmountToDepositString { get; set; }
     }
 }

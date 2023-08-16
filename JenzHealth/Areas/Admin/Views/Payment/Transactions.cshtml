@@ -1,12 +1,12 @@
 ﻿@model WebApp.Areas.Admin.ViewModels.TransactionVM
 @{
-    ViewBag.Title = "Manage Transaction Summaries";
+    ViewBag.Title = "Transaction Summaries";
 }
 <!-- Page Header -->
 <div class="page-header row no-gutters py-4">
     <div class="col-12 col-sm-11 text-center text-sm-left mb-0">
-        <span class="text-uppercase page-subtitle">Seed management</span>
-        <h3 class="page-title">Manage Transaction Summaries</h3>
+        <span class="text-uppercase page-subtitle">Account management</span>
+        <h3 class="page-title">Transaction Summaries</h3>
     </div>
     <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
         <button type="button" id="close" class="btn btn-white fa-pull-right" title="Click to close all">close</button>
@@ -96,7 +96,7 @@
                                     <td>
                                         @if (row.ShiftStatus == "Closed")
                                         {
-                                            <span class="badge badge-pill badge-danger">@row.ShiftStatus</span>
+                                            <span class="badge badge-pill badge-secondary">@row.ShiftStatus</span>
                                         }
                                         else
                                         {

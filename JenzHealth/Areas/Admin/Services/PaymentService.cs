@@ -19,7 +19,7 @@ namespace WebApp.Areas.Admin.Services
         public PaymentService()
         {
             _db = new DatabaseEntities();
-            _userService = new UserService(new DatabaseEntities());
+            _userService = new UserService(_db);
         }
         public PaymentService(DatabaseEntities db, UserService userService)
         {
@@ -53,16 +53,6 @@ namespace WebApp.Areas.Admin.Services
                 };
                 _db.Billings.Add(model);
             }
-
-            var booking = new Booking()
-            {
-                BillInvoiceNumber = invoiceNumber,
-                CollectionDate = vmodel.CollectionDate,
-                TailorID = vmodel.TailorID,
-                DateCreated = DateTime.Now,
-                IsDeleted = false,
-            };
-            _db.Bookings.Add(booking);
 
             var updateSettings = _db.ApplicationSettings.FirstOrDefault();
             updateSettings.BillCount = billCount;
@@ -118,7 +108,7 @@ namespace WebApp.Areas.Admin.Services
                 CustomerName = b.CustomerName == null ? _db.Customers.FirstOrDefault(x => x.CustomerUniqueID == b.CustomerUniqueID).Firstname + " " + _db.Customers.FirstOrDefault(x => x.CustomerUniqueID == b.CustomerUniqueID).Lastname : b.CustomerName,
                 CustomerGender = b.CustomerGender == null ? _db.Customers.FirstOrDefault(x => x.CustomerUniqueID == b.CustomerUniqueID).Gender : b.CustomerGender,
                 CustomerPhoneNumber = b.CustomerPhoneNumber == null ? _db.Customers.FirstOrDefault(x => x.CustomerUniqueID == b.CustomerUniqueID).PhoneNumber : b.CustomerPhoneNumber,
-                CustomerAge = b.CustomerAge == 0 ? DateTime.Now.Year - _db.Customers.FirstOrDefault(x => x.CustomerUniqueID == b.CustomerUniqueID).DOB.Year : b.CustomerAge,
+              //  CustomerAge = b.CustomerAge == 0 ? DateTime.Now.Year - _db.Customers.FirstOrDefault(x => x.CustomerUniqueID == b.CustomerUniqueID).DOB.Year : b.CustomerAge,
                 InvoiceNumber = b.InvoiceNumber
             }).FirstOrDefault();
             return model;
@@ -130,7 +120,7 @@ namespace WebApp.Areas.Admin.Services
                 CustomerName = b.CustomerName == null ? _db.Customers.FirstOrDefault(x => x.CustomerUniqueID == b.CustomerUniqueID).Firstname + " " + _db.Customers.FirstOrDefault(x => x.CustomerUniqueID == b.CustomerUniqueID).Lastname : b.CustomerName,
                 CustomerGender = b.CustomerGender == null ? _db.Customers.FirstOrDefault(x => x.CustomerUniqueID == b.CustomerUniqueID).Gender : b.CustomerGender,
                 CustomerPhoneNumber = b.CustomerPhoneNumber == null ? _db.Customers.FirstOrDefault(x => x.CustomerUniqueID == b.CustomerUniqueID).PhoneNumber : b.CustomerPhoneNumber,
-                CustomerAge = b.CustomerAge == 0 ? DateTime.Now.Year - _db.Customers.FirstOrDefault(x => x.CustomerUniqueID == b.CustomerUniqueID).DOB.Year : b.CustomerAge,
+               // CustomerAge = b.CustomerAge == 0 ? DateTime.Now.Year - _db.Customers.FirstOrDefault(x => x.CustomerUniqueID == b.CustomerUniqueID).DOB.Year : b.CustomerAge,
                 CustomerUniqueID = b.CustomerUniqueID,
                 InvoiceNumber = b.InvoiceNumber.ToUpper()
             }).ToList();
@@ -144,7 +134,7 @@ namespace WebApp.Areas.Admin.Services
                 Id = b.ClothTypeID,
                 ServiceName = b.ClothType.Name,
                 Quantity = b.Quantity,
-                SellingPrice = b.ClothType.SellingPrice,
+                SellingPrice = b.ClothType.CostPrice,
             }).ToList();
             foreach (var each in model)
             {
@@ -276,6 +266,7 @@ namespace WebApp.Areas.Admin.Services
             depositeCount++;
             var model = new DepositeCollection()
             {
+                BillInvoiceNumber =  vmodel.BillInvoiceNumber,
                 Amount = CustomSerializer.UnMaskString(vmodel.AmountString),
                 CustomerUniqueID = vmodel.CustomerUniqueID,
                 CustomerID = _db.Customers.FirstOrDefault(x => x.CustomerUniqueID == vmodel.CustomerUniqueID).Id,
@@ -310,22 +301,25 @@ namespace WebApp.Areas.Admin.Services
                     var billCashCollection = new CashCollection()
                     {
                         BillInvoiceNumber = vmodel.BillInvoiceNumber,
-                        AmountPaid = vmodel.PartPaymentID == null ? (vmodel.NetAmount - vmodel.WaivedAmount) : _db.PartPayments.FirstOrDefault(x => x.Id == vmodel.PartPaymentID).PartPaymentAmount,
+                        AmountPaid = vmodel.AmountToDeposit != 0 ? vmodel.AmountToDeposit : vmodel.PartPaymentID == null ? vmodel.AmountPaid : _db.PartPayments.FirstOrDefault(x => x.Id == vmodel.PartPaymentID).PartPaymentAmount,
+                      //  AmountPaid = vmodel.AmountToDeposit != 0 ? vmodel.AmountToDeposit : vmodel.PartPaymentID == null ? (vmodel.NetAmount - vmodel.WaivedAmount) : _db.PartPayments.FirstOrDefault(x => x.Id == vmodel.PartPaymentID).PartPaymentAmount,
                         NetAmount = vmodel.NetAmount,
                         DatePaid = DateTime.Now,
                         WaivedAmount = vmodel.WaivedAmount,
                         BalanceAmount = vmodel.NetAmount - vmodel.WaivedAmount,
                         IsDeleted = false,
                         TransactionReferenceNumber = vmodel.TransactionReferenceNumber,
-                        InstallmentType = vmodel.PartPaymentID == null ? "FULL" : "PART",
+                        InstallmentType = vmodel.AmountToDeposit != 0 ? "DEPOSIT" : vmodel.PartPaymentID == null ? "FULL" : "PART",
                         PartPaymentID = vmodel.PartPaymentID,
                         PaymentType = vmodel.PaymentType,
                         ShiftID = shift.Id,
                         PaymentReciept = String.Format("PR{0}", paymentCount.ToString("D6")),
-                        CollectedByID = _userService.GetCurrentUser().Id
+                        CollectedByID = _userService.GetCurrentUser().Id,
+                        IsDeposit = vmodel.AmountToDeposit != 0 ? true : false
                     };
                     _db.CashCollections.Add(billCashCollection);
                     vmodel.PaymentReciept = billCashCollection.PaymentReciept;
+                    billInvoiceNumber = vmodel.BillInvoiceNumber;
                     break;
                 case CollectionType.UNBILLED:
                     // Create bill for registered customer
@@ -335,7 +329,7 @@ namespace WebApp.Areas.Admin.Services
                         CustomerUniqueID = vmodel.CustomerUniqueID,
                         CustomerName = string.Format("{0} {1}", customer.Firstname, customer.Lastname),
                         CustomerGender = customer.Gender,
-                        CustomerAge = (DateTime.Now.Year - customer.DOB.Year),
+                       // CustomerAge = (DateTime.Now.Year - customer.DOB.Year),
                         CustomerPhoneNumber = customer.PhoneNumber,
                         CustomerType = CustomerType.REGISTERED_CUSTOMER,
                         CustomerID = customer.Id,
@@ -364,43 +358,44 @@ namespace WebApp.Areas.Admin.Services
 
                         _db.CashCollections.Add(unbilledCashCollection);
                         vmodel.PaymentReciept = unbilledCashCollection.PaymentReciept;
+
                     }
                     break;
-                case CollectionType.WALK_IN:
-                    // Create bill for walk-in customer
-                    var walkinBill = new BillingVM()
-                    {
-                        CustomerName = vmodel.CustomerName,
-                        CustomerGender = vmodel.CustomerGender,
-                        CustomerAge = vmodel.CustomerAge,
-                        CustomerPhoneNumber = vmodel.CustomerPhoneNumber,
-                        CustomerType = CustomerType.WALK_IN_CUSTOMER,
-                    };
-                    if (serviceList.Count > 0)
-                    {
-                        billInvoiceNumber = this.CreateBilling(walkinBill, serviceList);
+                //case CollectionType.WALK_IN:
+                //    // Create bill for walk-in customer
+                //    var walkinBill = new BillingVM()
+                //    {
+                //        CustomerName = vmodel.CustomerName,
+                //        CustomerGender = vmodel.CustomerGender,
+                //        CustomerAge = vmodel.CustomerAge,
+                //        CustomerPhoneNumber = vmodel.CustomerPhoneNumber,
+                //        CustomerType = CustomerType.WALK_IN_CUSTOMER,
+                //    };
+                //    if (serviceList.Count > 0)
+                //    {
+                //        billInvoiceNumber = this.CreateBilling(walkinBill, serviceList);
 
-                        var walkinCashCollection = new CashCollection()
-                        {
-                            BillInvoiceNumber = billInvoiceNumber,
-                            TransactionReferenceNumber = vmodel.TransactionReferenceNumber,
-                            DatePaid = DateTime.Now,
-                            IsDeleted = false,
-                            AmountPaid = vmodel.AmountPaid,
-                            NetAmount = vmodel.NetAmount,
-                            PaymentType = vmodel.PaymentType,
-                            BalanceAmount = vmodel.NetAmount - vmodel.WaivedAmount,
-                            PartPaymentID = vmodel.PartPaymentID,
-                            InstallmentType = "FULL",
-                            ShiftID = shift.Id,
-                            PaymentReciept = String.Format("PR{0}", paymentCount.ToString("D6")),
-                            CollectedByID = _userService.GetCurrentUser().Id
-                        };
+                //        var walkinCashCollection = new CashCollection()
+                //        {
+                //            BillInvoiceNumber = billInvoiceNumber,
+                //            TransactionReferenceNumber = vmodel.TransactionReferenceNumber,
+                //            DatePaid = DateTime.Now,
+                //            IsDeleted = false,
+                //            AmountPaid = vmodel.AmountPaid,
+                //            NetAmount = vmodel.NetAmount,
+                //            PaymentType = vmodel.PaymentType,
+                //            BalanceAmount = vmodel.NetAmount - vmodel.WaivedAmount,
+                //            PartPaymentID = vmodel.PartPaymentID,
+                //            InstallmentType = "FULL",
+                //            ShiftID = shift.Id,
+                //            PaymentReciept = String.Format("PR{0}", paymentCount.ToString("D6")),
+                //            CollectedByID = _userService.GetCurrentUser().Id
+                //        };
 
-                        _db.CashCollections.Add(walkinCashCollection);
-                        vmodel.PaymentReciept = walkinCashCollection.PaymentReciept;
-                    }
-                    break;
+                //        _db.CashCollections.Add(walkinCashCollection);
+                //        vmodel.PaymentReciept = walkinCashCollection.PaymentReciept;
+                //    }
+                //    break;
             }
             var updatesettings = _db.ApplicationSettings.FirstOrDefault();
             updatesettings.PaymentCount = paymentCount;
@@ -435,8 +430,8 @@ namespace WebApp.Areas.Admin.Services
                 DatePaid = b.DatePaid,
                 TransactionReferenceNumber = b.TransactionReferenceNumber == null ? "NIL" : b.TransactionReferenceNumber.ToUpper(),
                 PaymentType = b.PaymentType,
-                InstallmentType = b.InstallmentType.ToUpper(),
-                PartPayment = b.PartPayment == null ? "FULL PAYMENT" : b.PartPayment.InstallmentName,
+                InstallmentType = b.IsDeposit == true ? "DEPOSIT" : b.InstallmentType.ToUpper(),
+                PartPayment = b.IsDeposit == true ? "DEPOSIT" : b.PartPayment == null ? "FULL PAYMENT" : b.PartPayment.InstallmentName,
                 CollectedBy = b.CollectedBy.Firstname + " " + b.CollectedBy.Lastname,
                 ShiftNumber = b.Shift.ShiftUniqueID
             }).ToList();
@@ -472,7 +467,7 @@ namespace WebApp.Areas.Admin.Services
                 ShiftStatus = b.HasExpired ? "Closed" : "Open",
                 ShiftClosedBy = b.HasExpired ? b.ClosedBy : " - ",
                 TransactionCount = _db.CashCollections.Count(x => x.Shift.Id == b.Id),
-                TotalAmount = _db.CashCollections.Where(x => x.ShiftID == b.Id).ToList().Sum(x => x.AmountPaid),
+                TotalAmount = _db.CashCollections.Count(x => x.ShiftID == b.Id) == 0 ? 0 : _db.CashCollections.Where(x => x.ShiftID == b.Id).ToList().Sum(x => x.AmountPaid) ,
             }).OrderByDescending(x => x.Id).ToList();
 
             NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
@@ -511,6 +506,93 @@ namespace WebApp.Areas.Admin.Services
             shift.TotalAmountString = "₦" + shift.TotalAmount.ToString("N", nfi);
 
             return shift;
+        }
+        public SharedRevenueReportVM GetSharedRevenueReport(SharedRevenueReportVM vmodel)
+        {
+
+            NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
+            var model = new SharedRevenueReportVM();
+            List<SharedRevenueReportVM> records = new List<SharedRevenueReportVM>();
+            List<string> cashCollections = new List<string>();
+
+            if (vmodel.StartDate != null && vmodel.EndDate != null)
+            {
+                var startDate = new DateTime(vmodel.StartDate.Value.Year, vmodel.StartDate.Value.Month, vmodel.StartDate.Value.Day, DateTime.MinValue.Hour, DateTime.MinValue.Minute, DateTime.MinValue.Second);
+                var endDate = new DateTime(vmodel.EndDate.Value.Year, vmodel.EndDate.Value.Month, vmodel.EndDate.Value.Day, DateTime.MaxValue.Hour, DateTime.MaxValue.Minute, DateTime.MaxValue.Second);
+
+                model.StartDateString = startDate.ToShortDateString();
+                model.EndDateString = endDate.ToShortDateString();
+                cashCollections = _db.CashCollections.Where(x => x.DatePaid >= startDate && x.DatePaid <= endDate && !x.IsDeposit && !x.IsDeleted && !x.IsCancelled).Select(o => o.BillInvoiceNumber).ToList();
+            }
+            else
+            {
+                cashCollections = _db.CashCollections.Where(x => !x.IsDeposit && !x.IsDeleted && !x.IsCancelled).Select(o => o.BillInvoiceNumber).ToList();
+            }
+
+            var Tailor = _db.Users.FirstOrDefault(x => x.Username == vmodel.Tailor && !x.IsDeleted);
+            if (Tailor != null)
+            {
+                model.TailorName = Tailor?.Lastname + " " + Tailor?.Firstname;
+                var getAssignedTailor = _db.AssignedTailorToBilledClothes.Where(x => x.IsReady && x.TailorId == Tailor.Id).Select(o => o.Billing.InvoiceNumber).ToList();
+                var transactions = getAssignedTailor.Intersect(cashCollections);
+                //cashCollections.Join(_db.AssignedTailorToBilledClothes.Where(x=>x.IsReady ), cash => cash.BillInvoiceNumber, asstailor => asstailor.Billing.InvoiceNumber, (cash, asstailor) => new );
+
+                //var transactions = _db.AssignedTailorToBilledClothes.Where(x =>  x.TailorId == Tailor.Id)
+                //    .Join(_db.CashCollections.Where(x => !x.IsDeleted && !x.IsCancelled),
+                //    asstailor => asstailor.Billing.InvoiceNumber, cash => cash.BillInvoiceNumber, (asstailor, cash) => new 
+                //    {
+                //        asstailor.BillingId,
+                //        asstailor.Billing.ClothTypeID,
+                //        cash.BillInvoiceNumber,
+                //        asstailor.TailorId,
+                //        cash.BalanceAmount,
+                //        cash.DatePaid,
+                //        cash.PaymentReciept,
+                //        cash.IsDeposit
+                //    });
+
+                foreach (var item in transactions)
+                {
+                    var billings = _db.Billings.Where(x => x.InvoiceNumber == item && x.IsDeleted == false).ToList();
+                    foreach (var billing in billings)
+                    {
+                        var clothTypeId = billing.ClothTypeID;
+                        var getSettlement = _db.SettlementSetups.FirstOrDefault(x => x.TailorID == Tailor.Id && x.ClothTypeID == clothTypeId && x.IsActive && !x.IsDeleted);
+                        var tailorAssignment = _db.AssignedTailorToBilledClothes.FirstOrDefault(x => x.BillingId == billing.Id && x.IsReady);
+                        var Quantity = tailorAssignment.Quantity;
+
+                        if (getSettlement != null)
+                        {
+                            var BillInvoiceNumber = billing.InvoiceNumber;
+                            var clothType = _db.ClothTypes.FirstOrDefault(x => x.Id == clothTypeId);
+                            var TotalCharge = (clothType.CostPrice * Quantity);
+                            var partnerShare = (TotalCharge * (getSettlement.PartnerPercent / 100));
+                            var record = new SharedRevenueReportVM()
+                            {
+                                Quantity = Quantity,
+                                BillNumber = BillInvoiceNumber,
+                                ClothType = clothType.Name,
+                                UnitCharge = clothType.CostPrice,
+                                TotalCharge = TotalCharge,
+                                FinalReceiptNo = _db.CashCollections.FirstOrDefault(x => x.BillInvoiceNumber == billing.InvoiceNumber && !x.IsDeposit && !x.IsDeleted && !x.IsCancelled)?.PaymentReciept,
+                                Date = _db.CashCollections.FirstOrDefault(x => x.BillInvoiceNumber == billing.InvoiceNumber && !x.IsDeposit && !x.IsDeleted && !x.IsCancelled).DatePaid,
+                                PartnerShare = partnerShare,
+                                OwnerShare = (TotalCharge - partnerShare),
+                            };
+
+                            records.Add(record);
+                        }
+                    }
+                }
+                model.TableData = records;
+                model.TotalUnitCharge = records.Sum(x=>x.UnitCharge);
+                model.TotalOwnerShare = records.Sum(x=>x.OwnerShare);
+                model.TotalPartnerShare = records.Sum(x=>x.PartnerShare);
+                model.TotalTotalCharge = records.Sum(x=>x.TotalCharge);
+                model.TotalQuantity = records.Sum(x=>x.Quantity);
+
+            }
+            return model;
         }
         public List<CashCollectionVM> GetCashCollectionsForShift(int shiftID)
         {

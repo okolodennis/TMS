@@ -29,10 +29,10 @@
                             <th scope="col" class="border-0">Unique ID</th>
                             <th scope="col" class="border-0">Name</th>
                             <th scope="col" class="border-0">Gender</th>
-                            <th scope="col" class="border-0">Date of birth</th>
-                            <th scope="col" class="border-0">Email</th>
+                            <th scope="col" class="border-0 d-none">Date of birth</th>
+                            <th scope="col" class="border-0 d-none">Email</th>
                             <th scope="col" class="border-0">Phone number</th>
-                            <th scope="col" class="border-0">Address</th>
+                            <th scope="col" class="border-0 d-none">Address</th>
                             <th scope="col" class="border-0">Actions</th>
                         </tr>
                     </thead>
@@ -43,10 +43,10 @@
                             <td>@row.CustomerUniqueID</td>
                             <td>@row.Firstname @row.Lastname</td>
                             <td>@row.Gender</td>
-                            <td>@row.DOB.ToShortDateString()</td>
-                            <td>@row.Email</td>
+                            <td class="d-none">@row.DOB.ToShortDateString()</td>
+                            <td class="d-none">@row.Email</td>
                             <td>@row.PhoneNumber</td>
-                            <td>@row.Address</td>
+                            <td class="d-none">@row.Address</td>
                             <td>
                                 <button type="button" onclick="Edit(@row.Id)" class="btn btn-outline-accent" data-toggle="modal" data-target="#Edit">
                                     <i class="dropdown-icon lnr-pencil"> </i><span>Edit</span>

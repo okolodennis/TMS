@@ -69,3 +69,33 @@ function Prompt(ID) {
         }
     })
 }
+function CheckIfMeasurementExist() {
+    var meas = $("#NameCreate").val();
+
+    $.ajax({
+        url: "/ApplicationSettings/CheckIfMeasurementExist?term=" + meas,
+        type: "Get",
+        contentType: "application/json;charset=UTF-8",
+        dataType: "json",
+        success: function (data) {
+            if (data) {
+
+                $("#Message").html("Measurement already exist !").css("color", "red");
+                $("#btnSubmit").attr("disabled", true);
+            }
+            else {
+                $("#Message").html("").css("color", "green");
+                $("#btnSubmit").attr("disabled", false);
+            }
+        },
+        error: function () {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Error',
+                showConfirmButton: false,
+                timer: 1500
+            })
+        }
+    })
+};

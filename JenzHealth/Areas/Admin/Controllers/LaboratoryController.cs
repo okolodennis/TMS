@@ -106,7 +106,7 @@ namespace WebApp.Areas.Admin.Controllers
             if (Saved == true)
             {
                 ViewBag.ShowAlert = true;
-                TempData["AlertType"] = "alert-success";
+                TempData["AlertType"] = "alert-primary";
                 TempData["AlertMessage"] = "Result computation saved successfully";
             }
             var record = _laboratoryService.GetSpecimensForPreparation(ID);
@@ -119,25 +119,67 @@ namespace WebApp.Areas.Admin.Controllers
             ViewBag.Templates = _laboratoryService.GetDistinctTemplateForBilledServices(billedServices);
             return View();
         }
-        public ActionResult Compute(int templateID, string billNumber)
+        public ActionResult Compute(int templateID, string billNumber, string serviceIds)
         {
             TempData["BillNumber"] = billNumber;
             TempData["SpecimenCollectedID"] = SpecimenCollectionID;
-
+            int[] serviceIDs = Array.ConvertAll(serviceIds.Split(','), element => int.Parse(element));
             var template = _seedService.GetTemplate(templateID);
             switch (template.UseDefaultParameters)
             {
                 case true:
-                    return View("ComputeNonTemplatedServicePreparation", _laboratoryService.GetNonTemplatedLabPreparation(billNumber));
+                    return View("ComputeNonTemplatedServicePreparation", _laboratoryService.GetNonTemplatedLabPreparation(billNumber, serviceIDs[0]));
                 case false:
                     return View("ComputeTemplatedServicePreparation", _laboratoryService.SetupTemplatedServiceForComputation(templateID, billNumber));
             }
             return View();
         }
 
-        public JsonResult UpdateLabResults(List<RequestComputedResultVM> results, string labnote)
+        public ActionResult ResultApproval()
         {
-            var status = _laboratoryService.UpdateLabResults(results, labnote);
+            if (!Nav.CheckAuthorization(Request.Url.AbsolutePath))
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            return View();
+        }
+        [HttpPost]
+        public ActionResult ResultApproval(ResultApprovalVM vmodel)
+        {
+            ViewBag.TableData = _laboratoryService.GetAllTestForApprovalByBillNumber(vmodel.BillNumber);
+            return View(vmodel);
+        }
+
+        public ActionResult ComputedResult(int serviceParameterID, string billnumber, int templateID, int Id, int serviceID)
+        {
+            var template = _seedService.GetTemplate(templateID);
+            ViewBag.Id = Id;
+            switch (template.UseDefaultParameters)
+            {
+                case false:
+                    return View("ComputeTemplatedResult", _laboratoryService.GetComputedResultForTemplatedService(billnumber, serviceParameterID));
+                case true:
+                    return View("ComputeNonTemplatedResult", _laboratoryService.GetNonTemplatedLabPreparation(billnumber, serviceID));
+            }
+            return View();
+        }
+
+        public JsonResult ApproveResult(int Id)
+        {
+            var status = _laboratoryService.ApproveTestResult(Id);
+            return Json(status, JsonRequestBehavior.AllowGet);
+        }
+
+        //public JsonResult UpdateCollector(ClothCollection model)
+        //{
+        //    var status = _laboratoryService.UpdateCollector(model);
+        //    return Json(status, JsonRequestBehavior.AllowGet);
+        //}
+
+        public JsonResult UpdateLabResults(List<RequestComputedResultVM> results, string labnote, string comment)
+        {
+            var status = _laboratoryService.UpdateLabResults(results, labnote, comment);
             return Json(status, JsonRequestBehavior.AllowGet);
         }
         public JsonResult UpdateNonTemplatedLabResults(NonTemplatedLabPreparationVM vmodel, List<NonTemplatedLabPreparationOrganismXAntiBioticsVM> organisms)
@@ -163,8 +205,19 @@ namespace WebApp.Areas.Admin.Controllers
         }
         public ActionResult CheckSpecimenCollection(string invoicenumber)
         {
-            var exist = _laboratoryService.CheckSpecimenCollectionWithBillNumber(invoicenumber);
-            return Json(exist, JsonRequestBehavior.AllowGet);
+            bool exists = false;
+            bool hasCompletedPayment = false;
+            if (_paymentService.CheckIfPaymentIsCompleted(invoicenumber))
+            {
+                hasCompletedPayment = true;
+                exists = _laboratoryService.CheckSpecimenCollectionWithBillNumber(invoicenumber);
+            }
+            var response = new
+            {
+                HasCompletedPayment = hasCompletedPayment,
+                Exists = exists
+            };
+            return Json(response, JsonRequestBehavior.AllowGet);
         }
         public ActionResult GetSpecimenCollected(string invoicenumber)
         {

@@ -55,6 +55,7 @@ namespace WebApp.Areas.Admin.Controllers
         IUserService _userService;
         ILaboratoryService _laboratoryService;
         IReportService _reportService;
+        IActivityService _activityService;
         public ReportController()
         {
             _customerService = new CustomerService(db);
@@ -85,7 +86,9 @@ namespace WebApp.Areas.Admin.Controllers
         }
         #endregion
 
-        public ActionResult RequestTracker()
+      
+
+        public ActionResult ClothCollectors()
         {
             if (!Nav.CheckAuthorization(Request.Url.AbsolutePath))
             {
@@ -93,34 +96,21 @@ namespace WebApp.Areas.Admin.Controllers
             }
             return View();
         }
-        [HttpPost]
-        public ActionResult RequestTracker(RequestTrackerVM vmodel)
-        {
-            var records = _reportService.TrackRequest(vmodel);
-
-            ViewBag.TableData = records;
-            return View(vmodel);
-        }
-
-        public ActionResult LabResultCollectors()
+        public ActionResult SharedRevenueReport()
         {
             if (!Nav.CheckAuthorization(Request.Url.AbsolutePath))
             {
                 throw new UnauthorizedAccessException();
             }
-            return View();
+            var model = new SharedRevenueReportVM();
+            return View(model);
         }
         [HttpPost]
-        public ActionResult LabResultCollectors(LabResultCollectionVM vmodel)
+        public ActionResult SharedRevenueReport(SharedRevenueReportVM vmodel)
         {
-            var records = _laboratoryService.GetLabResultCollections(vmodel);
-            var distinctBills = records.Distinct(o => o.BillNumber).ToList();
-
-            ViewBag.TableData = records;
-            ViewBag.DistinctBills = distinctBills;
-            return View(vmodel);
+            var model = _paymentService.GetSharedRevenueReport(vmodel);
+            return View(model);
         }
-
         // GET: Admin/Report
 
         #region Payment Report

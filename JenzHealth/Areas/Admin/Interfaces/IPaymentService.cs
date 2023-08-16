@@ -33,5 +33,6 @@ namespace WebApp.Areas.Admin.Interfaces
         List<CashCollectionVM> GetPaymentDetails(string recieptnumber);
         decimal GetTotalPaidBillAmount(string billnumber);
         bool CheckIfPaymentIsCompleted(string billnumber);
+        SharedRevenueReportVM GetSharedRevenueReport(SharedRevenueReportVM vmodel);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using WebApp.Areas.Admin.ViewModels;
+using WebApp.DAL.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,13 +24,16 @@ namespace WebApp.Areas.Admin.Interfaces
         List<ServiceParameterVM> GetServicesToPrepare(string invoiceNumber);
         List<ServiceParameterVM> GetDistinctTemplateForBilledServices(List<ServiceParameterVM> billedServices);
         List<TemplateServiceCompuationVM> SetupTemplatedServiceForComputation(int TemplateID, string billNumber);
-        bool UpdateLabResults(List<RequestComputedResultVM> results, string labnote);
-        NonTemplatedLabPreparationVM GetNonTemplatedLabPreparation(string billnumber);
+        bool UpdateLabResults(List<RequestComputedResultVM> results, string labnote, string comment);
+        NonTemplatedLabPreparationVM GetNonTemplatedLabPreparation(string billnumber, int serviceID);
         List<NonTemplatedLabPreparationVM> GetNonTemplatedLabPreparationForReport(string billnumber);
         bool UpdateNonTemplatedLabResults(NonTemplatedLabPreparationVM vmodel, List<NonTemplatedLabPreparationOrganismXAntiBioticsVM> organisms);
         List<NonTemplatedLabPreparationOrganismXAntiBioticsVM> GetComputedOrganismXAntibiotics(int nonTemplatedId);
         List<SpecimenCollectionVM> GetSpecimenCollectedForReport(string billnumber, int templateID);
         List<TemplateServiceCompuationVM> GetTemplatedLabResultForReport(int templateID, string billnumber);
-        List<LabResultCollectionVM> GetLabResultCollections(LabResultCollectionVM vmodel);
+        List<ResultApprovalVM> GetAllTestForApprovalByBillNumber(string billnumber);
+        List<TemplateServiceCompuationVM> GetComputedResultForTemplatedService(string billnumber, int serviceParameterID);
+        bool ApproveTestResult(int Id);
+       // List<ClocthCollectionVM> GetClothCollections(ClocthCollectionVM vmodel);
     }
 }

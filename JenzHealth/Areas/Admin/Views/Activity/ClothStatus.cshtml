@@ -1,0 +1,92 @@
+﻿@using WebApp.DAL.Entity;
+@model WebApp.Areas.Admin.ViewModels.ClothStatusVM
+@{
+    ViewBag.Title = "Cloth Status";
+}
+<!-- Page Header -->
+<div class="page-header row no-gutters py-4">
+    <div class="col-12 col-sm-11 text-center text-sm-left mb-0">
+        <span class="text-uppercase page-subtitle">Activity management</span>
+        <h3 class="page-title">Cloth Status</h3>
+    </div>
+    <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
+        <button type="button" id="close" class="btn btn-white fa-pull-right" title="Click to close all">close</button>
+    </div>
+</div>
+@using (Html.BeginForm("ClothStatus", "Activity", FormMethod.Post, new { area = "Admin", @class = "validate", id = "WaiverForm", novalidate = true }))
+{
+    <div class="row">
+        <div class="col">
+            <div class="card card-small mb-4">
+                <div class="card-header">
+                    <div class="m-0">
+                        <div class="row">
+                            <div class="form-group col-md-8">
+                                <label for="socialGitHub">Tailor</label>
+                                <div class="input-group input-group-seamless">
+                                    @Html.EditorFor(model => model.Tailor, new { htmlAttributes = new { @class = "form-control Tailor", placeholder = "Enter Tailor", autocomplete = "off", required = true } })
+                                    <div class="invalid-feedback">
+                                        Tailor required
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="Search">-</label>
+                                <div class="input-group input-group-seamless">
+                                    <button class="btn btn-primary" id="Search">
+                                        Search
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-small mb-4" id="ServiceTableLoader" style="display:none">
+                    <div class="card-body">
+                        <div class="col text-center">
+                            <img src="~/Content/images/Spinner.gif" style="width:50px;height:50px" />
+                        </div>
+                    </div>
+                </div>
+                <div id="serviceTableDiv" style="display:none">
+                    <div class="card-body p-0 pb-3 text-center">
+                        <table class="file-manager file-manager-list2 d-none table-responsive">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th scope="col" class="border-0">S/N</th>
+                                    <th scope="col" class="border-0">Bill Number</th>
+                                    <th scope="col" class="border-0">Customer Name</th>
+                                    <th scope="col" class="border-0">Phone</th>
+                                    <th scope="col" class="border-0">Cloth Type</th>
+                                    <th scope="col" class="border-0">Quantity</th>
+                                    <th scope="col" class="border-0">Status</th>
+                                    <th scope="col" class="border-0">Mark as Ready</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ServiceBody">
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <div class="card-footer">
+                        <div class="row">
+                            @*<input type="hidden" id="billnumber" value="@Model.BillNumber" />*@
+                            <div class="col-md-12 text-center">
+                                <button class="btn btn-primary d-none" type="button" id="FinishBtn">
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts{
+    <script src="~/Scripts/jquery.autocomplete.js"></script>
+    <script src="~/Areas/Admin/Scripts/ClothStatus.js"></script>
+}

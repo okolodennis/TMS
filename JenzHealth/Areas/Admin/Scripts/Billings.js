@@ -205,35 +205,52 @@ function AddService(servicename) {
         contentType: "application/json;charset=utf-8",
         dataType: "json",
         success: function (response) {
+
             let html = "";
-            html = "<tr id='" + response.Id + "' ><td><button class='btn btn-danger' onclick='Delete(this)'>Remove</button></td><td>" + response.Name + "</td><td><input type='number' value='1' class='form-control quantity-" + response.Id + "' onchange='UpdateAmount(this)' onkeyup='UpdateAmount(this)' /></td><td class='sellingprice-" + response.Id + "' data-id='" + response.SellingPrice + "'>" + response.SellingPriceString + "</td><td><strong class='gross-" + response.Id + " gross'>₦00.00</strong></td><td><input type='text' value='1' class='form-control tailor-" + response.Id + "' onchange='UpdateAmount(this)' onkeyup='UpdateAmount(this)' /></td></tr > ";
+            html = "<tr id='" + response.Id + "' ><td><button class='btn btn-danger' onclick='Delete(this)'>Remove</button></td><td class='clothType'>" + response.Name + "</td><td><input type='number' value='1' class='form-control quantity-" + response.Id + "' onchange='UpdateAmount(this)' onkeyup='UpdateAmount(this)' /></td><td class='sellingprice-" + response.Id + "' data-id='" + response.CostPrice + "'>" + response.CostPriceString + "</td><td><strong class='gross-" + response.Id + " gross'>₦00.00</strong></td></tr > ";
             $("#ServiceBody").append(html);
             $("#ServiceName").val("");
-            CalculateGrossAmount(1, response.SellingPrice, response.Id);
+            CalculateGrossAmount(1, response.CostPrice, response.Id);
             updateNetAmount();
-            e.target.innerHTML = "Add"
+          //  e.target.innerHTML = "Add"
+           // $(".odd").addClass("d-none");
         },
         error: function (err) {
-            toastr.error(err.responseText, "An Error Occurred", { showDuration: 500 })
-            e.target.innerHTML = "Add"
+           // toastr.error(err.responseText, "An Error Occurred", { showDuration: 500 })
+           // e.target.innerHTML = "Add"
         }
     });
 }
 
-$("#ServiceName").on("blur", function (e) {
+$("#ServiceName").on("change", function () {
     var servicename = $("#ServiceName").val();
     if (servicename === "") {
         $("#ServiceName").addClass("is-invalid");
     }
     else {
+        $(".dataTables_empty").addClass("d-none");
         $("#ServiceName").removeClass("is-invalid");
-        e.target.innerHTML = "Adding...";
+
         setTimeout(function () {
-            servicename = $("#ServiceName").val();
-            AddService(servicename)
+            var isClothTypeExist = false;
+            $('#ServiceBody .clothType').each(function () {
+                var clothtype = $(this).html();
+                servicename = $("#ServiceName").val();
+
+                if (clothtype == servicename)
+                    isClothTypeExist = true;
+            });
+            if (!isClothTypeExist) {
+                servicename = $("#ServiceName").val();
+                AddService(servicename);
+            }
+            else {
+                toastr.success(servicename + " has already been added", { showDuration: 500 });
+            }
         }, 200);
     }
-})
+});
+
 $("#FinishBtn").click(function () {
     var valName = $("input[name='CustomerName']").val();
     var valAge = $("input[name='CustomerAge']").val();
@@ -394,4 +411,24 @@ document.addEventListener("keyup", function (e) {
     } else {
         e.target.classList.remove("is-invalid");
     }
+})
+
+$(function () {
+    $(".CustomerUnique").autoComplete({
+        resolver: "custom",
+        events: {
+            search: function (qry, callback) {
+                $.ajax({
+                    url: "/Admin/Customer/GetCustomerOrPhoneAutoComplete",
+                    type: "POST",
+                    dataType: "json",
+                    data: { term: qry },
+                }).done(function (res) {
+                    callback(res)
+                });
+            }
+        },
+        minLength: 1
+    });
+
 })

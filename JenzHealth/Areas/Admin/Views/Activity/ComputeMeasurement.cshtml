@@ -1,0 +1,160 @@
+﻿@using WebApp.DAL.Entity;
+@model WebApp.Areas.Admin.ViewModels.TakeMeasurementVM
+@{
+    ViewBag.Title = "Compute Measurement";
+}
+<!-- Page Header -->
+<div class="page-header row no-gutters py-4">
+    <div class="col-12 col-sm-11 text-center text-sm-left mb-0">
+        <span class="text-uppercase page-subtitle">Activity management</span>
+        <h3 class="page-title">Compute Measurement</h3>
+    </div>
+    <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
+        <button type="button" id="close" class="btn btn-white fa-pull-right" title="Click to close all">close</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card  card-small h-100">
+            <fieldset>
+                <legend class="text-center">Customer And Bill Information</legend>
+                <div id="customerinfoDiv">
+                    <table class="file-manager file-manager-list2 d-none table-responsive">
+                        <thead class="bg-light">
+                            <tr>
+                                <th scope="col" class="border-0">Bill Number</th>
+                                <th scope="col" class="border-0">Name</th>
+                                <th scope="col" class="border-0">Gender</th>
+                                <th scope="col" class="border-0">Phone Number</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>@Model.BillNumber</td>
+                                <td>@Model.CustomerName</td>
+                                <td>@Model.Gender</td>
+                                <td>@Model.PhoneNumber</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+
+            <div class="card-header border-bottom">
+                <hr />
+                <h3 class="m-0">Billed Clothes</h3>
+                <div class="block-handle"></div>
+            </div>
+            <div class="card-body p-2">
+                <div class="container-fluid" id="resultBody">
+                    @foreach (var billedClothType in Model.Setups)
+                    {
+                        <div class="row px-3">
+                            <div class="col-sm-3 pl-4 sc-stats__title">
+                             <h5>Cloth: @billedClothType.ClothType</h5>
+                             <h1 class="text-danger"> <span class="BilledQuantity-@billedClothType.ClothTypeId">@billedClothType.BilledQuantity</span></h1>
+                            </div>
+
+                            <div class="col-md-9">
+                                <table class="file-manager file-manager-list2 d-none table-responsive">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th scope="col">Parameter</th>
+                                            <th scope="col">Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var paramater in billedClothType.Parameters)
+                                        {
+                                            <tr>
+                                                <td data-parent="@billedClothType.ClothTypeId" data-child="@paramater.ParameterID">@paramater.Parameter</td>
+                                                <td><input type="text" class="form-control values" value="@paramater.Value" required /></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                <hr />
+                                <div class="row">
+                                    <div class="form-group col-sm-6">
+                                        <label for="labnote">Tailor</label>
+                                        <div class="input-group input-group-seamless">
+                                            <input type="text" class="form-control Tailor-@billedClothType.ClothTypeId tailorAutoComplete" value="@billedClothType.Tailor" required />
+                                            <input type="text" class="form-control d-none BillingID" value="@billedClothType.BillingID" required />
+                                            <input type="text" class="form-control d-none ClothTypeId-@billedClothType.ClothTypeId" value="@billedClothType.ClothTypeId" required />
+                                            <div class="invalid-feedback">
+                                                Tailor required
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <label for="RequestingDate">Quantity</label>
+                                        <div class="input-group input-group-seamless">
+                                            <input type="number" class="form-control Quantity-@billedClothType.ClothTypeId" value="@billedClothType.Quantity" required />
+                                            <div class="invalid-feedback">
+                                                Quantity required
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-4">
+                                        <label for="RequestingDate">Collection Date</label>
+                                        <div class="input-group input-group-seamless">
+                                            <input type="date" class="form-control CollectionDate-@billedClothType.ClothTypeId" value="@billedClothType.CollectionDate.ToString("yyyy-MM-dd")" required />
+                                            <div class="invalid-feedback">
+                                                Collection Date required
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <button class="btn btn-dark" type="button" onclick="AssignTailor(this.id)" id="@billedClothType.ClothTypeId">
+                                            Assign
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="assignTableDiv">
+                                    <table class="file-manager file-manager-list2 d-none table-responsive AssignTable-@billedClothType.ClothTypeId">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th scope="col" class="border-0"></th>
+                                                <th scope="col" class="border-0">Tailor</th>
+                                                <th scope="col" class="border-0 sum">Quantity</th>
+                                                <th scope="col" class="border-0">Collection Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="AssignBody-@billedClothType.ClothTypeId">
+                                        </tbody>
+                                        <tfoot class="p-2">
+                                            <tr class="text-center p-2 bg-light">
+                                                <th></th>
+                                                <th></th>
+                                                <th>Total: <span class="totalQty-@billedClothType.ClothTypeId">0</span></th>
+                                                <th></th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div><hr  class="border border-5" />
+                    }
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <input type="hidden" id="billnumber" value="@Model.BillNumber" />
+                    <div class="col-md-12 text-center">
+                        <button class="btn btn-primary" id="FinishBtn">
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<br />
+@section Scripts{
+    <script src="~/Scripts/jquery.autocomplete.js"></script>
+    <script src="~/Areas/Admin/Scripts/TakeMeasurement.js"></script>
+}
+
+

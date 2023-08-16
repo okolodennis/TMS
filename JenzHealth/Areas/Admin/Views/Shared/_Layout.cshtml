@@ -1,14 +1,12 @@
-﻿@{
-    using (WebApp.DAL.DataConnection.DatabaseEntities _entities = new WebApp.DAL.DataConnection.DatabaseEntities())
-    {
-        var settings = _entities.ApplicationSettings.FirstOrDefault();
-        ViewBag.AppName = settings.AppName;
-        byte[] empty = { };
-        var logo = settings.Logo == null ? empty : settings.Logo;
-        string LogoBase64 = Convert.ToBase64String(logo);
-        ViewBag.LogoSrc = string.Format("data:image/gif;base64,{0}", LogoBase64);
-    }
-}
+﻿@{ using (WebApp.DAL.DataConnection.DatabaseEntities _entities = new WebApp.DAL.DataConnection.DatabaseEntities())
+                {
+                    var settings = _entities.ApplicationSettings.FirstOrDefault();
+                    ViewBag.AppName = settings.AppName;
+                    byte[] empty = { };
+                    var logo = settings.Logo == null ? empty : settings.Logo;
+                    string LogoBase64 = Convert.ToBase64String(logo);
+                    ViewBag.LogoSrc = string.Format("data:image/gif;base64,{0}", LogoBase64);
+                } }
 
 <!doctype html>
 <html class="no-js h-100" lang="en">
@@ -23,6 +21,7 @@
     <link href="~/Content/css/all.css" rel="stylesheet" />
     <link href="~/Content/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/Content/fonts/font.css" rel="stylesheet" />
+    <link href="~/Content/css/fontawesome.min.css" rel="stylesheet" />
     <link href="~/Content/css/shards-dashboards.1.3.1.min.css" rel="stylesheet" />
     <link href="~/Content/css/extras.1.3.1.min.css" rel="stylesheet" />
     <link href="~/Content/css/responsive.dataTables.min.css" rel="stylesheet" />
@@ -43,7 +42,7 @@
                                 <span class="d-none d-md-inline ml-1">@ViewBag.AppName</span>
                             </div>
                         </a>
-                        <a class="toggle-sidebar d-sm-inline d-md-none d-lg-none">
+                        <a class="toggle-sidebar closenavbar d-sm-inline d-md-none d-lg-none">
                             <i class="material-icons">&#xE5C4;</i>
                         </a>
                     </nav>
@@ -55,7 +54,7 @@
                                 <i class="fas fa-search"></i>
                             </div>
                         </div>
-                        <input class="navbar-search form-control SearchInp" type="text" placeholder="Search for link...">
+                        <input class="navbar-search form-control SearchInp" type="text" placeholder="Search for Menu Link...">
                     </div>
                 </form>
                 <div class="nav-wrapper">
@@ -74,7 +73,7 @@
                                         <i class="fas fa-search"></i>
                                     </div>
                                 </div>
-                                <input class="navbar-search form-control" type="text" id="SearchInp" onkeyup="UrlSearch()" placeholder="Search for link..." aria-label="Search">
+                                <input class="navbar-search form-control" type="text" id="SearchInp" onkeyup="UrlSearch()" placeholder="Search for Menu Link..." aria-label="Search">
                             </div>
                         </form>
                         <ul class="navbar-nav border-left flex-row ">
@@ -116,12 +115,11 @@
                                     <img class="user-avatar rounded-circle mr-2" src="~/Content/images/user.png" alt="User Avatar">
                                     @if (Session["UserId"] != null)
                                     {
-                                        <span class="d-none d-md-inline-block">@Session["Name"].ToString()</span>
-                                    }
-                                    else
-                                    {
-                                        Response.Redirect("~/Account/Login", true);
-                                    }
+                        <span class="d-none d-md-inline-block">@Session["Name"].ToString()</span>}
+                    else
+                    {
+                        Response.Redirect("~/Account/Login", true);
+                    }
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-small">
                                     <a class="dropdown-item" href="~/Admin/User/ChangePassword"><i class="material-icons">&#xE7FD;</i> Change Password</a>
@@ -133,7 +131,7 @@
                             </li>
                         </ul>
                         <nav class="nav">
-                            <a href="#" class="nav-link nav-link-icon toggle-sidebar d-sm-inline d-md-none text-center border-left" data-toggle="collapse" data-target=".header-navbar" aria-expanded="false" aria-controls="header-navbar">
+                            <a href="#" class="opennavbar nav-link nav-link-icon toggle-sidebar d-sm-inline d-md-none text-center border-left" data-toggle="collapse" data-target=".header-navbar" aria-expanded="false" aria-controls="header-navbar">
                                 <i class="material-icons">&#xE5D2;</i>
                             </a>
                         </nav>
@@ -145,7 +143,7 @@
 
                 </div>
                 <footer class="main-footer d-flex p-2 px-3 bg-white border-top">
-                    <span class="copyright ml-auto my-auto mr-2 text-center">Powered by Soft Guys</span>
+                    <span class="copyright ml-auto my-auto mr-2 text-center">Powered by SoftGuys Technologies</span>
                 </footer>
             </main>
         </div>
@@ -154,11 +152,12 @@
 
     <script src="~/Scripts/loader.js"></script>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.sharrre.min.js"></script>
     <script src="~/Scripts/autocomplete.min.js"></script>
     <script src="~/Scripts/popper.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script src="~/Scripts/shards.min.js"></script>
-    <script src="~/Scripts/jquery.sharrre.min.js"></script>
+    <script src="~/Scripts/shards-dashboards.1.3.1.min.js"></script>
     <script src="~/Scripts/extras.1.3.1.min.js"></script>
     <script src="~/Scripts/toastr.min.js"></script>
     <script src="~/Scripts/spin.js"></script>
@@ -177,12 +176,12 @@
             @if (ViewBag.ShowAlert == true) {
                 @: $("#alert").show();
             }
-            var url = window.location.href.split('?')[0];
-            for (var i = 0; i < document.links.length; i++) {
-                if (document.links[i].href == url) {
-                //    document.links[i].className = 'show';
-                }
-            }
+            $(".opennavbar").click(function () {
+                $(".main-sidebar").addClass("open");
+            });
+            $(".closenavbar").click(function () {
+                $(".main-sidebar").removeClass("open");
+            });
         })
 
     </script>

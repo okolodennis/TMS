@@ -1,11 +1,11 @@
 ﻿@{
-    ViewBag.Title = "Manage ClothTypes";
+    ViewBag.Title = "Cloth Type Setup";
 }
 <!-- Page Header -->
 <div class="page-header row no-gutters py-4">
     <div class="col-12 col-sm-11 text-center text-sm-left mb-0">
         <span class="text-uppercase page-subtitle">Sttings</span>
-        <h3 class="page-title">Manage ClothTypes</h3>
+        <h3 class="page-title">Cloth Type Setup</h3>
     </div>
     <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
         <button type="button" id="close" class="btn btn-white fa-pull-right" title="Click to close all">close</button>
@@ -36,7 +36,7 @@
                     {
                         <tr>
                             <td>@row.Name</td>
-                            <td>@row.SellingPriceString</td>
+                            <td>@row.CostPriceString</td>
                             <td>
                                 <button type="button" onclick="Edit(@row.Id)" class="btn btn-outline-accent" data-toggle="modal" data-target="#Edit">
                                     <i class="dropdown-icon lnr-pencil"> </i><span>Edit</span>

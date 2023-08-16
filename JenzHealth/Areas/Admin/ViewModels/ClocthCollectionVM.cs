@@ -5,16 +5,16 @@ using System.Web;
 
 namespace WebApp.Areas.Admin.ViewModels
 {
-    public class LabResultCollectionVM
+    public class ClocthCollectionVM
     {
         public int Id { get; set; }
         public string CollectorName { get; set; }
         public string BillNumber { get; set; }
-        public string Template { get; set; }
-        public int? TemplateID { get; set; }
+        public string ClothType { get; set; }
+        public int ClothTypeID { get; set; }
         public DateTime? DateCollected { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public string PatientName { get; set; }
+        public string CustomerName { get; set; }
     }
 }

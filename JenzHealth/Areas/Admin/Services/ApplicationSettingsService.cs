@@ -19,6 +19,8 @@ namespace WebApp.Areas.Admin.Services
          */
         #region Instanciation
         readonly DatabaseEntities _db;
+        List<ClothTypeMeasurementVM> clothTypeMeasurementMainTableData = new List<ClothTypeMeasurementVM>();
+        IEnumerable<ClothTypeMeasurement> clothTypeMeasurementTabledata;
         public ApplicationSettingsService()
         {
             _db = new DatabaseEntities();
@@ -91,7 +93,7 @@ namespace WebApp.Areas.Admin.Services
                Id = b.Id,
                BrandName = b.AppName,
                Logo = b.Logo == null ? empty : b.Logo,
-               Watermark = b.Watermark == null ? empty : b.Watermark,
+            //   Watermark = b.Watermark == null ? empty : b.Watermark,
                DateGenerated = DateTime.Now
             }).ToList();
             return response;
@@ -103,9 +105,8 @@ namespace WebApp.Areas.Admin.Services
             bool HasSaved = false;
             ClothTypeMeasurement model = new ClothTypeMeasurement()
             {
-                ClothTypeID   = vmodel.ClothTypeID,
-                MeasurementID = vmodel.MeasurementID,
-                Name = vmodel.Name,
+                ClothTypeID   = vmodel.ClothTypeIDCreate,
+                MeasurementID = vmodel.MeasurementIDCreate,
                 IsActive = true,
                 IsDeleted = false,
                 DateCreated = DateTime.Now,
@@ -118,12 +119,12 @@ namespace WebApp.Areas.Admin.Services
         }
 
         // Getting ClothTypeMeasurement
-        public List<ClothTypeMeasurementVM> GetClothTypeMeasurement()
+        public List<ClothTypeMeasurementVM> GetClothTypeMeasurement(ClothTypeMeasurementVM vmodel)
         {
-            var model = _db.ClothTypeMeasurements.Where(x => x.IsDeleted == false).Select(b => new ClothTypeMeasurementVM()
+
+            var model = _db.ClothTypeMeasurements.Where(x => (x.ClothTypeID == vmodel.ClothTypeID || x.MeasurementID == vmodel.MeasurementID) && x.IsDeleted == false).Select(b => new ClothTypeMeasurementVM()
             {
                 Id = b.Id,
-                Name = b.Name,
                 ClothType = b.ClothType.Name,
                 Measurement = b.Measurement.Name,
             }).ToList();
@@ -135,7 +136,6 @@ namespace WebApp.Areas.Admin.Services
         {
             bool HasSaved = false;
             var model = _db.ClothTypeMeasurements.Where(x => x.Id == vmodel.Id).FirstOrDefault();
-            model.Name = vmodel.Name;
             model.ClothTypeID = vmodel.ClothTypeID;
             model.MeasurementID = vmodel.MeasurementID;
             model.ModifiedByID = Global.AuthenticatedUserID;
@@ -160,33 +160,104 @@ namespace WebApp.Areas.Admin.Services
             return HasDeleted;
         }
 
-        public ClothTypeMeasurementVM GetClothTypeMeasurement(string ClothTypeMeasurementname)
+        // Creating SettlementSetup
+        public bool CreateSettlementSetup(SettlementSetupVM vmodel)
         {
-            NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
-            var model = _db.ClothTypeMeasurements.Where(x => x.Name == ClothTypeMeasurementname).Select(b => new ClothTypeMeasurementVM()
+            bool HasSaved = false;
+            SettlementSetup model = new SettlementSetup()
+            {
+                ClothTypeID = vmodel.ClothTypeIDCreate,
+                TailorID = vmodel.TailorIDCreate,
+                PartnerPercent = vmodel.PartnerPercent,
+                IsActive = true,
+                IsDeleted = false,
+                DateCreated = DateTime.Now,
+                CreatedByID = Global.AuthenticatedUserID
+            };
+            _db.SettlementSetups.Add(model);
+            _db.SaveChanges();
+            HasSaved = true;
+            return HasSaved;
+        }
+
+        // Getting SettlementSetup
+        public List<SettlementSetupVM> GetSettlementSetup(SettlementSetupVM vmodel)
+        {
+
+            var model = _db.SettlementSetups.Where(x => (x.ClothTypeID == vmodel.ClothTypeID || x.TailorID == vmodel.TailorID) && x.IsDeleted == false).Select(b => new SettlementSetupVM()
             {
                 Id = b.Id,
-                Name = b.Name,
-                ClothTypeID = b.ClothTypeID,
-                MeasurementID = b.MeasurementID,
                 ClothType = b.ClothType.Name,
-                Measurement = b.Measurement.Name,
-            }).FirstOrDefault();
-
-            //if (model != null)
-            //{
-            //    model.SellingPriceString = "₦" + model.SellingPrice.ToString("N", nfi);
-            //    model.CostPriceString = "₦" + model.CostPrice.ToString("N", nfi);
-            //}
+                Tailor = b.Tailor.Username,
+                TailorName = b.Tailor.Lastname + " " + b.Tailor.Firstname,
+                PartnerPercent = b.PartnerPercent,
+            }).ToList();
             return model;
         }
+
+        // Editting and updating SettlementSetup
+        public bool EditSettlementSetup(SettlementSetupVM vmodel)
+        {
+            bool HasSaved = false;
+            var model = _db.SettlementSetups.Where(x => x.Id == vmodel.Id).FirstOrDefault();
+            model.PartnerPercent = vmodel.PartnerPercent;
+            model.ModifiedByID = Global.AuthenticatedUserID;
+
+            _db.Entry(model).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            HasSaved = true;
+            return HasSaved;
+        }
+
+        // Deleting SettlementSetup
+        public bool DeleteSettlementSetup(int ID)
+        {
+            bool HasDeleted = false;
+            var model = _db.SettlementSetups.Where(x => x.Id == ID).FirstOrDefault();
+            model.IsDeleted = true;
+            model.ModifiedByID = Global.AuthenticatedUserID;
+
+            _db.Entry(model).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            HasDeleted = true;
+            return HasDeleted;
+        }
+        public SettlementSetupVM GetSettlementSetup(int Id)
+        {
+            return _db.SettlementSetups.Where(x => x.Id == Id).Select(o=> new SettlementSetupVM()
+            { 
+                Id = o.Id,
+                Tailor = o.Tailor.Username,
+                ClothType = o.ClothType.Name,
+                PartnerPercent = o.PartnerPercent,
+                OwnerPercent = o.OwnerPercent
+            }).FirstOrDefault();
+        }
+        //public ClothTypeMeasurementVM GetClothTypeMeasurement(string ClothTypeMeasurementname)
+        //{
+        //    NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
+        //    var model = _db.ClothTypeMeasurements.Where(x => x.Name == ClothTypeMeasurementname).Select(b => new ClothTypeMeasurementVM()
+        //    {
+        //        Id = b.Id,
+        //        ClothTypeID = b.ClothTypeID,
+        //        MeasurementID = b.MeasurementID,
+        //        ClothType = b.ClothType.Name,
+        //        Measurement = b.Measurement.Name,
+        //    }).FirstOrDefault();
+
+        //    //if (model != null)
+        //    //{
+        //    //    model.SellingPriceString = "₦" + model.SellingPrice.ToString("N", nfi);
+        //    //    model.CostPriceString = "₦" + model.CostPrice.ToString("N", nfi);
+        //    //}
+        //    return model;
+        //}
         public List<ClothTypeMeasurementVM> GetClothTypeMeasurementAutoComplete(string query)
         {
             NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
-            var model = _db.ClothTypeMeasurements.Where(x => x.Name.StartsWith(query)).Select(b => new ClothTypeMeasurementVM()
+            var model = _db.ClothTypeMeasurements.Where(x => x.ClothType.Name.StartsWith(query)).Select(b => new ClothTypeMeasurementVM()
             {
                 Id = b.Id,
-                Name = b.Name,
                 ClothTypeID = b.ClothTypeID,
                 MeasurementID = b.MeasurementID,
                 ClothType = b.ClothType.Name,
@@ -197,7 +268,7 @@ namespace WebApp.Areas.Admin.Services
         public List<string> GetClothTypeMeasurementNameAutoComplete(string term)
         {
             List<string> ClothTypeMeasurements;
-            ClothTypeMeasurements = _db.ClothTypeMeasurements.Where(x => x.IsDeleted == false && x.Name.StartsWith(term)).Select(b => b.Name).ToList();
+            ClothTypeMeasurements = _db.ClothTypeMeasurements.Where(x => x.IsDeleted == false && x.ClothType.Name.StartsWith(term)).Select(b => b.ClothType.Name).ToList();
             return ClothTypeMeasurements;
         }
         /* *************************************************************************** */
@@ -211,27 +282,27 @@ namespace WebApp.Areas.Admin.Services
             {
                 Id = b.Id,
                 Name = b.Name,
-                SellingPrice = b.SellingPrice
+                CostPrice = b.CostPrice
             }).ToList();
             foreach (var each in model)
             {
-                each.SellingPriceString = "₦" + each.SellingPrice.ToString("N", nfi);
+                each.CostPriceString = "₦" + each.CostPrice.ToString("N", nfi);
             }
             return model;
         }
         public ClothTypeVM GetClothType(string clothTypeName)
         {
             NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
-            var model = _db.ClothTypes.Where(x => x.Name == clothTypeName).Select(b => new ClothTypeVM()
+            var model = _db.ClothTypes.Where(x => x.Name == clothTypeName && !x.IsDeleted).Select(b => new ClothTypeVM()
             {
                 Id = b.Id,
                 Name = b.Name,
-                SellingPrice = b.SellingPrice,
+                CostPrice = b.CostPrice,
             }).FirstOrDefault();
 
             if (model != null)
             {
-                model.SellingPriceString = "₦" + model.SellingPrice.ToString("N", nfi);
+                model.CostPriceString = "₦" + model.CostPrice.ToString("N", nfi);
             }
             return model;
         }
@@ -241,8 +312,8 @@ namespace WebApp.Areas.Admin.Services
             bool HasSaved = false;
             ClothType model = new ClothType()
             {
-                Name = vmodel.Name,
-                SellingPrice = CustomSerializer.UnMaskString(vmodel.SellingPriceString),
+                Name = vmodel.NameCreate,
+                CostPrice = CustomSerializer.UnMaskString(vmodel.CostPriceString),
                 IsDeleted = false,
                 DateCreated = DateTime.Now,
                 CreatedByID = Global.AuthenticatedUserID,
@@ -260,6 +331,7 @@ namespace WebApp.Areas.Admin.Services
             {
                 Id = b.Id,
                 Name = b.Name,
+                CostPriceString = b.CostPrice.ToString()
             }).FirstOrDefault();
             return model;
         }
@@ -270,7 +342,7 @@ namespace WebApp.Areas.Admin.Services
             bool HasSaved = false;
             var model = _db.ClothTypes.Where(x => x.Id == vmodel.Id).FirstOrDefault();
             model.Name = vmodel.Name;
-            model.SellingPrice = CustomSerializer.UnMaskString(vmodel.SellingPriceString);
+            model.CostPrice = CustomSerializer.UnMaskString(vmodel.CostPriceString);
             model.ModifiedByID = Global.AuthenticatedUserID;
 
             _db.Entry(model).State = System.Data.Entity.EntityState.Modified;
@@ -318,7 +390,7 @@ namespace WebApp.Areas.Admin.Services
             bool HasSaved = false;
             Measurement model = new Measurement()
             {
-                Name = vmodel.Name,
+                Name = vmodel.NameCreate,
                 IsDeleted = false,
                 DateCreated = DateTime.Now,
                 CreatedByID = Global.AuthenticatedUserID,
@@ -366,6 +438,26 @@ namespace WebApp.Areas.Admin.Services
             _db.SaveChanges();
             HasDeleted = true;
             return HasDeleted;
+        }
+        public bool CheckIfClothTypeExist(string term)
+        {
+            var exist = _db.ClothTypes.Any(x => x.Name == term && !x.IsDeleted && x.IsActive);
+            return exist;
+        }
+        public bool CheckIfMeasurementExist(string term)
+        {
+            var exist = _db.Measurements.Any(x => x.Name == term && !x.IsDeleted && x.IsActive);
+            return exist;
+        }
+        public bool CheckIfClothTypeMeasurementExist(int clothtype, int measurement)
+        {
+            var exist = _db.ClothTypeMeasurements.Any(x => x.ClothTypeID == clothtype && x.MeasurementID == measurement && !x.IsDeleted && x.IsActive);
+            return exist;
+        }
+        public bool CheckIfSettlementSetupExist(int clothtype, int tailor)
+        {
+            var exist = _db.SettlementSetups.Any(x => x.ClothTypeID == clothtype && x.TailorID == tailor && !x.IsDeleted && x.IsActive);
+            return exist;
         }
     }
 }

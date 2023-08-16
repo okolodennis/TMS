@@ -31,6 +31,10 @@ namespace WebApp
                 context.Database.CreateIfNotExists();
                 Seed.DatabaseSeed(context);
             }
+            else if (!context.ApplicationSettings.Any())
+            {
+                Seed.DatabaseSeed(context);
+            }
             Nav.StorePermissions(Nav.ApplicationMenu);
         }
         protected void Application_Error()

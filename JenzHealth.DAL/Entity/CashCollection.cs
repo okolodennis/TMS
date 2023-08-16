@@ -24,6 +24,7 @@ namespace WebApp.DAL.Entity
         public PaymentType PaymentType { get; set; }
         public bool IsCancelled { get; set; }
         public bool IsDeleted { get; set; }
+        public bool IsDeposit { get; set; }
         public int? ShiftID { get; set; }
         public DateTime DatePaid { get; set; }
         [ForeignKey("PartPaymentID")]

@@ -27,7 +27,7 @@ $("#Search").click(function (e) {
     e.preventDefault();
     e.stopPropagation();
     let value = $("#Searchby").val();
-
+   
     if (value === "") {
         $("#Searchby").addClass("is-invalid");
     }

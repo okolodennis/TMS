@@ -7,30 +7,49 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using PowerfulExtensions.Linq;
+using WebApp.Areas.Admin.ViewModels.Report;
+
 namespace WebApp.Areas.Admin.Services
 {
     public class LaboratoryService : ILaboratoryService
     {
         readonly DatabaseEntities _db;
         readonly ISeedService _seedService;
-        readonly PaymentService _paymentService;
-
+        readonly IPaymentService _paymentService;
+        readonly IUserService _userService;
         public LaboratoryService()
         {
             _db = new DatabaseEntities();
             _seedService = new SeedService();
             _paymentService = new PaymentService();
+            _userService = new UserService();
         }
         public LaboratoryService(DatabaseEntities db)
         {
             _db = db;
             _seedService = new SeedService(db);
             _paymentService = new PaymentService(db, new UserService());
+            _userService = new UserService(db);
         }
-
         public ServiceParameterVM GetServiceParameter(string ServiceName)
         {
             var model = _db.ServiceParameters.Where(x => x.Service.Description == ServiceName).Select(b => new ServiceParameterVM()
+            {
+                Id = b.Id,
+                ServiceID = b.ServiceID,
+                Service = b.Service.Description,
+                SpecimenID = b.SpecimenID,
+                Specimen = b.Specimen.Name,
+                TemplateID = b.TemplateID,
+                Template = b.Template.Name,
+                RequireApproval = b.RequireApproval,
+            }).FirstOrDefault();
+
+            return model;
+        }
+        public ServiceParameterVM GetServiceParameter(int serviceID)
+        {
+            var model = _db.ServiceParameters.Where(x => x.ServiceID == serviceID).Select(b => new ServiceParameterVM()
             {
                 Id = b.Id,
                 ServiceID = b.ServiceID,
@@ -74,17 +93,38 @@ namespace WebApp.Areas.Admin.Services
 
             if (paramterSetups != null)
             {
-                var existingParameterSetups = _db.ServiceParameterSetups.Where(x => x.ServiceParameterID == serviceParameterID);
-                if (existingParameterSetups.Any())
+                List<ServiceParameterSetupVM> parameterToAdd = new List<ServiceParameterSetupVM>();
+                List<ServiceParameterSetup> parameterToDelete = new List<ServiceParameterSetup>();
+
+                var existingParameterSetups = _db.ServiceParameterSetups.Where(x => x.ServiceParameterID == serviceParameterID && x.IsDeleted == false).ToList();
+                if (existingParameterSetups.Count() > 0)
                 {
                     foreach (var existingparamtersetup in existingParameterSetups)
                     {
                         existingparamtersetup.IsDeleted = true;
                         _db.Entry(existingparamtersetup).State = System.Data.Entity.EntityState.Modified;
                     }
+                    foreach (var parametersetup in paramterSetups)
+                    {
+                        var existing = existingParameterSetups.Where(x => x.Name == parametersetup.Name && x.ServiceParameterID == serviceParameterID).FirstOrDefault();
+                        if (existing != null)
+                        {
+                            existing.Name = parametersetup.Name;
+                            existing.Rank = parametersetup.Rank;
+                            existing.IsDeleted = false;
+                        }
+                        else
+                        {
+                            parameterToAdd.Add(parametersetup);
+                        }
+                    }
+                }
+                else
+                {
+                    parameterToAdd.AddRange(paramterSetups);
                 }
 
-                foreach (var paramter in paramterSetups)
+                foreach (var paramter in parameterToAdd)
                 {
                     var serviceparamtersetup = new ServiceParameterSetup()
                     {
@@ -107,7 +147,7 @@ namespace WebApp.Areas.Admin.Services
                 Id = b.Id,
                 Name = b.Name,
                 Rank = b.Rank,
-                ServiceParameterID = b.ServiceParameterID
+                ServiceParameterID = b.ServiceParameterID,
             }).ToList();
             return serviceparamtersetups;
         }
@@ -126,21 +166,38 @@ namespace WebApp.Areas.Admin.Services
         }
         public void UpdateParameterRangeSetup(List<ServiceParameterRangeSetupVM> rangeSetups)
         {
+            List<ServiceParameterRangeSetupVM> rangeToAdd = new List<ServiceParameterRangeSetupVM>();
             var uniqueIDs = rangeSetups.Distinct(o => o.ServiceParameterSetupID).ToList();
             if (uniqueIDs.Any())
             {
                 foreach (var id in uniqueIDs)
                 {
-                    var existingRangesSetups = _db.ServiceParameterRangeSetups.Where(x => x.ServiceParameterSetupID == id.ServiceParameterSetupID && x.IsDeleted == false);
+                    var existingRangesSetups = _db.ServiceParameterRangeSetups.Where(x => x.ServiceParameterSetupID == id.ServiceParameterSetupID && x.IsDeleted == false).ToList();
                     foreach (var existingrangesetup in existingRangesSetups)
                     {
                         existingrangesetup.IsDeleted = true;
                         _db.Entry(existingrangesetup).State = System.Data.Entity.EntityState.Modified;
                     }
+                    var rangeForParameterSetups = rangeSetups.Where(x => x.ServiceParameterSetupID == id.ServiceParameterSetupID).ToList();
+                    foreach (var rangesetup in rangeForParameterSetups)
+                    {
+                        var existingRangeSetup = _db.ServiceParameterRangeSetups.Where(x => x.Unit == rangesetup.Unit && x.Range == rangesetup.Range && x.ServiceParameterSetupID == rangesetup.ServiceParameterSetupID).FirstOrDefault();
+                        if (existingRangeSetup != null)
+                        {
+                            existingRangeSetup.Range = rangesetup.Range;
+                            existingRangeSetup.Unit = rangesetup.Unit;
+                            existingRangeSetup.IsDeleted = false;
+                            _db.Entry(existingRangeSetup).State = System.Data.Entity.EntityState.Modified;
+                        }
+                        else
+                        {
+                            rangeToAdd.Add(rangesetup);
+                        }
+                    }
                     _db.SaveChanges();
                 }
             }
-            foreach (var rangesetup in rangeSetups)
+            foreach (var rangesetup in rangeToAdd)
             {
                 var rangeSetup = new ServiceParameterRangeSetup()
                 {
@@ -154,7 +211,6 @@ namespace WebApp.Areas.Admin.Services
                 _db.SaveChanges();
             }
         }
-
         public void UpdateSpecimenSampleCollection(SpecimenCollectionVM specimenCollected, List<SpecimenCollectionCheckListVM> checklist)
         {
             int specimenCollectionID = 0;
@@ -166,7 +222,8 @@ namespace WebApp.Areas.Admin.Services
                 sampleExist.ProvitionalDiagnosis = specimenCollected.ProvitionalDiagnosis;
                 sampleExist.OtherInformation = specimenCollected.OtherInformation;
                 sampleExist.RequestingDate = specimenCollected.RequestingDate;
-                sampleExist.CollectedByID = Global.AuthenticatedUserID;
+                sampleExist.CollectedByID = _userService.GetCurrentUser().Id;
+                sampleExist.LabNumber = specimenCollected.LabNumber;
                 _db.Entry(sampleExist).State = System.Data.Entity.EntityState.Modified;
                 _db.SaveChanges();
                 specimenCollectionID = sampleExist.Id;
@@ -175,7 +232,7 @@ namespace WebApp.Areas.Admin.Services
             {
                 var labCount = _db.ApplicationSettings.FirstOrDefault().LabCount;
                 labCount++;
-                var labnumber = string.Format("LAB/{0}", labCount.ToString("D6"));
+                //var labnumber = string.Format("LAB/{0}", labCount.ToString("D6"));
 
                 var specimenCollection = new SpecimenCollection()
                 {
@@ -187,8 +244,8 @@ namespace WebApp.Areas.Admin.Services
                     RequestingDate = specimenCollected.RequestingDate,
                     IsDeleted = false,
                     DateTimeCreated = DateTime.Now,
-                    LabNumber = labnumber,
-                    CollectedByID = Global.AuthenticatedUserID
+                    LabNumber = specimenCollected.LabNumber,
+                    CollectedByID = _userService.GetCurrentUser().Id
                 };
 
                 _db.SpecimenCollections.Add(specimenCollection);
@@ -255,7 +312,6 @@ namespace WebApp.Areas.Admin.Services
             else
                 return false;
         }
-
         public SpecimenCollectionVM GetSpecimenCollected(string billnumber)
         {
             var specimenCollected = _db.SpecimenCollections.Where(x => x.IsDeleted == false && x.BillInvoiceNumber == billnumber).Select(b => new SpecimenCollectionVM()
@@ -266,9 +322,14 @@ namespace WebApp.Areas.Admin.Services
                 OtherInformation = b.OtherInformation,
                 RequestingPhysician = b.RequestingPhysician,
                 RequestingDate = b.RequestingDate,
-                LabNumber = b.LabNumber
+                LabNumber = b.LabNumber,
+                CollectedBy = b.CollectedBy.Firstname + " " + b.CollectedBy.Lastname,
+                DateTimeCreated = b.DateTimeCreated
             }).FirstOrDefault();
-            specimenCollected.CheckList = this.GetCheckList(specimenCollected.Id);
+            if(specimenCollected != null)
+            {
+                specimenCollected.CheckList = this.GetCheckList(specimenCollected.Id);
+            }
             return specimenCollected;
         }
         public List<SpecimenCollectionVM> GetSpecimenCollectedForReport(string billnumber, int templateID)
@@ -285,13 +346,13 @@ namespace WebApp.Areas.Admin.Services
                 CollectedBy = b.CollectedBy.Firstname + " " + b.CollectedBy.Lastname,
                 DateTimeCreated = b.DateTimeCreated
             }).ToList();
-            foreach(var specimenColl in specimenCollected)
+            foreach (var specimenColl in specimenCollected)
             {
                 var specimens = this.GetCheckList(specimenColl.Id);
-                foreach(var spec in specimens)
+                foreach (var spec in specimens)
                 {
                     var parameterSetup = this.GetServiceParameter(spec.Service);
-                    if(parameterSetup.TemplateID == templateID)
+                    if (parameterSetup.TemplateID == templateID)
                     {
                         specimenColl.Specimen = parameterSetup.Specimen;
                         specimenColl.ServiceDepartment = _seedService.GetService((int)parameterSetup.ServiceID).ServiceDepartment.ToUpper();
@@ -300,7 +361,6 @@ namespace WebApp.Areas.Admin.Services
             }
             return specimenCollected;
         }
-
         public List<SpecimenCollectionCheckListVM> GetCheckList(int SpecimentCollectionID)
         {
             var checklist = _db.SpecimenCollectionCheckLists.Where(x => x.IsDeleted == false && x.SpecimenCollectionID == SpecimentCollectionID)
@@ -326,6 +386,12 @@ namespace WebApp.Areas.Admin.Services
                     CustomerPhoneNumber = _db.Billings.FirstOrDefault(x => x.InvoiceNumber == b.BillInvoiceNumber).CustomerPhoneNumber,
                     CustomerUniqueID = _db.Billings.FirstOrDefault(x => x.InvoiceNumber == b.BillInvoiceNumber).CustomerUniqueID,
                 }).ToList();
+            List<SpecimenCollectionVM> DataToRemoveFromList = new List<SpecimenCollectionVM>();
+            foreach (var record in preparations)
+            {
+                record.HasPaidAllBill = _paymentService.CheckIfPaymentIsCompleted(record.BillInvoiceNumber);
+            }
+            preparations.RemoveAll(x => x.HasPaidAllBill == false);
             return preparations;
         }
         public SpecimenCollectionVM GetSpecimensForPreparation(int Id)
@@ -348,14 +414,42 @@ namespace WebApp.Areas.Admin.Services
                 Template = _db.ServiceParameters.FirstOrDefault(x => x.ServiceID == b.ServiceID).Template.Name,
                 TemplateID = _db.ServiceParameters.FirstOrDefault(x => x.ServiceID == b.ServiceID).TemplateID,
                 BillNumber = b.InvoiceNumber,
-                Templated = _db.ServiceParameters.FirstOrDefault(x => x.ServiceID == b.ServiceID).Template.UseDefaultParameters
+                Templated = _db.ServiceParameters.FirstOrDefault(x => x.ServiceID == b.ServiceID).Template.UseDefaultParameters,
+                RequireApproval = _db.ServiceParameters.FirstOrDefault(x => x.ServiceID == b.ServiceID).RequireApproval
             }).ToList();
-
+            foreach (var item in model)
+            {
+                var serviceParameter = _db.ServiceParameters.FirstOrDefault(x => x.ServiceID == item.ServiceID);
+                var checkApproval = _db.ResultApprovals.FirstOrDefault(x => x.ServiceParameterID == serviceParameter.Id && x.BillNumber == item.BillNumber);
+                item.Approved = checkApproval != null ? checkApproval.HasApproved : false;
+            }
             return model;
+        }
+        public bool CheckIfTestHasBeenComputed(int templateID, string billnumber)
+        {
+            var template = _db.Templates.FirstOrDefault(x => x.Id == templateID);
+            if (!template.UseDefaultParameters)
+            {
+                var exist = _db.TemplatedLabPreparations.Where(x => x.BillInvoiceNumber == billnumber && x.ServiceParameterSetup.ServiceParameter.TemplateID == templateID).FirstOrDefault();
+                if (exist != null)
+                    return true;
+            }
+            else
+            {
+                var exist = _db.NonTemplatedLabPreparations.Where(x => x.BillInvoiceNumber == billnumber).FirstOrDefault();
+                if (exist != null)
+                    return true;
+            }
+            return false;
         }
         public List<ServiceParameterVM> GetDistinctTemplateForBilledServices(List<ServiceParameterVM> billedServices)
         {
-            return billedServices.Distinct(o => o.TemplateID).ToList();
+            var distinctTemplate = billedServices.Distinct(o => o.TemplateID).ToList();
+            foreach (var record in distinctTemplate)
+            {
+                record.HasBeenComputed = CheckIfTestHasBeenComputed((int)record.TemplateID, record.BillNumber);
+            }
+            return distinctTemplate;
         }
 
         public List<TemplateServiceCompuationVM> SetupTemplatedServiceForComputation(int TemplateID, string billNumber)
@@ -380,11 +474,13 @@ namespace WebApp.Areas.Admin.Services
                 // Check for database record and map
                 foreach (var parametersetup in parameterSetups)
                 {
-                    var record = this.GetParamaterValue(billNumber,parametersetup.Id);
+                    var record = this.GetParamaterValue(billNumber, parametersetup.Id);
                     var range = _db.ServiceParameterRangeSetups.FirstOrDefault(x => x.Id == record.RangeID);
 
                     parametersetup.Value = record.Value;
                     parametersetup.Labnote = record.Labnote;
+                    parametersetup.FilmingReport = record.FilmingReport;
+                    parametersetup.ScientificComment = record.ScientificComment;
                     parametersetup.Range = range == null ? " " : range.Range;
                     parametersetup.Unit = range == null ? " " : range.Unit;
                 }
@@ -406,23 +502,83 @@ namespace WebApp.Areas.Admin.Services
                 }
                 billservice.Service = service.Service;
                 billservice.ServiceID = (int)service.ServiceID;
+                billservice.FilmingReport = parameterSetups.FirstOrDefault().FilmingReport;
+                //billservice.FilmingReport = 
                 model.Add(billservice);
             }
             model[0].Labnote = model[0].Parameters[0].Parameter.Labnote;
+            model[0].ScienticComment = model[0].Parameters[0].Parameter.ScientificComment;
 
             return model;
         }
         public List<TemplateServiceCompuationVM> GetTemplatedLabResultForReport(int templateID, string billnumber)
         {
             var result = _db.TemplatedLabPreparations.Where(x => x.BillInvoiceNumber == billnumber && x.IsDeleted == false && x.ServiceParameterSetup.ServiceParameter.TemplateID == templateID)
-                .Select(b => new TemplateServiceCompuationVM() { 
-                  Parameter = b.ServiceParameterSetup.Name,
-                  Value = b.Value,
-                  Unit = b.ServiceRange.Unit,
-                  Service = b.ServiceParameterSetup.ServiceParameter.Service.Description,
-                  Labnote = b.Labnote
+                .Select(b => new TemplateServiceCompuationVM()
+                {
+                    Parameter = b.ServiceParameterSetup.Name,
+                    Value = b.Value,
+                    Unit = b.ServiceRange.Unit,
+                    Range = b.ServiceRange.Range,
+                    ServiceID = (int)b.ServiceParameterSetup.ServiceParameter.ServiceID,
+                    Service = b.ServiceParameterSetup.ServiceParameter.Service.Description,
+                    ServiceParameterID = b.ServiceParameterSetup.ServiceParameterID,
+                    RequireApproval = b.ServiceParameterSetup.ServiceParameter.RequireApproval,
+                    ScienticComment = b.ScienticComment,
+                    PreparedBy = b.PreparedBy.Firstname + " " + b.PreparedBy.Lastname,
+                    SpecimenCollectedBy = _db.SpecimenCollections.FirstOrDefault(x => x.BillInvoiceNumber == b.BillInvoiceNumber).CollectedBy.Firstname + " " +
+                     _db.SpecimenCollections.FirstOrDefault(x => x.BillInvoiceNumber == b.BillInvoiceNumber).CollectedBy.Lastname,
+                    DateCollected = _db.SpecimenCollections.FirstOrDefault(x => x.BillInvoiceNumber == b.BillInvoiceNumber).DateTimeCreated,
+                    DatePrepared = b.DateCreated,
+                    DateApproved = _db.ResultApprovals.FirstOrDefault(x => x.BillNumber == b.BillInvoiceNumber && x.ServiceParameterID == b.ServiceParameterSetup.ServiceParameterID) != null ?
+                    _db.ResultApprovals.FirstOrDefault(x => x.BillNumber == b.BillInvoiceNumber && x.ServiceParameterID == b.ServiceParameterSetup.ServiceParameterID).DateApproved : null,
+                    ApprovedBy = _db.ResultApprovals.FirstOrDefault(x => x.BillNumber == b.BillInvoiceNumber && x.ServiceParameterID == b.ServiceParameterSetup.ServiceParameterID) != null ?
+                    _db.ResultApprovals.FirstOrDefault(x => x.BillNumber == b.BillInvoiceNumber && x.ServiceParameterID == b.ServiceParameterSetup.ServiceParameterID).ApprovedBy.Firstname + " " +
+                    _db.ResultApprovals.FirstOrDefault(x => x.BillNumber == b.BillInvoiceNumber && x.ServiceParameterID == b.ServiceParameterSetup.ServiceParameterID).ApprovedBy.Lastname :
+                    "NIL",
+                    Specimen = b.ServiceParameterSetup.ServiceParameter.Specimen.Name,
+                    FilmingReport = b.FilmingReport
                 }).ToList();
-            return result;
+
+            foreach (var item in result)
+            {
+                item.Status = GetStatusForTemplateReport(int.Parse(item.Value), item.Range);
+            }
+
+            List<TemplateServiceCompuationVM> ServicesForReport = new List<TemplateServiceCompuationVM>();
+            // Check for approved test
+            var distinctServices = result.Distinct(o => o.ServiceID).ToList();
+            foreach (var service in distinctServices)
+            {
+                if (!service.RequireApproval)
+                {
+                    var serviceResults = result.Where(x => x.ServiceID == service.ServiceID).ToList();
+                    ServicesForReport.AddRange(serviceResults);
+                }
+                else
+                {
+                    var checkIfApproved = _db.ResultApprovals.FirstOrDefault(x => x.ServiceParameterID == service.ServiceParameterID && x.BillNumber == billnumber);
+                    if (checkIfApproved != null)
+                    {
+                        if (checkIfApproved.HasApproved)
+                        {
+                            var serviceResults = result.Where(x => x.ServiceID == service.ServiceID).ToList();
+                            ServicesForReport.AddRange(serviceResults);
+                        }
+                    }
+                }
+            }
+            return ServicesForReport;
+        }
+        private string GetStatusForTemplateReport(int value, string range)
+        {
+            var rangeValues = Array.ConvertAll(range.Split('-'), rangeValue => rangeValue.Contains('.') ? float.Parse(rangeValue) : int.Parse(rangeValue));
+            if (value < rangeValues[0])
+                return "LOW";
+            else if (value > rangeValues[1])
+                return "HIGH";
+            else
+                return "NORMAL";
         }
         public RequestComputedResultVM GetParamaterValue(string billnumber, int SetupID)
         {
@@ -431,25 +587,36 @@ namespace WebApp.Areas.Admin.Services
                 {
                     Value = b.Value,
                     RangeID = (int)b.ServiceRangeID,
-                    Labnote = b.Labnote
+                    Labnote = b.Labnote,
+                    ScientificComment = b.ScienticComment,
+                    FilmingReport = b.FilmingReport
                 }).FirstOrDefault();
             if (record != null)
                 return record;
             else
                 return new RequestComputedResultVM();
         }
-        public bool UpdateLabResults(List<RequestComputedResultVM> results, string labnote)
+        public bool UpdateLabResults(List<RequestComputedResultVM> results, string labnote, string comment)
         {
             foreach (var result in results)
             {
-                var exist = _db.TemplatedLabPreparations.Where(x => x.BillInvoiceNumber == result.BillInvoiceNumber && x.IsDeleted == false && x.ServiceParameterSetupID == result.KeyID).FirstOrDefault();
+                string service = result.Service;
+                var existData = _db.TemplatedLabPreparations.Where(x => x.BillInvoiceNumber == result.BillInvoiceNumber && x.IsDeleted == false && x.ServiceParameterSetupID == result.KeyID);
 
-                if (exist != null)
+                if (existData.FirstOrDefault() != null)
                 {
+                    var exist = existData.FirstOrDefault();
                     exist.Value = result.Value;
                     exist.Labnote = labnote;
+                    exist.ScienticComment = comment;
                     exist.ServiceRangeID = result.RangeID;
+                    exist.FilmingReport = result.FilmingReport;
+                    exist.PreparedByID = _userService.GetCurrentUser().Id;
+
                     _db.Entry(exist).State = System.Data.Entity.EntityState.Modified;
+                    _db.SaveChanges();
+                    var ID = existData.Select(b => b.ServiceParameterSetup.ServiceParameterID).FirstOrDefault();
+                    int serviceParameterID = Convert.ToInt32(ID);
                 }
                 else
                 {
@@ -461,18 +628,37 @@ namespace WebApp.Areas.Admin.Services
                         Value = result.Value,
                         ServiceRangeID = result.RangeID,
                         Labnote = labnote,
+                        ScienticComment = comment,
+                        FilmingReport = result.FilmingReport,
                         IsDeleted = false,
-                        DateCreated = DateTime.Now
+                        DateCreated = DateTime.Now,
+                        PreparedByID = _userService.GetCurrentUser().Id
                     };
                     _db.TemplatedLabPreparations.Add(templateLabPreparation);
+                    _db.SaveChanges();
+                }
+                // Update Result Approval 
+                var serviceParameter = GetServiceParameter(service);
+                if (serviceParameter.RequireApproval)
+                {
+                    var checkIfExist = _db.ResultApprovals.Where(x => x.ServiceParameterID == serviceParameter.Id && x.BillNumber == result.BillInvoiceNumber).FirstOrDefault();
+                    if (checkIfExist == null)
+                    {
+                        var approvalModel = new ResultApproval()
+                        {
+                            ServiceParameterID = serviceParameter.Id,
+                            BillNumber = result.BillInvoiceNumber,
+                        };
+                        _db.ResultApprovals.Add(approvalModel);
+                        _db.SaveChanges();
+                    }
                 }
             }
-            _db.SaveChanges();
             return true;
         }
-        public NonTemplatedLabPreparationVM GetNonTemplatedLabPreparation(string billnumber)
+        public NonTemplatedLabPreparationVM GetNonTemplatedLabPreparation(string billnumber, int serviceID)
         {
-            var model = _db.NonTemplatedLabPreparations.Where(x => x.IsDeleted == false && x.BillInvoiceNumber == billnumber).Select(b => new NonTemplatedLabPreparationVM()
+            var model = _db.NonTemplatedLabPreparations.Where(x => x.IsDeleted == false && x.BillInvoiceNumber == billnumber && x.ServiceID == serviceID).Select(b => new NonTemplatedLabPreparationVM()
             {
                 Id = b.Id,
                 Temperature = b.Temperature,
@@ -510,6 +696,7 @@ namespace WebApp.Areas.Admin.Services
                 Cystals = b.Cystals,
                 DateCreated = b.DateCreated,
                 DateOfProduction = b.DateOfProduction,
+                DateOfProductionn = b.DateOfProduction,
                 DurationOfAbstinence = b.DurationOfAbstinence,
                 EpithelialCells = b.EpithelialCells,
                 GiemsaOthers = b.GiemsaOthers,
@@ -528,15 +715,18 @@ namespace WebApp.Areas.Admin.Services
                 ModeOfProduction = b.ModeOfProduction,
                 Morphology = b.Morphology,
                 Motility = b.Motility,
+                Motilityy = b.Motility,
                 OthersResult = b.OthersResult,
                 Ova = b.Ova,
                 PH = b.PH,
-                Protozoa = b.Protozoa,  
+                Protozoa = b.Protozoa,
                 PusCells = b.PusCells,
                 RedBloodCells = b.RedBloodCells,
                 TimeExamined = b.TimeExamined,
+                TimeExaminedd = b.TimeExamined,
                 TimeOfProduction = b.TimeOfProduction,
                 TimeRecieved = b.TimeRecieved,
+                TimeRecievedd = b.TimeRecieved,
                 TrichomonasVaginalis = b.TrichomonasVaginalis,
                 VincetsOrganisms = b.VincetsOrganisms,
                 Viscosity = b.Viscosity,
@@ -546,8 +736,17 @@ namespace WebApp.Areas.Admin.Services
                 WetMountYesats = b.WetMountYesats,
                 WhiteBloodCells = b.WhiteBloodCells,
                 YeastCells = b.YeastCells,
-                ZiehlOthers = b.ZiehlOthers
+                ZiehlOthers = b.ZiehlOthers,
+                Service = b.Service.Description,
+                ServiceID = b.ServiceID,
+                ScienticComment = b.ScienticComment
             }).FirstOrDefault();
+            if (model == null)
+            {
+                model = new NonTemplatedLabPreparationVM();
+                model.ServiceID = serviceID;
+            }
+
             return model;
         }
         public List<NonTemplatedLabPreparationVM> GetNonTemplatedLabPreparationForReport(string billnumber)
@@ -626,20 +825,59 @@ namespace WebApp.Areas.Admin.Services
                 WetMountYesats = b.WetMountYesats,
                 WhiteBloodCells = b.WhiteBloodCells,
                 YeastCells = b.YeastCells,
-                ZiehlOthers = b.ZiehlOthers
+                ZiehlOthers = b.ZiehlOthers,
+                ScienticComment = b.ScienticComment,
+                Service = b.Service.Description,
+                ServiceID = b.ServiceID,
+                PreparedBy = b.PreparedBy.Firstname + " " + b.PreparedBy.Lastname,
+                DateApproved = _db.ResultApprovals.FirstOrDefault(x => x.BillNumber == b.BillInvoiceNumber && x.ServiceParameterID == _db.ServiceParameters.FirstOrDefault(o => o.ServiceID == b.ServiceID).Id) != null ?
+                    _db.ResultApprovals.FirstOrDefault(x => x.BillNumber == b.BillInvoiceNumber && x.ServiceParameterID == _db.ServiceParameters.FirstOrDefault(o => o.ServiceID == b.ServiceID).Id).DateApproved : null,
+                ApprovedBy = _db.ResultApprovals.FirstOrDefault(x => x.BillNumber == b.BillInvoiceNumber && x.ServiceParameterID == _db.ServiceParameters.FirstOrDefault(o => o.ServiceID == b.ServiceID).Id) != null ?
+                    _db.ResultApprovals.FirstOrDefault(x => x.BillNumber == b.BillInvoiceNumber && x.ServiceParameterID == _db.ServiceParameters.FirstOrDefault(o => o.ServiceID == b.ServiceID).Id).ApprovedBy.Firstname + " " +
+                    _db.ResultApprovals.FirstOrDefault(x => x.BillNumber == b.BillInvoiceNumber && x.ServiceParameterID == _db.ServiceParameters.FirstOrDefault(o => o.ServiceID == b.ServiceID).Id).ApprovedBy.Lastname :
+                    "NIL",
             }).ToList();
-            foreach(var item in model)
+            foreach (var item in model)
             {
                 item.MicroscopyTypee = item.MicroscopyType.DisplayName();
                 item.StainTypee = item.StainType.DisplayName();
             }
-            return model;
+
+            List<NonTemplatedLabPreparationVM> ServicesForReport = new List<NonTemplatedLabPreparationVM>();
+            // Check for approved test
+            var distinctServices = model.Distinct(o => o.ServiceID).ToList();
+            foreach (var service in distinctServices)
+            {
+                var serviceParameter = _db.ServiceParameters.FirstOrDefault(x => x.ServiceID == service.ServiceID);
+                if (!serviceParameter.RequireApproval)
+                {
+                    var serviceResults = model.Where(x => x.ServiceID == service.ServiceID).ToList();
+                    ServicesForReport.AddRange(serviceResults);
+                }
+                else
+                {
+                    var checkIfApproved = _db.ResultApprovals.FirstOrDefault(x => x.ServiceParameterID == serviceParameter.Id && x.BillNumber == billnumber);
+                    if (checkIfApproved != null)
+                    {
+                        if (checkIfApproved.HasApproved)
+                        {
+                            var serviceResults = model.Where(x => x.ServiceID == service.ServiceID).ToList();
+                            ServicesForReport.AddRange(serviceResults);
+                        }
+                    }
+                }
+            }
+            if (ServicesForReport.Count() == 0)
+            {
+                throw new Exception("This Test can not be printed without approval. Please Approve Test Result and try again.");
+            }
+            return ServicesForReport;
         }
 
         public bool UpdateNonTemplatedLabResults(NonTemplatedLabPreparationVM vmodel, List<NonTemplatedLabPreparationOrganismXAntiBioticsVM> organisms)
         {
             var checkResultIfExist = _db.NonTemplatedLabPreparations.Where(x => x.IsDeleted == false && x.BillInvoiceNumber == vmodel.BillInvoiceNumber).FirstOrDefault();
-            if(checkResultIfExist != null)
+            if (checkResultIfExist != null)
             {
                 checkResultIfExist.IsDeleted = true;
                 _db.Entry(checkResultIfExist).State = System.Data.Entity.EntityState.Modified;
@@ -717,8 +955,11 @@ namespace WebApp.Areas.Admin.Services
                 WhiteBloodCells = vmodel.WhiteBloodCells,
                 YeastCells = vmodel.YeastCells,
                 ZiehlOthers = vmodel.ZiehlOthers,
+                ScienticComment = vmodel.ScienticComment,
+                ServiceID = vmodel.ServiceID,
                 IsDeleted = false,
-                DateCreated = DateTime.Now
+                DateCreated = DateTime.Now,
+                PreparedByID = _userService.GetCurrentUser().Id
             };
             _db.NonTemplatedLabPreparations.Add(model);
             _db.SaveChanges();
@@ -727,7 +968,7 @@ namespace WebApp.Areas.Admin.Services
             {
                 foreach (var organism in organisms)
                 {
-                    if(checkResultIfExist != null)
+                    if (checkResultIfExist != null)
                     {
                         var checkIfOrganismExist = _db.NonTemplatedLabResultOrganismXAntibiotics.FirstOrDefault(x => x.IsDeleted == false && x.OrganismID == organism.OrganismID && x.NonTemplateLabResultID == checkResultIfExist.Id);
                         if (checkIfOrganismExist != null)
@@ -737,7 +978,7 @@ namespace WebApp.Areas.Admin.Services
                             _db.SaveChanges();
                         }
                     }
-                  
+
                     var organismModel = new NonTemplatedLabResultOrganismXAntibiotics()
                     {
                         AntiBioticID = organism.AntiBioticID,
@@ -755,6 +996,22 @@ namespace WebApp.Areas.Admin.Services
                     _db.SaveChanges();
                 }
             }
+            var service = _seedService.GetService((int)model.ServiceID).Description;
+            var serviceParameter = GetServiceParameter(service);
+            if (serviceParameter.RequireApproval)
+            {
+                var checkIfExist = _db.ResultApprovals.Where(x => x.ServiceParameterID == serviceParameter.Id && x.BillNumber == vmodel.BillInvoiceNumber).FirstOrDefault();
+                if (checkIfExist == null)
+                {
+                    var approvalModel = new ResultApproval()
+                    {
+                        ServiceParameterID = serviceParameter.Id,
+                        BillNumber = vmodel.BillInvoiceNumber,
+                    };
+                    _db.ResultApprovals.Add(approvalModel);
+                    _db.SaveChanges();
+                }
+            }
             return true;
         }
         public List<NonTemplatedLabPreparationOrganismXAntiBioticsVM> GetComputedOrganismXAntibiotics(int nonTemplatedId)
@@ -764,7 +1021,7 @@ namespace WebApp.Areas.Admin.Services
                 {
                     Id = b.Id,
                     NonTemplateLabResultID = b.NonTemplateLabResultID,
-                    SensitiveDegree = b.SensitiveDegree == null ? "N/A": b.SensitiveDegree,
+                    SensitiveDegree = b.SensitiveDegree == null ? "N/A" : b.SensitiveDegree,
                     IsSensitive = b.IsSensitive,
                     IsResistance = b.IsResistance,
                     AntiBioticID = b.AntiBioticID,
@@ -776,25 +1033,100 @@ namespace WebApp.Areas.Admin.Services
                 }).ToList();
             return results;
         }
-        public List<LabResultCollectionVM> GetLabResultCollections(LabResultCollectionVM vmodel)
+        public List<ResultApprovalVM> GetAllTestForApprovalByBillNumber(string billnumber)
         {
-            var records = _db.LabResultCollections.Where(x => x.BillNumber == vmodel.BillNumber || (x.DateCollected >= vmodel.StartDate && x.DateCollected <= vmodel.EndDate))
-                .Select(b => new LabResultCollectionVM()
-                {
-                    Id = b.Id,
-                    DateCollected = b.DateCollected,
-                    BillNumber = b.BillNumber,
-
-                    CollectorName = b.Collector.ToUpper(),
-                    TemplateID = b.TemplateID,
-                    Template = b.Template.Name
-                }).ToList();
-
-            foreach (var record in records)
+            var records = _db.ResultApprovals.Where(x => x.BillNumber == billnumber).Select(b => new ResultApprovalVM()
             {
-                record.PatientName = _paymentService.GetCustomerForBill(record.BillNumber).CustomerName;
-            }
+                Id = b.Id,
+                ServiceID = b.ServiceParameter.ServiceID,
+                Service = b.ServiceParameter.Service.Description,
+                Template = b.ServiceParameter.Template.Name,
+                TemplateID = b.ServiceParameter.TemplateID,
+                HasApproved = b.HasApproved,
+                ApprovedBy = b.ApprovedBy.Firstname + " " + b.ApprovedBy.Lastname,
+                DateApproved = b.DateApproved,
+                ApprovedByID = b.ApprovedByID,
+                ServiceParameterID = b.ServiceParameterID,
+                BillNumber = b.BillNumber
+            }).ToList();
             return records;
         }
+        public List<TemplateServiceCompuationVM> GetComputedResultForTemplatedService(string billnumber, int serviceParameterID)
+        {
+            var record = _db.TemplatedLabPreparations.Where(x => x.BillInvoiceNumber == billnumber && x.ServiceParameterSetup.ServiceParameterID == serviceParameterID).Select(b => new TemplateServiceCompuationVM()
+            {
+                Parameter = b.ServiceParameterSetup.Name,
+                Value = b.Value,
+                Unit = b.ServiceRange.Unit,
+                Range = b.ServiceRange.Range,
+                Service = b.ServiceParameterSetup.ServiceParameter.Service.Description,
+                Labnote = b.Labnote,
+                ScienticComment = b.ScienticComment,
+                PreparedBy = b.PreparedBy.Firstname + " " + b.PreparedBy.Lastname,
+                DatePrepared = b.DateCreated,
+                Specimen = b.ServiceParameterSetup.ServiceParameter.Specimen.Name,
+                FilmingReport = b.FilmingReport
+            }).ToList();
+            foreach (var item in record)
+            {
+                item.Status = GetStatusForTemplateReport(int.Parse(item.Value), item.Range);
+            }
+            return record;
+        }
+        public bool ApproveTestResult(int Id)
+        {
+            var test = _db.ResultApprovals.FirstOrDefault(x => x.Id == Id);
+            test.HasApproved = true;
+            test.ApprovedByID = _userService.GetCurrentUser().Id;
+            test.DateApproved = DateTime.Now;
+
+            _db.Entry(test).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+
+            return true;
+        }
+
+        //public bool UpdateCollector(ClothCollection model)
+        //{
+        //    var currentUser = _userService.GetCurrentUser();
+        //    var exist = _db.ClothCollections.Where(x => x.BillNumber == model.BillNumber && x.ClothTypeID == model.ClothTypeID).FirstOrDefault();
+        //    if (exist != null)
+        //    {
+        //        exist.Collector = model.Collector;
+        //        exist.DateCollected = DateTime.Now;
+        //        exist.IssuerID = currentUser.Id;
+        //        _db.Entry(exist).State = System.Data.Entity.EntityState.Modified;
+        //    }
+        //    else
+        //    {
+        //        model.IssuerID = currentUser.Id;
+        //        model.DateCollected = DateTime.Now;
+        //        _db.ClothCollections.Add(model);
+        //    }
+        //    _db.SaveChanges();
+
+        //    return true;
+        //}
+
+        //public List<ClocthCollectionVM> GetClothCollections(ClocthCollectionVM vmodel)
+        //{
+        //    var records = _db.ClothCollections.Where(x => x.BillNumber == vmodel.BillNumber || (x.DateCollected >= vmodel.StartDate && x.DateCollected <= vmodel.EndDate))
+        //        .Select(b => new ClocthCollectionVM()
+        //        {
+        //            Id = b.Id,
+        //            DateCollected = b.DateCollected,
+        //            BillNumber = b.BillNumber,
+        //            CollectorName = b.Collector.ToUpper(),
+        //            ClothTypeID = b.ClothType.Id,
+        //            ClothType = b.ClothType.Name
+        //        }).ToList();
+
+        //    foreach (var record in records)
+        //    {
+        //        record.CustomerName = _paymentService.GetCustomerForBill(record.BillNumber).CustomerName;
+        //    }
+        //    return records;
+        //}
+
     }
 }

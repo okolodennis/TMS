@@ -151,34 +151,6 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>AGE:                            </Value>
-                <Style>
-                  <FontStyle>Normal</FontStyle>
-                  <FontFamily>Calibri</FontFamily>
-                  <FontSize>14pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
-                  <TextDecoration>None</TextDecoration>
-                </Style>
-              </TextRun>
-              <TextRun>
-                <Label>Customer Age</Label>
-                <Value>=First(Fields!CustomerAge.Value, "CustomerDataSet")</Value>
-                <Style>
-                  <FontStyle>Normal</FontStyle>
-                  <FontFamily>Calibri</FontFamily>
-                  <FontSize>14pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
-                  <TextDecoration>None</TextDecoration>
-                </Style>
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
-          </Paragraph>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
                 <Value>GENDER:                    </Value>
                 <Style>
                   <FontStyle>Normal</FontStyle>
@@ -916,7 +888,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Balance To Pay</Value>
+                              <Value>Amount To Pay</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontSize>12pt</FontSize>
@@ -1339,6 +1311,7 @@
         <Source>Database</Source>
         <Value>=First(Fields!Watermark.Value, "SettingDataSet")</Value>
         <MIMEType>image/png</MIMEType>
+        <BackgroundRepeat>Clip</BackgroundRepeat>
       </BackgroundImage>
     </Style>
   </Body>

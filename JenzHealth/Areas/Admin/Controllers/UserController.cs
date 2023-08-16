@@ -87,7 +87,14 @@ namespace WebApp.Areas.Admin.Controllers
             bool hasSaved = false;
             if (ModelState.IsValid)
             {
-                hasSaved = _userService.CreateUser(vmodel);
+                if (_userService.CheckIfUsernameExist(vmodel.Username))
+                {
+
+                }
+                else
+                {
+                    hasSaved = _userService.CreateUser(vmodel);
+                }
             }
             return RedirectToAction("Manage", new { Added = hasSaved });
         }
@@ -248,5 +255,15 @@ namespace WebApp.Areas.Admin.Controllers
             return Json("Success",JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult GetUserAutoComplete(string term)
+        {
+            var response = _userService.GetUserAutoComplete(term);
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult CheckIfUsernameExist(string term)
+        {
+            var response = _userService.CheckIfUsernameExist(term);
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
     }
 }

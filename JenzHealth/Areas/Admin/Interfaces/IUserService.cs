@@ -31,6 +31,7 @@ namespace WebApp.Areas.Admin.Interfaces
         Shift GetShift();
         void CloseShift(int Id);
         User GetCurrentUser();
-
+        List<string> GetUserAutoComplete(string term);
+        bool CheckIfUsernameExist(string term);
     }
 }

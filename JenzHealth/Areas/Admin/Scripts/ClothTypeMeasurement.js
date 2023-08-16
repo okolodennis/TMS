@@ -1,4 +1,6 @@
-﻿function Edit(Id) {
+﻿const { error } = require("toastr");
+
+function Edit(Id) {
     $.ajax({
         url: "/ApplicationSettings/GetClothTypeMeasurement/" + Id,
         type: "GET",
@@ -73,3 +75,29 @@ function Prompt(ID) {
         }
     })
 }
+
+function CheckIfClothTypeMeasurementExist() {
+    var clothtype = $("#ClothTypeIDCreate").val();
+    var measurement = $("#MeasurementIDCreate").val();
+
+    $.ajax({
+        url: "/ApplicationSettings/CheckIfClothTypeMeasurementExist?clothtype=" + clothtype + "&measurement=" + measurement,
+        type: "Get",
+        contentType: "application/json;charset=UTF-8",
+        dataType: "json",
+        success: function (data) {
+            if (data) {
+
+                $("#Message").html("Entry already exist !").css("color", "red");
+                $("#btnSubmit").attr("disabled", true);
+            }
+            else {
+                $("#Message").html("").css("color", "green");
+                $("#btnSubmit").attr("disabled", false);
+            }
+        },
+        error: function () {
+           
+        }
+    })
+};

@@ -16,10 +16,9 @@ namespace WebApp.Areas.Admin.Interfaces
         bool UpdateApplicationSettings(ApplicationSettingsVM Vmodel, HttpPostedFileBase Logo, HttpPostedFileBase Watermark);
         List<SettingsDataSetVM> GetReportHeader();
         bool CreateClothTypeMeasurement(ClothTypeMeasurementVM vmodel);
-        List<ClothTypeMeasurementVM> GetClothTypeMeasurement();
+        List<ClothTypeMeasurementVM> GetClothTypeMeasurement(ClothTypeMeasurementVM vmodel);
         bool EditClothTypeMeasurement(ClothTypeMeasurementVM vmodel);
         bool DeleteClothTypeMeasurement(int ID);
-        ClothTypeMeasurementVM GetClothTypeMeasurement(string ClothTypeMeasurementname);
         List<ClothTypeMeasurementVM> GetClothTypeMeasurementAutoComplete(string query);
         List<string> GetClothTypeMeasurementNameAutoComplete(string term);
         List<ClothTypeVM> GetClothTypes();
@@ -34,5 +33,14 @@ namespace WebApp.Areas.Admin.Interfaces
         bool EditMeasurement(MeasurementVM vmodel);
         bool DeleteMeasurement(int ID);
         List<string> GetClothTypeAutoComplete(string term);
+        bool CreateSettlementSetup(SettlementSetupVM vmodel);
+        List<SettlementSetupVM> GetSettlementSetup(SettlementSetupVM vmodel);
+        bool EditSettlementSetup(SettlementSetupVM vmodel);
+        bool DeleteSettlementSetup(int ID);
+        SettlementSetupVM GetSettlementSetup(int Id);
+        bool CheckIfClothTypeExist(string term);
+        bool CheckIfMeasurementExist(string term);
+        bool CheckIfClothTypeMeasurementExist(int clothtype, int measurement);
+        bool CheckIfSettlementSetupExist(int clothtype, int tailor);
     }
 }

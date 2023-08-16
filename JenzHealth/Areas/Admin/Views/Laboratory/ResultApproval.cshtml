@@ -1,12 +1,12 @@
-﻿@model WebApp.Areas.Admin.ViewModels.LabResultCollectionVM
+﻿@model WebApp.Areas.Admin.ViewModels.ResultApprovalVM
 @{
-    ViewBag.Title = "Lab Result Collection Report";
+    ViewBag.Title = "Result Approval";
 }
 <!-- Page Header -->
 <div class="page-header row no-gutters py-4">
     <div class="col-12 col-sm-11 text-center text-sm-left mb-0">
-        <span class="text-uppercase page-subtitle">Report management</span>
-        <h3 class="page-title">Lab Result Collection</h3>
+        <span class="text-uppercase page-subtitle">Laboratory management</span>
+        <h3 class="page-title">Result Approval</h3>
     </div>
     <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
         <button type="button" id="close" class="btn btn-white fa-pull-right" title="Click to close all">close</button>
@@ -17,11 +17,11 @@
         <div class="card card-small mb-4">
             <div class="card-header border-bottom">
                 <h6 class="m-0">
-                    Lab Reports
+                    Computed Test
                 </h6>
                 <br />
                 <div class="m-0">
-                    @using (Html.BeginForm("LabResultCollectors", "Report", FormMethod.Post, new { area = "Admin", @class = "validate", novalidate = true }))
+                    @using (Html.BeginForm("ResultApproval", "Laboratory", FormMethod.Post, new { area = "Admin", @class = "validate", novalidate = true }))
                     {
                         <div class="row">
                             <div class="form-group col-md-8">
@@ -32,19 +32,7 @@
                                             <i class="material-icons">bloodtype</i>
                                         </div>
                                     </div>
-                                    @Html.EditorFor(model => model.BillNumber, new { htmlAttributes = new { @class = "form-control", placeholder = "Enter bill number" } })
-                                </div>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="socialGitHub" class="fa-pull-right">Date range</label>
-                                <div id="analytics-overview-date-range" class="input-daterange input-group input-group-sm ml-auto">
-                                    <input type="text" class="input-sm form-control" name="StartDate" placeholder="Start Date" id="analytics-overview-date-range-1">
-                                    <input type="text" class="input-sm form-control" name="EndDate" placeholder="End Date" id="analytics-overview-date-range-2">
-                                    <span class="input-group-append">
-                                        <span class="input-group-text">
-                                            <i class="material-icons">&#xE916;</i>
-                                        </span>
-                                    </span>
+                                    @Html.EditorFor(model => model.BillNumber, new { htmlAttributes = new { @class = "form-control", placeholder = "Enter bill invoice number " } })
                                 </div>
                             </div>
                         </div>
@@ -72,11 +60,12 @@
                 <thead>
                     <tr>
                         <th scope="col">S/N</th>
-                        <th scope="col">Bill Number</th>
-                        <th scope="col">Patient</th>
+                        <th scope="col">Service</th>
                         <th scope="col">Template</th>
-                        <th scope="col">Collector</th>
-                        <th scope="col">Date Collected</th>
+                        <th scope="col">Approved?</th>
+                        <th scope="col">Approved By?</th>
+                        <th scope="col">Date Approved</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -84,17 +73,37 @@
                         if (ViewBag.TableData != null)
                         {
                             var counter = 0;
-                            foreach (var row in ViewBag.DistinctBills)
+                            foreach (var row in ViewBag.TableData)
                             {
                                 counter++;
-                                <tr>
-                                    <td>@counter</td>
-                                    <td>@row.BillNumber</td>
-                                    <td>@row.PatientName</td>
-                                    <td>@row.Template</td>
-                                    <td>@row.CollectorName</td>
-                                    <td>@row.DateCollected</td>
-                                </tr>
+                                        <tr>
+                                            <td>@counter</td>
+                                            <td>@row.Service</td>
+                                            <td>@row.Template</td>
+                                            <td>
+                                                @if (!row.HasApproved)
+                                                {
+                                                    <i class="fa fa-close fa-2x text-danger"></i>
+                                                }
+                                                else
+                                                {
+                                                   <i class="fa fa-check fa-2x text-success"></i>
+                                                }
+                                            </td>
+                                            <td>@row.ApprovedBy</td>
+                                            <td>@row.DateApproved</td>
+                                            <td>
+                                                @if (!row.HasApproved)
+                                                {
+                                                    <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
+                                                        <a href="@Url.Action("ComputedResult",new{serviceParameterID = row.ServiceParameterID, billnumber = row.BillNumber, templateID = row.TemplateID, Id = row.Id, serviceID = row.ServiceID })" class="btn btn-white" title="Click to vet and approve">
+                                                            <i class="material-icons">&#xE870;</i> Vet and Approve
+                                                        </a>
+                                                    </div>
+                                                }
+
+                                            </td>
+                                        </tr>
                             }
                         }
                     }

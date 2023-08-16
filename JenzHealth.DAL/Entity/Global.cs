@@ -69,7 +69,7 @@ namespace WebApp.DAL.Entity
     }
     public enum PaymentType
     {
-        [EnumDisplayName(DisplayName = "Cash Deposite")]
+        [EnumDisplayName(DisplayName = "Cash")]
         CASH = 1,
 
         [EnumDisplayName(DisplayName = "Point Of Service")]
@@ -81,10 +81,10 @@ namespace WebApp.DAL.Entity
 
     public enum RecieptTypes
     {
-        [EnumDisplayName(DisplayName = "Payment Reciept")]
+        [EnumDisplayName(DisplayName = "Payment Receipt")]
         PAYMENT_RECIEPT = 1,
-        [EnumDisplayName(DisplayName = "Deposite Recipet")]
-        DEPOSITE_RECIEPT,
+        //[EnumDisplayName(DisplayName = "Deposite Recipet")]
+        //DEPOSITE_RECIEPT,
     }
     public enum CollectionType
     {
@@ -92,8 +92,8 @@ namespace WebApp.DAL.Entity
         BILLED = 1,
         [EnumDisplayName(DisplayName = "Unbilled")]
         UNBILLED,
-        [EnumDisplayName(DisplayName = "Walk-In Customer")]
-        WALK_IN
+        //[EnumDisplayName(DisplayName = "Walk-In Customer")]
+        //WALK_IN
     }
     public enum MicroscopyType
     {

@@ -9,6 +9,7 @@ namespace WebApp.Areas.Admin.ViewModels
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string NameCreate { get; set; }
         public string CostPriceString { get; set; }
         public string SellingPriceString { get; set; }
         public decimal SellingPrice { get; set; }

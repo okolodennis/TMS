@@ -1,13 +1,13 @@
 ﻿@using WebApp.DAL.Entity;
 @model WebApp.Areas.Admin.ViewModels.RefundVM
 @{
-    ViewBag.Title = "Manage Refunds";
+    ViewBag.Title = "Refunds";
 }
 <!-- Page Header -->
 <div class="page-header row no-gutters py-4">
     <div class="col-12 col-sm-11 text-center text-sm-left mb-0">
-        <span class="text-uppercase page-subtitle">Payment management</span>
-        <h3 class="page-title">Manage Refunds</h3>
+        <span class="text-uppercase page-subtitle">Account management</span>
+        <h3 class="page-title">Refunds</h3>
     </div>
     <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
         <button type="button" id="close" class="btn btn-white fa-pull-right" title="Click to close all">close</button>
@@ -119,7 +119,7 @@
                             </tr>
                             <tr>
                                 <th colspan="3"></th>
-                                <th> Balance Amount (₦)</th>
+                                <th> Amount To Pay (₦)</th>
                                 <td id="BalanceAmount">₦0.00</td>
                             </tr>
                         </tfoot>
@@ -148,7 +148,7 @@
         <hr />
         <div class="col-md-12 text-center">
             <button class="btn btn-primary" type="submit" id="FinishBtn">
-                Save
+                Cancel Receipt
             </button>
         </div>
         <br />

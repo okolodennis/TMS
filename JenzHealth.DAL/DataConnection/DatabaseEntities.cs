@@ -51,9 +51,11 @@ namespace WebApp.DAL.DataConnection
         public virtual DbSet<ClothType> ClothTypes { get; set; }
         public virtual DbSet<Measurement> Measurements { get; set; }
         public virtual DbSet<ClothTypeMeasurement> ClothTypeMeasurements { get; set; }
-        public virtual DbSet<TakeMeasurement> TakeMeasurements { get; set; }
+        public virtual DbSet<MeasurementCollection> MeasurementCollections { get; set; }
+        public virtual DbSet<AssignedTailorToBilledCloth> AssignedTailorToBilledClothes { get; set; }
         public virtual DbSet<Booking> Bookings { get; set; }
-        public virtual DbSet<LabResultCollection> LabResultCollections { get; set; }
+        public virtual DbSet<ResultApproval> ResultApprovals { get; set; }
+        public virtual DbSet<SettlementSetup> SettlementSetups { get; set; }
  
     }
 }

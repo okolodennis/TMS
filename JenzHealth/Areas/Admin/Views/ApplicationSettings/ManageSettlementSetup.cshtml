@@ -1,0 +1,120 @@
+﻿@model WebApp.Areas.Admin.ViewModels.SettlementSetupVM
+@{
+    ViewBag.Title = "Settlement Setup";
+}
+<!-- Page Header -->
+<div class="page-header row no-gutters py-4">
+    <div class="col-12 col-sm-11 text-center text-sm-left mb-0">
+        <span class="text-uppercase page-subtitle">Settings</span>
+        <h3 class="page-title">Settlement Setup</h3>
+    </div>
+    <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
+        <button type="button" id="close" class="btn btn-white fa-pull-right" title="Click to close all">close</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card card-small mb-4">
+            <div class="card-header border-bottom">
+                <h6 class="m-0">
+                    Active Settlement
+                    <button class="btn btn-primary fa-pull-right" data-toggle="modal"
+                            data-target="#Create">
+                        <i class="material-icons">add</i> Add Settlement
+                    </button>
+                </h6>
+                <br />
+                <div class="m-0">
+                    @using (Html.BeginForm("ManageSettlementSetup", "ApplicationSettings", FormMethod.Post, new { area = "Admin", @class = "validate", novalidate = true }))
+                    {
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="socialGitHub">Tailor</label>
+                            <div class="input-group input-group-seamless">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <i class="material-icons">bloodtype</i>
+                                    </div>
+                                </div>
+                                @Html.DropDownListFor(model => model.TailorID, (IEnumerable<SelectListItem>)ViewBag.Tailor, "-- Select Tailor --", new { @class = "form-control" })
+                                <div class="invalid-feedback">
+                                    Tarilor required
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="socialGitHub">Cloth Type</label>
+                            <div class="input-group input-group-seamless">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <i class="material-icons">bloodtype</i>
+                                    </div>
+                                </div>
+                                @Html.DropDownListFor(model => model.ClothTypeID, (IEnumerable<SelectListItem>)ViewBag.ClothType, "-- Select Cloth Type --", new { @class = "form-control" })
+                                <div class="invalid-feedback">
+                                    ClothType required
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-primary">
+                                <i class="material-icons">search</i> Search
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+                <table class="file-manager file-manager-list d-none table-responsive">
+                    <thead class="bg-light">
+                        <tr>
+                            <th scope="col" class="border-0">Tailor</th>
+                            <th scope="col" class="border-0">Tailor Full Name</th>
+                            <th scope="col" class="border-0">Cloth Type</th>
+                            <th scope="col" class="border-0">Partner Percentage</th>
+                            <th scope="col" class="border-0">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            if (ViewBag.SettlementSetup != null)
+                            {
+                                if (ViewBag.SettlementSetup.Count > 0)
+                                {
+                                    foreach (var row in ViewBag.SettlementSetup)
+                                    {
+                                                <tr>
+                                                    <td>@row.Tailor</td>
+                                                    <td>@row.TailorName</td>
+                                                    <td>@row.ClothType</td>
+                                                    <td>@row.PartnerPercent%</td>
+                                                    <td>
+                                                        <button type="button" onclick="Edit(@row.Id)" class="btn btn-outline-accent" data-toggle="modal" data-target="#Edit">
+                                                            <i class="dropdown-icon lnr-pencil"> </i><span>Edit</span>
+                                                        </button>
+                                                        <button type="button" onclick="Prompt(@row.Id)" class="btn btn-outline-danger">
+                                                            <i class="dropdown-icon lnr-trash"> </i><span>Delete</span>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="4">No data found</td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/Areas/Admin/Scripts/SettlementSetup.js"></script>
+}
+@Html.Partial("_EditSettlementSetup")
+@Html.Partial("_CreateSettlementSetup")

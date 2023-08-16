@@ -52,13 +52,13 @@ namespace WebApp.DAL.DataConnection
                 new Entity.User()
                 {
                     Id = 1,
-                    Firstname = "Joe",
-                    Lastname = "Parker",
-                    Username = "Admin",
-                    Email = "admin@WebApp.com",
+                    Firstname = "Admin",
+                    Lastname = "Admin",
+                    Username = "admin",
+                    Email = "admin@gmail.com",
                     IsActive = true,
                     RoleID = 1,
-                    Password = WebApp.DAL.Helpers.CustomEnrypt.Encrypt("Legendary"),
+                    Password = WebApp.DAL.Helpers.CustomEnrypt.Encrypt("password@"),
                     DateCreated = DateTime.Now
                 }
                 );

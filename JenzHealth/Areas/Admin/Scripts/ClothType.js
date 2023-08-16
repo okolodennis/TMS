@@ -7,7 +7,7 @@
         success: function (result) {
             $('#Id').val(result.Id);
             $('#Name').val(result.Name);
-            $('#SellingPriceString').val(result.Price); },
+            $('#SellingPriceString').val(result.SellingPriceString); },
         error: function (errormessage) {
             var message = errormessage.responseText;
             toastr.error(message, "Data not retrieved successfully", { showDuration: 500 })
@@ -69,3 +69,34 @@ function Prompt(ID) {
         }
     })
 }
+
+function CheckIfClothTypeExist() {
+    var clothtype = $("#NameCreate").val();
+
+    $.ajax({
+        url: "/ApplicationSettings/CheckIfClothTypeExist?term=" + clothtype,
+        type: "Get",
+        contentType: "application/json;charset=UTF-8",
+        dataType: "json",
+        success: function (data) {
+            if (data) {
+
+                $("#Message").html("ClothType already exist !").css("color", "red");
+                $("#btnSubmit").attr("disabled", true);
+            }
+            else {
+                $("#Message").html("").css("color", "green");
+                $("#btnSubmit").attr("disabled", false);
+            }
+        },
+        error: function () {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Error',
+                showConfirmButton: false,
+                timer: 1500
+            })
+        }
+    })
+};

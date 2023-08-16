@@ -17,6 +17,10 @@ namespace WebApp.DAL.Entity
         public int? ServiceParameterID { get; set; }
         public int? ServiceParameterSetupID { get; set; }
         public string Labnote { get; set; }
+        public string ScienticComment { get; set; }
+        public int? PreparedByID { get; set; }
+        public string FilmingReport { get; set; }
+
         public DateTime DateCreated { get; set; }
         public bool IsDeleted { get; set; }
         [ForeignKey("ServiceParameterID")]
@@ -25,5 +29,7 @@ namespace WebApp.DAL.Entity
         public ServiceParameterSetup ServiceParameterSetup { get; set; }
         [ForeignKey("ServiceRangeID")]
         public ServiceParameterRangeSetup ServiceRange { get; set; }
+        [ForeignKey("PreparedByID")]
+        public User PreparedBy { get; set; }
     }
 }
