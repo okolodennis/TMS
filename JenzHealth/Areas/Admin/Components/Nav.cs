@@ -27,7 +27,7 @@ namespace WebApp.Areas.Admin.Components
 
             
               // Payment
-            new Menu(url: "#",stringText:"Payment Management", icon: "money", isMenu: true,claim: "Payment", childMenus: new List<Menu>(){
+            new Menu(url: "#",stringText:"Account Management", icon: "money", isMenu: true,claim: "Payment", childMenus: new List<Menu>(){
                 new Menu(url: "/Admin/Payment/Billings",stringText:"Billings", icon: null ?? defaultIcon, isMenu: true,claim: "payment.billing", childMenus: null),
                 new Menu(url: "/Admin/Payment/CashCollections",stringText:"Cash Collections", icon: null ?? defaultIcon, isMenu: true,claim: "payment.cashcollection", childMenus: null),
                // new Menu(url: "/Admin/Payment/DepositeCollections",stringText:"Deposite Collections", icon: null ?? defaultIcon, isMenu: true,claim: "payment.depositecollection", childMenus: null),
@@ -36,7 +36,9 @@ namespace WebApp.Areas.Admin.Components
                 new Menu(url: "/Admin/Payment/Waivers",stringText:"Waivers", icon: null ?? defaultIcon, isMenu: true,claim: "payment.waivers", childMenus: null),
                 new Menu(url: "/Admin/Payment/Refunds",stringText:"Refunds", icon: null ?? defaultIcon, isMenu: true,claim: "payment.refunds", childMenus: null),
                 new Menu(url: "/Admin/Payment/RecieptCancellations",stringText:"Reciept cancellation", icon: null ?? defaultIcon, isMenu: true,claim: "payment.recieptcancellation", childMenus: null),
-            }),
+                new Menu(url: "/Admin/Payment/SharedRevenueReport",stringText:"Shared Revenue Report", icon: null ?? defaultIcon, isMenu: true,claim: "payment.sharedrevenuereport", childMenus: null),
+                       
+               }),
 
                 // Laboratory
             new Menu(url: "#",stringText:"Laboratory Management", icon: "apartment", isMenu: true,claim: "laboratory", childMenus: new List<Menu>(){
@@ -94,7 +96,7 @@ namespace WebApp.Areas.Admin.Components
             }),
               
               // Payment
-            new Menu(url: "#",stringText:"Payment Management", icon: "money", isMenu: true,claim: "Payment", childMenus: new List<Menu>(){
+            new Menu(url: "#",stringText:"Account Management", icon: "money", isMenu: true,claim: "Payment", childMenus: new List<Menu>(){
                 new Menu(url: "/Admin/Payment/Billings",stringText:"Billings", icon: null ?? defaultIcon, isMenu: true,claim: "payment.billing", childMenus: null),
                 new Menu(url: "/Admin/Payment/CashCollections",stringText:"Cash Collections", icon: null ?? defaultIcon, isMenu: true,claim: "payment.cashcollection", childMenus: null),
               //  new Menu(url: "/Admin/Payment/DepositeCollections",stringText:"Deposite Collections", icon: null ?? defaultIcon, isMenu: true,claim: "payment.depositecollection", childMenus: null),
@@ -103,7 +105,8 @@ namespace WebApp.Areas.Admin.Components
                 new Menu(url: "/Admin/Payment/Waivers",stringText:"Waivers", icon: null ?? defaultIcon, isMenu: true,claim: "payment.waivers", childMenus: null),
                 new Menu(url: "/Admin/Payment/Refunds",stringText:"Refunds", icon: null ?? defaultIcon, isMenu: true,claim: "payment.refunds", childMenus: null),
                 new Menu(url: "/Admin/Payment/RecieptCancellations",stringText:"Reciept cancellation", icon: null ?? defaultIcon, isMenu: true,claim: "payment.recieptcancellation", childMenus: null),
-            }),
+                new Menu(url: "/Admin/Payment/SharedRevenueReport",stringText:"Shared Revenue Report", icon: null ?? defaultIcon, isMenu: true,claim: "payment.sharedrevenuereport", childMenus: null),
+               }),
 
               // Laboratory
             new Menu(url: "#",stringText:"Laboratory Management", icon: "apartment", isMenu: true,claim: "laboratory", childMenus: new List<Menu>(){
