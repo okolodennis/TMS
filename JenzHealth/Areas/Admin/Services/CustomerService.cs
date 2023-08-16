@@ -170,7 +170,7 @@ namespace WebApp.Areas.Admin.Services
         public List<string> GetCustomerOrPhoneAutoComplete(string term)
         {
             List<string> users;
-            users = _db.Customers.Where(x => !x.IsDeleted && (x.CustomerUniqueID.StartsWith(term) || x.PhoneNumber.StartsWith(term))).Select(b => b.CustomerUniqueID).ToList();
+            users = _db.Customers.Where(x => !x.IsDeleted && (x.CustomerUniqueID.StartsWith(term) || x.CustomerUniqueID.EndsWith(term) || x.PhoneNumber.StartsWith(term) || x.PhoneNumber.EndsWith(term))).Select(b => b.CustomerUniqueID).ToList();
             return users;
         }
 
