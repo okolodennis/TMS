@@ -153,15 +153,16 @@ namespace WebApp.Areas.Admin.Services
                 }
 
                 // Check for assigned tailor
-                var assignedTailor = _db.AssignedTailorToBilledClothes.FirstOrDefault(x => x.Billing.Id == measurementSetup.BillingID);
-                if (assignedTailor != null)
+                var assignedTailors = _db.AssignedTailorToBilledClothes.Where(x => x.Billing.Id == measurementSetup.BillingID).Select(o=> new TailorAssignment()
                 {
-                    measurementSetup.BillingID = measurementSetup.BillingID;
-                    measurementSetup.TailorId = assignedTailor.TailorId;
-                    measurementSetup.Tailor = _db.Users.FirstOrDefault(x => x.Id == assignedTailor.TailorId).Username;
-                    measurementSetup.CollectionDate = assignedTailor.CollectionDate;
-                }
+                Quantity = o.Quantity,
+                Tailor = o.Tailor.Username,
+                CollectionDate = o.CollectionDate
+                }).ToList();
+
+                measurementSetup.TotalQuantity = assignedTailors.Sum(x => x.Quantity);
                 measurementSetup.Parameters = parameterSetups;
+                measurementSetup.TailorAssignments = assignedTailors;
                 setups.Add(measurementSetup);
             }
             model.Setups = setups;
@@ -215,6 +216,15 @@ namespace WebApp.Areas.Admin.Services
                             };
                             _db.AssignedTailorToBilledClothes.Add(assignTailor);
                             _db.SaveChanges();
+                        }
+                        else
+                        {
+                            checkIfAssignTailorExist.Quantity = item.Quantity;
+                            checkIfAssignTailorExist.CollectionDate = item.CollectionDate;
+                            _db.Entry(checkIfAssignTailorExist).State = System.Data.Entity.EntityState.Modified;
+
+                            _db.SaveChanges();
+
                         }
                     }
                 }

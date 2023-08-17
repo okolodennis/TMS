@@ -21,6 +21,7 @@ namespace WebApp.Areas.Admin.ViewModels
         public int ClothTypeId { get; set; }
         public string ClothType { get; set; }
         public string Gender { get; set; }
+        public int TotalQuantity { get; set; }
         public int Quantity { get; set; }
         public int BilledQuantity { get; set; }
         public string Tailor { get; set; }

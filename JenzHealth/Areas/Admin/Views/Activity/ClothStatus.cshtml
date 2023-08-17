@@ -24,20 +24,20 @@
                             <div class="form-group col-md-8">
                                 <label for="socialGitHub">Tailor</label>
                                 <div class="input-group input-group-seamless">
-                                    @Html.EditorFor(model => model.Tailor, new { htmlAttributes = new { @class = "form-control Tailor", placeholder = "Enter Tailor", autocomplete = "off", required = true } })
+                                    @Html.EditorFor(model => model.Tailor, new { htmlAttributes = new { @class = "form-control Tailor Search", placeholder = "Enter Tailor", autocomplete = "off", required = true } })
                                     <div class="invalid-feedback">
                                         Tailor required
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-2">
+                            @*<div class="form-group col-md-2">
                                 <label for="Search">-</label>
                                 <div class="input-group input-group-seamless">
                                     <button class="btn btn-primary" id="Search">
                                         Search
                                     </button>
                                 </div>
-                            </div>
+                            </div>*@
                         </div>
                     </div>
                 </div>

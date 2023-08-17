@@ -62,140 +62,141 @@ $(window).ready(function () {
         $("#InvoiceDiv").hide();
     }
 });
-$("#SearchCustomer").click(function (e) {
-    e.preventDefault();
-    e.stopPropagation();
+$(".Search").on("change", function () {
+   // e.preventDefault();
+   // e.stopPropagation();
+    setTimeout(function () {
+
+        let searchby = $("#SearchBy").val();
+
+        if (searchby == "New") {
+            var username = $("#CustomerUniqueID").val();
+            if (username === "") {
+                $("#CustomerUniqueID").addClass("is-invalid");
+            } else {
+                $("#CustomerUniqueID").removeClass("is-invalid");
+                //  e.target.innerHTML = "Searching..."
+                $("#customerInfoLoader").show();
+                $("#ServiceTableLoader").show();
+                $("#serviceTableDiv").hide();
+                $("#customerinfoDiv").hide();
+                $("#Customername").empty();
+                $("#Customergender").empty();
+                $("#Customerphonenumber").empty();
+                $("#Customerage").empty();
+                $("#ServiceBody").empty();
+                $("#NetAmount").html("₦0.00");
 
 
-    let searchby = $("#SearchBy").val();
 
-    if (searchby == "New") {
-        var username = $("#CustomerUniqueID").val();
-        if (username === "") {
-            $("#CustomerUniqueID").addClass("is-invalid");
+
+                $.ajax({
+                    url: 'GetCustomerByUsername?username=' + username,
+                    method: "Get",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        $("#Customername").html(response.Firstname + " " + response.Lastname);
+                        $("#Customergender").html(response.Gender);
+                        $("#Customerphonenumber").html(response.PhoneNumber);
+                        $("#CustomerUniqueID").val(response.CustomerUniqueID);
+
+                        // Calcualte age
+                        let customerDOBYear = new Date(+response.DOB.replace(/\D/g, '')).getFullYear();
+                        let currentYear = new Date().getFullYear();
+                        let customerAge = parseInt(currentYear - customerDOBYear);
+                        $("#Customerage").html(customerAge);
+
+                        $("#customerInfoLoader").hide();
+                        $("#customerinfoDiv").show();
+                        $("#ServiceTableLoader").hide();
+                        $("#serviceTableDiv").show();
+                        //  e.target.innerHTML = "Search"
+                    },
+                    error: function (err) {
+                        toastr.error(err.responseText, "An Error Occurred", { showDuration: 500 })
+                        //  e.target.innerHTML = "Search"
+                        $("#customerInfoLoader").hide();
+                        $("#customerinfoDiv").show();
+                        $("#ServiceTableLoader").hide();
+                        $("#serviceTableDiv").show();
+                    }
+                })
+            }
         } else {
-            $("#CustomerUniqueID").removeClass("is-invalid");
-            e.target.innerHTML = "Searching..."
-            $("#customerInfoLoader").show();
-            $("#ServiceTableLoader").show();
-            $("#serviceTableDiv").hide();
-            $("#customerinfoDiv").hide();
-            $("#Customername").empty();
-            $("#Customergender").empty();
-            $("#Customerphonenumber").empty();
-            $("#Customerage").empty();
-            $("#ServiceBody").empty();
-            $("#NetAmount").html("₦0.00");
+            var invoiceNumber = $("#InvoiceNumber").val();
+            if (invoiceNumber === "") {
+                $("#InvoiceNumber").addClass("is-invalid");
+            }
+            else {
+                $("#InvoiceNumber").removeClass("is-invalid");
+                //e.target.innerHTML = "Searching..."
+                $("#customerInfoLoader").show();
+                $("#ServiceTableLoader").show();
+                $("#serviceTableDiv").hide();
+                $("#customerinfoDiv").hide();
+                $("#Customername").empty();
+                $("#Customergender").empty();
+                $("#Customerphonenumber").empty();
+                $("#Customerage").empty();
+                $("#ServiceBody").empty();
+                $("#NetAmount").html("₦0.00");
+
+                $.ajax({
+                    url: 'GetCustomerByInvoiceNumber?invoiceNumber=' + invoiceNumber,
+                    method: "Get",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        $("#Customername").html(response.CustomerName);
+                        $("#Customergender").html(response.CustomerGender);
+                        $("#Customerphonenumber").html(response.CustomerPhoneNumber);
+                        $("#Customerage").html(response.CustomerAge);
+
+                        $("#customerInfoLoader").hide();
+                        $("#customerinfoDiv").show();
 
 
+                        $.ajax({
+                            url: 'GetServicesByInvoiceNumber?invoiceNumber=' + invoiceNumber,
+                            method: "Get",
+                            contentType: "application/json;charset=utf-8",
+                            dataType: "json",
+                            success: function (datas) {
+                                $("#ServiceBody").empty()
+                                $.each(datas, function (i, data) {
+                                    let html = "";
+                                    html = "<tr id='" + data.Id + "' ><td><button class='btn btn-danger' onclick='Delete(this)'>Remove</button></td><td>" + data.ServiceName + "</td><td><input type='number' value=" + data.Quantity + " class='form-control quantity-" + data.Id + "' onchange='UpdateAmount(this)' onkeyup='UpdateAmount(this)' /></td><td class='sellingprice-" + data.Id + "' data-id='" + data.SellingPrice + "'>" + data.SellingPriceString + "</td><td><strong class='gross-" + data.Id + " gross'>₦00.00</strong></td></tr>";
+                                    $("#ServiceBody").append(html);
+                                    $("#ServiceName").val("");
+                                    CalculateGrossAmount(data.Quantity, data.SellingPrice, data.Id);
+                                });
+                                updateNetAmount();
+                                $("#ServiceTableLoader").hide();
+                                $("#serviceTableDiv").show();
+                            },
+                            error: function (err) {
+                                toastr.error("No record found", "Not Found", { showDuration: 500 })
+                                $("#ServiceTableLoader").hide();
+                                $("#serviceTableDiv").show();
+                            }
+                        })
 
+                        //  e.target.innerHTML = "Search"
+                    },
+                    error: function (err) {
+                        toastr.error(err.responseText, "An Error Occurred", { showDuration: 500 })
+                        // e.target.innerHTML = "Search";
+                        $("#customerInfoLoader").hide();
+                        $("#customerinfoDiv").show();
+                        $("#ServiceTableLoader").hide();
+                        $("#serviceTableDiv").show();
+                    }
+                })
 
-            $.ajax({
-                url: 'GetCustomerByUsername?username=' + username,
-                method: "Get",
-                contentType: "application/json;charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    $("#Customername").html(response.Firstname + " " + response.Lastname);
-                    $("#Customergender").html(response.Gender);
-                    $("#Customerphonenumber").html(response.PhoneNumber);
-                    $("#CustomerUniqueID").val(response.CustomerUniqueID);
-
-                    // Calcualte age
-                    let customerDOBYear = new Date(+response.DOB.replace(/\D/g, '')).getFullYear();
-                    let currentYear = new Date().getFullYear();
-                    let customerAge = parseInt(currentYear - customerDOBYear);
-                    $("#Customerage").html(customerAge);
-
-                    $("#customerInfoLoader").hide();
-                    $("#customerinfoDiv").show();
-                    $("#ServiceTableLoader").hide();
-                    $("#serviceTableDiv").show();
-                    e.target.innerHTML = "Search"
-                },
-                error: function (err) {
-                    toastr.error(err.responseText, "An Error Occurred", { showDuration: 500 })
-                    e.target.innerHTML = "Search"
-                    $("#customerInfoLoader").hide();
-                    $("#customerinfoDiv").show();
-                    $("#ServiceTableLoader").hide();
-                    $("#serviceTableDiv").show();
-                }
-            })
+            }
         }
-    } else {
-        var invoiceNumber = $("#InvoiceNumber").val();
-        if (invoiceNumber === "") {
-            $("#InvoiceNumber").addClass("is-invalid");
-        }
-        else {
-            $("#InvoiceNumber").removeClass("is-invalid");
-            e.target.innerHTML = "Searching..."
-            $("#customerInfoLoader").show();
-            $("#ServiceTableLoader").show();
-            $("#serviceTableDiv").hide();
-            $("#customerinfoDiv").hide();
-            $("#Customername").empty();
-            $("#Customergender").empty();
-            $("#Customerphonenumber").empty();
-            $("#Customerage").empty();
-            $("#ServiceBody").empty();
-            $("#NetAmount").html("₦0.00");
-
-            $.ajax({
-                url: 'GetCustomerByInvoiceNumber?invoiceNumber=' + invoiceNumber,
-                method: "Get",
-                contentType: "application/json;charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    $("#Customername").html(response.CustomerName);
-                    $("#Customergender").html(response.CustomerGender);
-                    $("#Customerphonenumber").html(response.CustomerPhoneNumber);
-                    $("#Customerage").html(response.CustomerAge);
-
-                    $("#customerInfoLoader").hide();
-                    $("#customerinfoDiv").show();
-
-
-                    $.ajax({
-                        url: 'GetServicesByInvoiceNumber?invoiceNumber=' + invoiceNumber,
-                        method: "Get",
-                        contentType: "application/json;charset=utf-8",
-                        dataType: "json",
-                        success: function (datas) {
-                            $("#ServiceBody").empty()
-                            $.each(datas, function (i, data) {
-                                let html = "";
-                                html = "<tr id='" + data.Id + "' ><td><button class='btn btn-danger' onclick='Delete(this)'>Remove</button></td><td>" + data.ServiceName + "</td><td><input type='number' value=" + data.Quantity + " class='form-control quantity-" + data.Id + "' onchange='UpdateAmount(this)' onkeyup='UpdateAmount(this)' /></td><td class='sellingprice-" + data.Id + "' data-id='" + data.SellingPrice + "'>" + data.SellingPriceString + "</td><td><strong class='gross-" + data.Id + " gross'>₦00.00</strong></td></tr>";
-                                $("#ServiceBody").append(html);
-                                $("#ServiceName").val("");
-                                CalculateGrossAmount(data.Quantity, data.SellingPrice, data.Id);
-                            });
-                            updateNetAmount();
-                            $("#ServiceTableLoader").hide();
-                            $("#serviceTableDiv").show();
-                        },
-                        error: function (err) {
-                            toastr.error("No record found", "Not Found", { showDuration: 500 })
-                            $("#ServiceTableLoader").hide();
-                            $("#serviceTableDiv").show();
-                        }
-                    })
-
-                    e.target.innerHTML = "Search"
-                },
-                error: function (err) {
-                    toastr.error(err.responseText, "An Error Occurred", { showDuration: 500 })
-                    e.target.innerHTML = "Search";
-                    $("#customerInfoLoader").hide();
-                    $("#customerinfoDiv").show();
-                    $("#ServiceTableLoader").hide();
-                    $("#serviceTableDiv").show();
-                }
-            })
-
-        }
-    }
+    }, 1000);
 });
 
 function AddService(servicename) {

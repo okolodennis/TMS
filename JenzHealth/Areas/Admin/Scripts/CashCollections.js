@@ -105,243 +105,245 @@ $("#Deposit").click(function (e) {
     $("#FinishBtn").html("Deposit")
 });
 
-$("#SearchCustomer").click(function (e) {
-    e.preventDefault();
-    e.stopPropagation();
+$(".Search").on("change", function () {
+   // e.preventDefault();
+   // e.stopPropagation();
 
-    $("#FinishBtn").prop("disabled", false);
+    setTimeout(function () {
+        $("#FinishBtn").prop("disabled", false);
 
-    let searchby = $("input[name='CollectionType']:checked").val();
-    if (searchby == "UNBILLED") {
-        var username = $("#CustomerUniqueID").val();
-        if (username === "") {
-            $("#CustomerUniqueID").addClass("is-invalid");
+        let searchby = $("input[name='CollectionType']:checked").val();
+        if (searchby == "UNBILLED") {
+            var username = $("#CustomerUniqueID").val();
+            if (username === "") {
+                $("#CustomerUniqueID").addClass("is-invalid");
+            } else {
+                $("#CustomerUniqueID").removeClass("is-invalid");
+                //  e.target.innerHTML = "Searching..."
+                $("#ServiceBody").empty();
+                $("#WaiveAmount").html("₦0.00");
+                $("#BalanceAmount").html("₦0.00");
+                $("#NetAmount").html("₦0.00");
+                $("#customerInfoLoader").show();
+                $("#ServiceTableLoader").show();
+                $("#serviceTableDiv").hide();
+                $("#customerinfoDiv").hide();
+                $("#Customername").empty();
+                $("#Customergender").empty();
+                $("#Customerphonenumber").empty();
+                $("#Customerage").empty();
+                $("#ServiceBody").empty();
+                $("#installmentdrp").empty();
+                $("#InstallmentDiv").hide();
+
+
+                $.ajax({
+                    url: 'GetCustomerByUsername?username=' + username,
+                    method: "Get",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        $("#Customername").html(response.Firstname + " " + response.Lastname);
+                        $("#Customergender").html(response.Gender);
+                        $("#Customerphonenumber").html(response.PhoneNumber);
+                        $("#CustomerUniqueID").val(response.CustomerUniqueID);
+
+                        // Calcualte age
+                        let customerDOBYear = new Date(+response.DOB.replace(/\D/g, '')).getFullYear();
+                        let currentYear = new Date().getFullYear();
+                        let customerAge = parseInt(currentYear - customerDOBYear);
+                        $("#Customerage").html(customerAge);
+
+                        $("#customerInfoLoader").hide();
+                        $("#customerinfoDiv").show();
+                        $("#ServiceTableLoader").hide();
+                        $("#serviceTableDiv").show();
+                        // e.target.innerHTML = "Search"
+                    },
+                    error: function (err) {
+                        toastr.error(err.responseText, "An Error Occurred", { showDuration: 500 })
+                        // e.target.innerHTML = "Search";
+                        $("#customerInfoLoader").hide();
+                        $("#customerinfoDiv").show();
+                        $("#ServiceTableLoader").hide();
+                        $("#serviceTableDiv").show();
+                    }
+                })
+
+            }
         } else {
-            $("#CustomerUniqueID").removeClass("is-invalid");
-            e.target.innerHTML = "Searching..."
-            $("#ServiceBody").empty();
-            $("#WaiveAmount").html("₦0.00");
-            $("#BalanceAmount").html("₦0.00");
-            $("#NetAmount").html("₦0.00");
-            $("#customerInfoLoader").show();
-            $("#ServiceTableLoader").show();
-            $("#serviceTableDiv").hide();
-            $("#customerinfoDiv").hide();
-            $("#Customername").empty();
-            $("#Customergender").empty();
-            $("#Customerphonenumber").empty();
-            $("#Customerage").empty();
-            $("#ServiceBody").empty();
-            $("#installmentdrp").empty();
-            $("#InstallmentDiv").hide();
+            var invoiceNumber = $("#BillInvoiceNumber").val();
+            if (invoiceNumber === "") {
+                $("#BillInvoiceNumber").addClass("is-invalid");
+            }
+            else {
+                $("#BillInvoiceNumber").removeClass("is-invalid");
+                // e.target.innerHTML = "Searching..."
 
+                $("#ServiceBody").empty();
+                $("#WaiveAmount").html("₦0.00");
+                $("#BalanceAmount").html("₦0.00");
+                $("#NetAmount").html("₦0.00");
+                $("#customerInfoLoader").show();
+                $("#ServiceTableLoader").show();
+                $("#serviceTableDiv").hide();
+                $("#customerinfoDiv").hide();
+                $("#Customername").empty();
+                $("#Customergender").empty();
+                $("#Customerphonenumber").empty();
+                $("#Customerage").empty();
+                $("#ServiceBody").empty();
+                $("#installmentdrp").empty();
+                $("#InstallmentDiv").hide();
 
-            $.ajax({
-                url: 'GetCustomerByUsername?username=' + username,
-                method: "Get",
-                contentType: "application/json;charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    $("#Customername").html(response.Firstname + " " + response.Lastname);
-                    $("#Customergender").html(response.Gender);
-                    $("#Customerphonenumber").html(response.PhoneNumber);
-                    $("#CustomerUniqueID").val(response.CustomerUniqueID);
+                $.ajax({
+                    url: 'GetCustomerByInvoiceNumber?invoiceNumber=' + invoiceNumber,
+                    method: "Get",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        $("#Customername").html(response.CustomerName);
+                        $("#Customergender").html(response.CustomerGender);
+                        $("#Customerphonenumber").html(response.CustomerPhoneNumber);
+                        $("#Customerage").html(response.CustomerAge);
 
-                    // Calcualte age
-                    let customerDOBYear = new Date(+response.DOB.replace(/\D/g, '')).getFullYear();
-                    let currentYear = new Date().getFullYear();
-                    let customerAge = parseInt(currentYear - customerDOBYear);
-                    $("#Customerage").html(customerAge);
+                        $("#customerInfoLoader").hide();
+                        $("#customerinfoDiv").show();
 
-                    $("#customerInfoLoader").hide();
-                    $("#customerinfoDiv").show();
-                    $("#ServiceTableLoader").hide();
-                    $("#serviceTableDiv").show();
-                    e.target.innerHTML = "Search"
-                },
-                error: function (err) {
-                    toastr.error(err.responseText, "An Error Occurred", { showDuration: 500 })
-                    e.target.innerHTML = "Search";
-                    $("#customerInfoLoader").hide();
-                    $("#customerinfoDiv").show();
-                    $("#ServiceTableLoader").hide();
-                    $("#serviceTableDiv").show();
-                }
-            })
-
-        }
-    } else {
-        var invoiceNumber = $("#BillInvoiceNumber").val();
-        if (invoiceNumber === "") {
-            $("#BillInvoiceNumber").addClass("is-invalid");
-        }
-        else {
-            $("#BillInvoiceNumber").removeClass("is-invalid");
-            e.target.innerHTML = "Searching..."
-
-            $("#ServiceBody").empty();
-            $("#WaiveAmount").html("₦0.00");
-            $("#BalanceAmount").html("₦0.00");
-            $("#NetAmount").html("₦0.00");
-            $("#customerInfoLoader").show();
-            $("#ServiceTableLoader").show();
-            $("#serviceTableDiv").hide();
-            $("#customerinfoDiv").hide();
-            $("#Customername").empty();
-            $("#Customergender").empty();
-            $("#Customerphonenumber").empty();
-            $("#Customerage").empty();
-            $("#ServiceBody").empty();
-            $("#installmentdrp").empty();
-            $("#InstallmentDiv").hide();
-
-            $.ajax({
-                url: 'GetCustomerByInvoiceNumber?invoiceNumber=' + invoiceNumber,
-                method: "Get",
-                contentType: "application/json;charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    $("#Customername").html(response.CustomerName);
-                    $("#Customergender").html(response.CustomerGender);
-                    $("#Customerphonenumber").html(response.CustomerPhoneNumber);
-                    $("#Customerage").html(response.CustomerAge);
-
-                    $("#customerInfoLoader").hide();
-                    $("#customerinfoDiv").show();
-
-                    // Get Services
-                    $.ajax({
-                        url: 'GetServicesByInvoiceNumber?invoiceNumber=' + invoiceNumber,
-                        method: "Get",
-                        contentType: "application/json;charset=utf-8",
-                        dataType: "json",
-                        success: function (datas) {
-                            $("#ServiceBody").empty()
-                            $.each(datas, function (i, data) {
-                                let html = "";
-                                html = "<tr id='" + data.Id + "' ><td><button class='btn btn-danger' disabled onclick='Delete(this)'>Remove</button></td><td>" + data.ServiceName + "</td><td><input type='number' disabled value=" + data.Quantity + " class='form-control quantity-" + data.Id + "' onchange='UpdateAmount(this)' onkeyup='UpdateAmount(this)' /></td><td class='sellingprice-" + data.Id + "' data-id='" + data.SellingPrice + "'>" + data.SellingPriceString + "</td><td><strong class='gross-" + data.Id + " gross'>₦00.00</strong></td></tr>";
-                                $("#ServiceBody").append(html);
-                                $("#ServiceName").val("");
-                                CalculateGrossAmount(data.Quantity, data.SellingPrice, data.Id);
-                            });
-                            updateNetAmount();
-                            var netamount = $("#NetAmount").html();
-                            var waiveamount = $("#WaiveAmount").html();
-                            var paidamount = $("#PaidAmount").html();
-                            var balanceAmount = (ConvertToDecimal(netamount) - ConvertToDecimal(waiveamount)) - ConvertToDecimal(paidamount);
-
-
-                            $("#BalanceAmount").html("₦" + numberWithCommas(balanceAmount) + ".00");
-                        },
-                        error: function (err) {
-                            toastr.error(err.fail, "Data not retrieved successfully", { showDuration: 500 });
-                        }
-                    });
-
-                    // Get Waived Amount
-                    $.ajax({
-                        url: 'GetWaivedAmountsForInvoiceNumber?invoiceNumber=' + invoiceNumber,
-                        method: "Get",
-                        contentType: "application/json;charset=utf-8",
-                        dataType: "json",
-                        success: function (data) {
-                            if (data.Id != 0) {
-                                $("#WaiveAmount").html("₦" + numberWithCommas(data.WaiveAmount) + ".00");
-                            }
-                            var netamount = $("#NetAmount").html();
-                            var waiveamount = $("#WaiveAmount").html();
-                            var paidamount = $("#PaidAmount").html();
-                            var balanceAmount = (ConvertToDecimal(netamount) - ConvertToDecimal(waiveamount)) - ConvertToDecimal(paidamount);
-
-                            $("#BalanceAmount").html("₦" + numberWithCommas(balanceAmount) + ".00");
-                        },
-                        error: function (err) {
-                            toastr.error(err.fail, "Data not retrieved successfully", { showDuration: 500 });
-                            $("#ServiceTableLoader").hide();
-                            $("#serviceTableDiv").show();
-                        }
-                    });
-
-                    // Get Total Amount Paid
-                    $.ajax({
-                        url: 'GetTotalPaidBillAmount?invoiceNumber=' + invoiceNumber,
-                        method: "Get",
-                        contentType: "application/json;charset=utf-8",
-                        dataType: "json",
-                        success: function (totalamountpaid) {
-                            updateNetAmount();
-                            if (totalamountpaid != null) {
-                                $("#PaidAmount").html("₦" + numberWithCommas(totalamountpaid) + ".00");
+                        // Get Services
+                        $.ajax({
+                            url: 'GetServicesByInvoiceNumber?invoiceNumber=' + invoiceNumber,
+                            method: "Get",
+                            contentType: "application/json;charset=utf-8",
+                            dataType: "json",
+                            success: function (datas) {
+                                $("#ServiceBody").empty()
+                                $.each(datas, function (i, data) {
+                                    let html = "";
+                                    html = "<tr id='" + data.Id + "' ><td><button class='btn btn-danger' disabled onclick='Delete(this)'>Remove</button></td><td>" + data.ServiceName + "</td><td><input type='number' disabled value=" + data.Quantity + " class='form-control quantity-" + data.Id + "' onchange='UpdateAmount(this)' onkeyup='UpdateAmount(this)' /></td><td class='sellingprice-" + data.Id + "' data-id='" + data.SellingPrice + "'>" + data.SellingPriceString + "</td><td><strong class='gross-" + data.Id + " gross'>₦00.00</strong></td></tr>";
+                                    $("#ServiceBody").append(html);
+                                    $("#ServiceName").val("");
+                                    CalculateGrossAmount(data.Quantity, data.SellingPrice, data.Id);
+                                });
+                                updateNetAmount();
                                 var netamount = $("#NetAmount").html();
                                 var waiveamount = $("#WaiveAmount").html();
-                                var balanceAmount = (ConvertToDecimal(netamount) - ConvertToDecimal(waiveamount)) - totalamountpaid;
+                                var paidamount = $("#PaidAmount").html();
+                                var balanceAmount = (ConvertToDecimal(netamount) - ConvertToDecimal(waiveamount)) - ConvertToDecimal(paidamount);
+
 
                                 $("#BalanceAmount").html("₦" + numberWithCommas(balanceAmount) + ".00");
-                            } else {
-                                totalamount = "₦0.00";
-                                $("#PaidAmount").html(totalamount);
-                                var netamount = $("#NetAmount").html();
-                                var balanceAmount = (ConvertToDecimal(netamount) - ConvertToDecimal(waiveamount)) - totalamountpaid;
-
-                                $("#BalanceAmount").html("₦" + numberWithCommas(balanceAmount) + ".00");                            }
-
-                            $("#ServiceTableLoader").hide();
-                            $("#serviceTableDiv").show();
-                        },
-                        error: function (err) {
-                            toastr.error(err.fail, "Data not retrieved successfully", { showDuration: 500 });
-                            $("#ServiceTableLoader").hide();
-                            $("#serviceTableDiv").show();
-                        }
-                    });
-
-                    // Populate installment
-                    $.ajax({
-                        url: 'GetInstallmentsByInvoiceNumber?invoiceNumber=' + invoiceNumber,
-                        method: "Get",
-                        contentType: "application/json;charset=utf-8",
-                        dataType: "json",
-                        success: function (datas) {
-                            if (datas.length > 0) {
-                                installmentCount = 0;
-                                $.each(datas, function (i, data) {
-                                    installmentCount++;
-                                    let html = "";
-                                    if (data.HasPaid) {
-                                        html = "<option value='" + data.Id + "' style='color: green'>" + data.InstallmentName + " (₦" + numberWithCommas(data.PartPaymentAmount) + ".00) <span class='badge badge-pill badge-success'>PAID</span></option>";
-                                    } else {
-                                        html = "<option value='" + data.Id + "'>" + data.InstallmentName + " (₦" + numberWithCommas(data.PartPaymentAmount) + ".00)</option>";
-                                    }
-                                    $("#installmentdrp").append(html);
-                                });
-                                $("#InstallmentDiv").show();
+                            },
+                            error: function (err) {
+                                toastr.error(err.fail, "Data not retrieved successfully", { showDuration: 500 });
                             }
+                        });
 
-                        },
-                        error: function (err) {
-                            toastr.error(err.responseText, "Data not retrieved successfully", { showDuration: 500 });
-                        }
-                    })
+                        // Get Waived Amount
+                        $.ajax({
+                            url: 'GetWaivedAmountsForInvoiceNumber?invoiceNumber=' + invoiceNumber,
+                            method: "Get",
+                            contentType: "application/json;charset=utf-8",
+                            dataType: "json",
+                            success: function (data) {
+                                if (data.Id != 0) {
+                                    $("#WaiveAmount").html("₦" + numberWithCommas(data.WaiveAmount) + ".00");
+                                }
+                                var netamount = $("#NetAmount").html();
+                                var waiveamount = $("#WaiveAmount").html();
+                                var paidamount = $("#PaidAmount").html();
+                                var balanceAmount = (ConvertToDecimal(netamount) - ConvertToDecimal(waiveamount)) - ConvertToDecimal(paidamount);
+
+                                $("#BalanceAmount").html("₦" + numberWithCommas(balanceAmount) + ".00");
+                            },
+                            error: function (err) {
+                                toastr.error(err.fail, "Data not retrieved successfully", { showDuration: 500 });
+                                $("#ServiceTableLoader").hide();
+                                $("#serviceTableDiv").show();
+                            }
+                        });
+
+                        // Get Total Amount Paid
+                        $.ajax({
+                            url: 'GetTotalPaidBillAmount?invoiceNumber=' + invoiceNumber,
+                            method: "Get",
+                            contentType: "application/json;charset=utf-8",
+                            dataType: "json",
+                            success: function (totalamountpaid) {
+                                updateNetAmount();
+                                if (totalamountpaid != null) {
+                                    $("#PaidAmount").html("₦" + numberWithCommas(totalamountpaid) + ".00");
+                                    var netamount = $("#NetAmount").html();
+                                    var waiveamount = $("#WaiveAmount").html();
+                                    var balanceAmount = (ConvertToDecimal(netamount) - ConvertToDecimal(waiveamount)) - totalamountpaid;
+
+                                    $("#BalanceAmount").html("₦" + numberWithCommas(balanceAmount) + ".00");
+                                } else {
+                                    totalamount = "₦0.00";
+                                    $("#PaidAmount").html(totalamount);
+                                    var netamount = $("#NetAmount").html();
+                                    var balanceAmount = (ConvertToDecimal(netamount) - ConvertToDecimal(waiveamount)) - totalamountpaid;
+
+                                    $("#BalanceAmount").html("₦" + numberWithCommas(balanceAmount) + ".00");
+                                }
+
+                                $("#ServiceTableLoader").hide();
+                                $("#serviceTableDiv").show();
+                            },
+                            error: function (err) {
+                                toastr.error(err.fail, "Data not retrieved successfully", { showDuration: 500 });
+                                $("#ServiceTableLoader").hide();
+                                $("#serviceTableDiv").show();
+                            }
+                        });
+
+                        // Populate installment
+                        $.ajax({
+                            url: 'GetInstallmentsByInvoiceNumber?invoiceNumber=' + invoiceNumber,
+                            method: "Get",
+                            contentType: "application/json;charset=utf-8",
+                            dataType: "json",
+                            success: function (datas) {
+                                if (datas.length > 0) {
+                                    installmentCount = 0;
+                                    $.each(datas, function (i, data) {
+                                        installmentCount++;
+                                        let html = "";
+                                        if (data.HasPaid) {
+                                            html = "<option value='" + data.Id + "' style='color: green'>" + data.InstallmentName + " (₦" + numberWithCommas(data.PartPaymentAmount) + ".00) <span class='badge badge-pill badge-success'>PAID</span></option>";
+                                        } else {
+                                            html = "<option value='" + data.Id + "'>" + data.InstallmentName + " (₦" + numberWithCommas(data.PartPaymentAmount) + ".00)</option>";
+                                        }
+                                        $("#installmentdrp").append(html);
+                                    });
+                                    $("#InstallmentDiv").show();
+                                }
+
+                            },
+                            error: function (err) {
+                                toastr.error(err.responseText, "Data not retrieved successfully", { showDuration: 500 });
+                            }
+                        })
 
 
-                    e.target.innerHTML = "Search"
-                   
+                        // e.target.innerHTML = "Search"
 
-                },
-                error: function (err) {
-                    toastr.error(err.responseText, "An Error Occurred", { showDuration: 500 })
-                    e.target.innerHTML = "Search";
-                    $("#customerInfoLoader").hide();
-                    $("#customerinfoDiv").show();
-                    $("#ServiceTableLoader").hide();
-                    $("#serviceTableDiv").show();
-                    $("#InstallmentTableLoader").hide();
-                }
-            })
 
+                    },
+                    error: function (err) {
+                        toastr.error(err.responseText, "An Error Occurred", { showDuration: 500 })
+                        // e.target.innerHTML = "Search";
+                        $("#customerInfoLoader").hide();
+                        $("#customerinfoDiv").show();
+                        $("#ServiceTableLoader").hide();
+                        $("#serviceTableDiv").show();
+                        $("#InstallmentTableLoader").hide();
+                    }
+                })
+
+            }
         }
-    }
-
+    }, 1000);
 })
 
 function AddService(servicename) {

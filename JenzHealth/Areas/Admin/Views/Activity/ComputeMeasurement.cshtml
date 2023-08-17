@@ -68,7 +68,7 @@
                                         {
                                             <tr>
                                                 <td data-parent="@billedClothType.ClothTypeId" data-child="@paramater.ParameterID">@paramater.Parameter</td>
-                                                <td><input type="text" class="form-control values" value="@paramater.Value" required /></td>
+                                                <td><input type="number" class="form-control values" value="@paramater.Value" required /></td>
                                             </tr>
                                         }
                                     </tbody>
@@ -78,7 +78,7 @@
                                     <div class="form-group col-sm-6">
                                         <label for="labnote">Tailor</label>
                                         <div class="input-group input-group-seamless">
-                                            <input type="text" class="form-control Tailor-@billedClothType.ClothTypeId tailorAutoComplete" value="@billedClothType.Tailor" required />
+                                            <input type="text" class="form-control Tailor-@billedClothType.ClothTypeId tailorAutoComplete" value="@billedClothType.Tailor"  />
                                             <input type="text" class="form-control d-none BillingID" value="@billedClothType.BillingID" required />
                                             <input type="text" class="form-control d-none ClothTypeId-@billedClothType.ClothTypeId" value="@billedClothType.ClothTypeId" required />
                                             <div class="invalid-feedback">
@@ -118,16 +118,28 @@
                                                 <th scope="col" class="border-0">Tailor</th>
                                                 <th scope="col" class="border-0 sum">Quantity</th>
                                                 <th scope="col" class="border-0">Collection Date</th>
+                                                <th scope="col" class="border-0 d-none"></th>
                                             </tr>
                                         </thead>
                                         <tbody id="AssignBody-@billedClothType.ClothTypeId">
+                                            @foreach (var item in billedClothType.TailorAssignments)
+                                            {
+                                            <tr>
+                                                <td><button class='btn btn-danger' onclick='Delete(this)'>Remove</button></td>
+                                                <td>@item.Tailor</td>
+                                                <td>@item.Quantity</td>
+                                                <td>@item.CollectionDate.ToShortDateString()</td>
+                                                <td class='d-none'>@billedClothType.ClothTypeId</td>
+                                            </tr>
+                                            }
                                         </tbody>
                                         <tfoot class="p-2">
                                             <tr class="text-center p-2 bg-light">
                                                 <th></th>
                                                 <th></th>
-                                                <th>Total: <span class="totalQty-@billedClothType.ClothTypeId">0</span></th>
+                                                <th>Total: <span class="totalQty-@billedClothType.ClothTypeId">@billedClothType.TotalQuantity</span></th>
                                                 <th></th>
+                                                <th class='d-none'></th>
                                             </tr>
                                         </tfoot>
                                     </table>

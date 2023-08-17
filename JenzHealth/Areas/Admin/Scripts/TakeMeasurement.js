@@ -146,7 +146,7 @@ $(function () {
         events: {
             search: function (qry, callback) {
                 $.ajax({
-                    url: "/Admin/User/GetUserAutoComplete",
+                    url: "/Admin/User/GetTailorAutoComplete",
                     type: "POST",
                     dataType: "json",
                     data: { term: qry },
@@ -186,6 +186,8 @@ function AssignTailor(clothTypeId) {
             html = "<tr id='" + clothTypeId + "' ><td><button class='btn btn-danger' onclick='Delete(this)'>Remove</button></td><td>" + tailor + "</td><td>" + quantity + "</td><td>" + collectionDate + "</td><td class='d-none'>" + clothTypeId + "</td></tr > ";
             $(AssignBodyId).append(html);
             $(totalQty).html(totalQuantity);
+            $(Tailor).val("");
+            $(Quantity).val(0)
         }
         if (totalQuantity == 0) {
             $(".dataTables_empty").addClass("d-block");

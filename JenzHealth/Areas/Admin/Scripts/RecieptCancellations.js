@@ -44,145 +44,146 @@ $(window).ready(function () {
     }
 });
 
-$("#SearchCustomer").click(function (e) {
-    e.preventDefault();
-    e.stopPropagation();
+$(".Search").on("change", function () {
+    // e.preventDefault();
+    // e.stopPropagation();
 
+    setTimeout(function () {
 
-    var reciept = $("#PaymentReciept").val();
-    if (reciept === "") {
-        $("#PaymentReciept").addClass("is-invalid");
-    }
-    else {
-        $("#PaymentReciept").removeClass("is-invalid");
-        e.target.innerHTML = "Searching..."
+        var reciept = $("#PaymentReciept").val();
+        if (reciept === "") {
+            $("#PaymentReciept").addClass("is-invalid");
+        }
+        else {
+            $("#PaymentReciept").removeClass("is-invalid");
+            //e.target.innerHTML = "Searching..."
 
-        $("#ServiceBody").empty();
-        $("#WaiveAmount").html("₦0.00");
-        $("#BalanceAmount").html("₦0.00");
-        $("#NetAmount").html("₦0.00");
-        $("#customerInfoLoader").show();
-        $("#ServiceTableLoader").show();
-        $("#serviceTableDiv").hide();
-        $("#customerinfoDiv").hide();
-        $("#Customername").empty();
-        $("#Customergender").empty();
-        $("#Customerphonenumber").empty();
-        $("#Customerage").empty();
-        $("#ServiceBody").empty();
-        $.ajax({
-            url: "GetBillInvoiceWithReciept?recipet=" + reciept,
-            method: "Get",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (invoiceNumber) {
-                $.ajax({
-                    url: 'GetCustomerByInvoiceNumber?invoiceNumber=' + invoiceNumber,
-                    method: "Get",
-                    contentType: "application/json;charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        $("#Customername").html(response.CustomerName);
-                        $("#Customergender").html(response.CustomerGender);
-                        $("#Customerphonenumber").html(response.CustomerPhoneNumber);
-                        $("#Customerage").html(response.CustomerAge);
+            $("#ServiceBody").empty();
+            $("#WaiveAmount").html("₦0.00");
+            $("#BalanceAmount").html("₦0.00");
+            $("#NetAmount").html("₦0.00");
+            $("#customerInfoLoader").show();
+            $("#ServiceTableLoader").show();
+            $("#serviceTableDiv").hide();
+            $("#customerinfoDiv").hide();
+            $("#Customername").empty();
+            $("#Customergender").empty();
+            $("#Customerphonenumber").empty();
+            $("#Customerage").empty();
+            $("#ServiceBody").empty();
+            $.ajax({
+                url: "GetBillInvoiceWithReciept?recipet=" + reciept,
+                method: "Get",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (invoiceNumber) {
+                    $.ajax({
+                        url: 'GetCustomerByInvoiceNumber?invoiceNumber=' + invoiceNumber,
+                        method: "Get",
+                        contentType: "application/json;charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            $("#Customername").html(response.CustomerName);
+                            $("#Customergender").html(response.CustomerGender);
+                            $("#Customerphonenumber").html(response.CustomerPhoneNumber);
+                            $("#Customerage").html(response.CustomerAge);
 
-                        $("#customerInfoLoader").hide();
-                        $("#customerinfoDiv").show();
+                            $("#customerInfoLoader").hide();
+                            $("#customerinfoDiv").show();
 
-                        // Get Services
-                        $.ajax({
-                            url: 'GetServicesByInvoiceNumber?invoiceNumber=' + invoiceNumber,
-                            method: "Get",
-                            contentType: "application/json;charset=utf-8",
-                            dataType: "json",
-                            success: function (datas) {
-                                $("#ServiceBody").empty()
-                                $.each(datas, function (i, data) {
-                                    let html = "";
-                                    html = "<tr id='" + data.Id + "' ><td><button class='btn btn-danger' disabled onclick='Delete(this)'>Remove</button></td><td>" + data.ServiceName + "</td><td><input type='number' value=" + data.Quantity + " class='form-control quantity-" + data.Id + "' onchange='UpdateAmount(this)' onkeyup='UpdateAmount(this)' /></td><td class='sellingprice-" + data.Id + "' data-id='" + data.SellingPrice + "'>" + data.SellingPriceString + "</td><td><strong class='gross-" + data.Id + " gross'>₦00.00</strong></td></tr>";
-                                    $("#ServiceBody").append(html);
-                                    $("#ServiceName").val("");
-                                    CalculateGrossAmount(data.Quantity, data.SellingPrice, data.Id);
-                                });
-                                updateNetAmount();
-                            },
-                            error: function (err) {
-                                toastr.error(err, "Data not retrieved successfully", { showDuration: 500 });
-                            }
-                        });
-
-                        // Get Waived Amount
-                        $.ajax({
-                            url: 'GetWaivedAmountsForInvoiceNumber?invoiceNumber=' + invoiceNumber,
-                            method: "Get",
-                            contentType: "application/json;charset=utf-8",
-                            dataType: "json",
-                            success: function (data) {
-                                if (data.Id != 0) {
-                                    $("#WaiveAmount").html("₦" + numberWithCommas(data.WaiveAmount) + ".00");
-                                    $("#BalanceAmount").html("₦" + numberWithCommas(data.AvailableAmount) + ".00");
-                                } else {
-                                    var netamount = $("#NetAmount").html();
-                                    $("#BalanceAmount").html(netamount);
-                                }
-
-                                $("#ServiceTableLoader").hide();
-                                $("#serviceTableDiv").show();
-                            },
-                            error: function (err) {
-                                toastr.error(err.fail, "Data not retrieved successfully", { showDuration: 500 });
-                                $("#ServiceTableLoader").hide();
-                                $("#serviceTableDiv").show();
-                            }
-                        });
-
-                        // Populate installmentt
-                        $.ajax({
-                            url: 'GetInstallmentsByInvoiceNumber?invoiceNumber=' + invoiceNumber,
-                            method: "Get",
-                            contentType: "application/json;charset=utf-8",
-                            dataType: "json",
-                            success: function (datas) {
-                                if (datas.length > 0) {
-                                    installmentCount = 0;
+                            // Get Services
+                            $.ajax({
+                                url: 'GetServicesByInvoiceNumber?invoiceNumber=' + invoiceNumber,
+                                method: "Get",
+                                contentType: "application/json;charset=utf-8",
+                                dataType: "json",
+                                success: function (datas) {
+                                    $("#ServiceBody").empty()
                                     $.each(datas, function (i, data) {
-                                        installmentCount++;
                                         let html = "";
-                                        html = "<option value='" + data.Id + "'>" + data.InstallmentName + " (₦" + numberWithCommas(data.PartPaymentAmount) + ".00)</option>";
-                                        $("#installmentdrp").append(html);
+                                        html = "<tr id='" + data.Id + "' ><td><button class='btn btn-danger' disabled onclick='Delete(this)'>Remove</button></td><td>" + data.ServiceName + "</td><td><input type='number' value=" + data.Quantity + " class='form-control quantity-" + data.Id + "' onchange='UpdateAmount(this)' onkeyup='UpdateAmount(this)' /></td><td class='sellingprice-" + data.Id + "' data-id='" + data.SellingPrice + "'>" + data.SellingPriceString + "</td><td><strong class='gross-" + data.Id + " gross'>₦00.00</strong></td></tr>";
+                                        $("#ServiceBody").append(html);
+                                        $("#ServiceName").val("");
+                                        CalculateGrossAmount(data.Quantity, data.SellingPrice, data.Id);
                                     });
-                                    $("#InstallmentDiv").show();
+                                    updateNetAmount();
+                                },
+                                error: function (err) {
+                                    toastr.error(err, "Data not retrieved successfully", { showDuration: 500 });
                                 }
+                            });
 
-                            },
-                            error: function (err) {
-                                toastr.error(err.responseText, "Data not retrieved successfully", { showDuration: 500 });
-                            }
-                        })
+                            // Get Waived Amount
+                            $.ajax({
+                                url: 'GetWaivedAmountsForInvoiceNumber?invoiceNumber=' + invoiceNumber,
+                                method: "Get",
+                                contentType: "application/json;charset=utf-8",
+                                dataType: "json",
+                                success: function (data) {
+                                    if (data.Id != 0) {
+                                        $("#WaiveAmount").html("₦" + numberWithCommas(data.WaiveAmount) + ".00");
+                                        $("#BalanceAmount").html("₦" + numberWithCommas(data.AvailableAmount) + ".00");
+                                    } else {
+                                        var netamount = $("#NetAmount").html();
+                                        $("#BalanceAmount").html(netamount);
+                                    }
+
+                                    $("#ServiceTableLoader").hide();
+                                    $("#serviceTableDiv").show();
+                                },
+                                error: function (err) {
+                                    toastr.error(err.fail, "Data not retrieved successfully", { showDuration: 500 });
+                                    $("#ServiceTableLoader").hide();
+                                    $("#serviceTableDiv").show();
+                                }
+                            });
+
+                            // Populate installmentt
+                            $.ajax({
+                                url: 'GetInstallmentsByInvoiceNumber?invoiceNumber=' + invoiceNumber,
+                                method: "Get",
+                                contentType: "application/json;charset=utf-8",
+                                dataType: "json",
+                                success: function (datas) {
+                                    if (datas.length > 0) {
+                                        installmentCount = 0;
+                                        $.each(datas, function (i, data) {
+                                            installmentCount++;
+                                            let html = "";
+                                            html = "<option value='" + data.Id + "'>" + data.InstallmentName + " (₦" + numberWithCommas(data.PartPaymentAmount) + ".00)</option>";
+                                            $("#installmentdrp").append(html);
+                                        });
+                                        $("#InstallmentDiv").show();
+                                    }
+
+                                },
+                                error: function (err) {
+                                    toastr.error(err.responseText, "Data not retrieved successfully", { showDuration: 500 });
+                                }
+                            })
 
 
-                        e.target.innerHTML = "Search"
-                    },
-                    error: function (err) {
-                        toastr.error(err.responseText, "An Error Occurred", { showDuration: 500 })
-                        e.target.innerHTML = "Search";
-                        $("#customerInfoLoader").hide();
-                        $("#customerinfoDiv").show();
-                        $("#ServiceTableLoader").hide();
-                        $("#serviceTableDiv").show();
-                        $("#InstallmentTableLoader").hide();
-                    }
-                })
+                            //  e.target.innerHTML = "Search"
+                        },
+                        error: function (err) {
+                            toastr.error(err.responseText, "An Error Occurred", { showDuration: 500 })
+                            //  e.target.innerHTML = "Search";
+                            $("#customerInfoLoader").hide();
+                            $("#customerinfoDiv").show();
+                            $("#ServiceTableLoader").hide();
+                            $("#serviceTableDiv").show();
+                            $("#InstallmentTableLoader").hide();
+                        }
+                    })
 
-            },
-            error: function (err) {
-                toastr.error(err, "Data not retrieved successfully", { showDuration: 500 });
-            }
-        })
+                },
+                error: function (err) {
+                    toastr.error(err, "Data not retrieved successfully", { showDuration: 500 });
+                }
+            })
 
-    }
-
+        }
+    }, 1000);
 })
 $("#FinishBtn").click(function () {
     var valPaymentReciept = $("input[name='PaymentReciept']").val();
