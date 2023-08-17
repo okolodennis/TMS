@@ -186,75 +186,83 @@ $(".Search").on("change", function () {
     }, 1000);
 })
 $("#FinishBtn").click(function () {
-    var valPaymentReciept = $("input[name='PaymentReciept']").val();
-    var valAmountToRefund = $("input[name='AmountToRefundString']").val();
-    var valComment = $("#Comment").val();
-    if (valPaymentReciept === "" || valAmountToRefund == "₦0.00" || valComment == "") {
-        $("input[name='PaymentReciept']").addClass("is-invalid");
-        $("input[name='AmountToRefundString']").addClass("is-invalid");
-        $("#Comment").addClass("is-invalid");
-        toastr.error("Please, fill the form properly", "Validation error", { showDuration: 500 })
+    let recievedAmount = ConvertToDecimal($("#BalanceAmount").html());
+    let refundAmount = ConvertToDecimal($("#AmountToRefundString").val());
 
+    if (refundAmount <= recievedAmount) {
+        var valPaymentReciept = $("input[name='PaymentReciept']").val();
+        var valAmountToRefund = $("input[name='AmountToRefundString']").val();
+        var valComment = $("#Comment").val();
+        if (valPaymentReciept === "" || valAmountToRefund == "₦0.00" || valComment == "") {
+            $("input[name='PaymentReciept']").addClass("is-invalid");
+            $("input[name='AmountToRefundString']").addClass("is-invalid");
+            $("#Comment").addClass("is-invalid");
+            toastr.error("Please, fill the form properly", "Validation error", { showDuration: 500 })
+
+        }
+        else {
+
+            $("input[name='PaymentReciept']").removeClass("is-invalid");
+            $("input[name='AmountToRefundString']").removeClass("is-invalid");
+            $("#Comment").removeClass("is-invalid");
+
+            Swal.fire({
+                title: 'Confirmation',
+                text: "Are you sure, you want to proceed with this operation?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, proceed!'
+            }).then((result) => {
+                if (result.value) {
+                    let data = {
+                        PaymentReciept: $("input[name='PaymentReciept']").val(),
+                        AmountToRefund: ConvertToDecimal($("input[name='AmountToRefundString']").val()),
+                        Comment: $("#Comment").val()
+                    };
+                    // Send ajax call to server
+                    $.ajax({
+                        url: 'Refunds',
+                        method: 'Post',
+                        dataType: "json",
+                        data: { vmodel: data },
+                        success: function (response) {
+                            if (response == true) {
+                                Swal.fire({
+                                    title: 'Refund successfully',
+                                    showCancelButton: false,
+                                    confirmButtonText: 'Ok',
+                                    showLoaderOnConfirm: true,
+                                }).then((result) => {
+                                    if (result.value) {
+                                        location.href = "Refunds?Saved=true";
+                                    } else if (
+                                        result.dismiss === Swal.DismissReason.cancel
+                                    ) {
+                                        location.href = "Refunds?Saved=true";
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+                else if (
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    swalWithBootstrapButtons.fire(
+                        'Cancelled',
+                        'Cancelled :)',
+                        'error'
+                    )
+                }
+            })
+        }
     }
     else {
-
-        $("input[name='PaymentReciept']").removeClass("is-invalid");
-        $("input[name='AmountToRefundString']").removeClass("is-invalid");
-        $("#Comment").removeClass("is-invalid");
-
-        Swal.fire({
-            title: 'Confirmation',
-            text: "Are you sure, you want to proceed with this operation?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, proceed!'
-        }).then((result) => {
-            if (result.value) {
-                let data = {
-                    PaymentReciept: $("input[name='PaymentReciept']").val(),
-                    AmountToRefund: ConvertToDecimal($("input[name='AmountToRefundString']").val()),
-                    Comment: $("#Comment").val()
-                };
-                // Send ajax call to server
-                $.ajax({
-                    url: 'Refunds',
-                    method: 'Post',
-                    dataType: "json",
-                    data: { vmodel: data },
-                    success: function (response) {
-                        if (response == true) {
-                            Swal.fire({
-                                title: 'Refund successfully',
-                                showCancelButton: false,
-                                confirmButtonText: 'Ok',
-                                showLoaderOnConfirm: true,
-                            }).then((result) => {
-                                if (result.value) {
-                                    location.href = "Refunds?Saved=true";
-                                } else if (
-                                    result.dismiss === Swal.DismissReason.cancel
-                                ) {
-                                    location.href = "Refunds?Saved=true";
-                                }
-                            })
-                        }
-                    }
-                })
-            }
-            else if (
-                result.dismiss === Swal.DismissReason.cancel
-            ) {
-                swalWithBootstrapButtons.fire(
-                    'Cancelled',
-                    'Cancelled :)',
-                    'error'
-                )
-            }
-        })
+        toastr.info("Refund amount cannot exceed Paid amount", { showDuration: 500 })
     }
-})
+});
 
 function CalculateGrossAmount(quantity, price, RowID) {
     let grossAmount = quantity * price;

@@ -192,9 +192,10 @@ namespace WebApp.Areas.Admin.Controllers
         [HttpPost]
         public ActionResult CashCollections(CashCollectionVM vmodel, List<ServiceListVM> serviceList)
         {
-            var response = _paymentService.CashCollection(vmodel, serviceList);
+            string shiftNumber = "";
+            var response = _paymentService.CashCollection(vmodel, serviceList, out shiftNumber);
+            Session["ShiftNumber"] = shiftNumber;
             return Json(response, JsonRequestBehavior.AllowGet);
-
         }
 
         public ActionResult Transactions()

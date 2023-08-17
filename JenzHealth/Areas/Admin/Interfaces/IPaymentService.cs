@@ -21,7 +21,7 @@ namespace WebApp.Areas.Admin.Interfaces
         List<PartPaymentVM> GetPartPayments(string BillInvoiceNumber);
         bool MapPartPayment(List<PartPaymentVM> vmodel);
         bool Deposite(DepositeCollectionVM vmodel);
-        CashCollectionVM CashCollection(CashCollectionVM vmodel, List<ServiceListVM> serviceList);
+        CashCollectionVM CashCollection(CashCollectionVM vmodel, List<ServiceListVM> serviceList, out string shiftNumber);
         Waiver GetWaivedAmountForBillInvoiceNumber(string billInvoiceNumber);
         TransactionVM GetTransactionReports(TransactionVM vmodel);
         TransactionVM GetShiftTransactionDetails(int shiftID);

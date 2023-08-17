@@ -115,11 +115,13 @@
                                     <img class="user-avatar rounded-circle mr-2" src="~/Content/images/user.png" alt="User Avatar">
                                     @if (Session["UserId"] != null)
                                     {
-                        <span class="d-none d-md-inline-block">@Session["Name"].ToString()</span>}
-                    else
-                    {
-                        Response.Redirect("~/Account/Login", true);
-                    }
+
+                                <span class="d-none d-md-inline-block">@Session["Name"].ToString() <br /> @Session["ShiftNumber"].ToString()</span>
+                                    }
+                                            else
+                                            {
+                                                Response.Redirect("~/Account/Login", true);
+                                            }
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-small">
                                     <a class="dropdown-item" href="~/Admin/User/ChangePassword"><i class="material-icons">&#xE7FD;</i> Change Password</a>

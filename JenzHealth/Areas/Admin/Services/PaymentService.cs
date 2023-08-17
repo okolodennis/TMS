@@ -288,9 +288,10 @@ namespace WebApp.Areas.Admin.Services
 
             return true;
         }
-        public CashCollectionVM CashCollection(CashCollectionVM vmodel, List<ServiceListVM> serviceList)
+        public CashCollectionVM CashCollection(CashCollectionVM vmodel, List<ServiceListVM> serviceList, out string shiftNumber)
         {
             var shift = _userService.GetShift();
+            shiftNumber = shift.ShiftUniqueID;
             var paymentCount = _db.ApplicationSettings.FirstOrDefault().PaymentCount;
             paymentCount++;
             string billInvoiceNumber = string.Empty;

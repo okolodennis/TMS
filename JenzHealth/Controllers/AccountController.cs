@@ -50,6 +50,8 @@ namespace WebApp.Controllers
                     var RoleID = db.Users.Where(x => x.Id == UserID).FirstOrDefault().RoleID;
                     var PermissionList = db.RolePermissions.Where(x => x.RoleID == RoleID).ToList();
                     Nav.GetRolePermissionMenu(Nav.ApplicationMenu, PermissionList);
+                    var shift = _userService.GetShift();
+                    Session["ShiftNumber"] = shift.ShiftUniqueID;
                 }
                 if (Global.ReturnUrl != null)
                 {
@@ -130,6 +132,8 @@ namespace WebApp.Controllers
             Session["Name"] = Firstname + " " + Lastname;
             Session["Role"] = Role;
             Session["RoleID"] = RoleID;
+      
+
         }
 
         #endregion

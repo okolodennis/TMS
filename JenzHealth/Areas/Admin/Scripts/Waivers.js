@@ -101,29 +101,38 @@ $(".Search").on("change", function () {
 });
 
 $("#FinishBtn").click(function () {
-    Swal.fire({
-        title: 'Confirmation',
-        text: "Are you sure, you want to proceed with this operation?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, proceed!'
-    }).then((result) => {
-        if (result.value) {
-            $("#WaiverForm").submit();
-        }
-        else if (
-            result.dismiss === Swal.DismissReason.cancel
-        ) {
-            swalWithBootstrapButtons.fire(
-                'Cancelled',
-                'Cancelled :)',
-                'error'
-            )
-        }
-    })
-})
+    let netAmount = ConvertToDecimal($("#NetAmount").val());
+    let waiverAmount = ConvertToDecimal($("#waiverAmount").val());
+
+    if (waiverAmount <= netAmount) {
+        Swal.fire({
+            title: 'Confirmation',
+            text: "Are you sure, you want to proceed with this operation?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, proceed!'
+        }).then((result) => {
+           
+            if (result.value) {
+                $("#WaiverForm").submit();
+            }
+            else if (
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
+                swalWithBootstrapButtons.fire(
+                    'Cancelled',
+                    'Cancelled :)',
+                    'error'
+                )
+            }
+        });
+    }
+    else {
+        toastr.info("Wavier amount cannot exceed Net amount", { showDuration: 500 })
+    }
+});
 
 
 $("#waiverAmount").keyup(function () {
