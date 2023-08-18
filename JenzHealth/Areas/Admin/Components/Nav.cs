@@ -113,7 +113,7 @@ namespace WebApp.Areas.Admin.Components
                 new Menu(url: "/Admin/Payment/PartPayment",stringText:"Part Payment", icon: null ?? defaultIcon, isMenu: true,claim: "account.partpayment", childMenus: null),
                 new Menu(url: "/Admin/Payment/Waivers",stringText:"Waivers", icon: null ?? defaultIcon, isMenu: true,claim: "account.waivers", childMenus: null),
                 new Menu(url: "/Admin/Payment/Refunds",stringText:"Refunds", icon: null ?? defaultIcon, isMenu: true,claim: "account.refunds", childMenus: null),
-                new Menu(url: "/Admin/Payment/RecieptCancellations",stringText:"Reciept cancellation", icon: null ?? defaultIcon, isMenu: true,claim: "account.recieptcancellation", childMenus: null),
+                new Menu(url: "/Admin/Payment/RecieptCancellations",stringText:"Reciept Cancellation", icon: null ?? defaultIcon, isMenu: true,claim: "account.recieptcancellation", childMenus: null),
                }),
 
              //Activity

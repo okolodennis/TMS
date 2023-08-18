@@ -1,13 +1,13 @@
 ﻿@using WebApp.DAL.Entity;
 @model WebApp.Areas.Admin.ViewModels.RefundVM
 @{
-    ViewBag.Title = "Refunds";
+    ViewBag.Title = "Reciept Cancellations";
 }
 <!-- Page Header -->
 <div class="page-header row no-gutters py-4">
     <div class="col-12 col-sm-11 text-center text-sm-left mb-0">
         <span class="text-uppercase page-subtitle">Account management</span>
-        <h3 class="page-title">Refunds</h3>
+        <h3 class="page-title">Reciept Cancellations</h3>
     </div>
     <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
         <button type="button" id="close" class="btn btn-white fa-pull-right" title="Click to close all">close</button>
@@ -19,7 +19,7 @@
             <div class="card-header">
 
                 <div class="m-0">
-                    @using (Html.BeginForm("Refunds", "Payment", FormMethod.Post, new { area = "Admin", @class = "validate", novalidate = true }))
+                    @using (Html.BeginForm("RecieptCancellations", "Payment", FormMethod.Post, new { area = "Admin", @class = "validate", novalidate = true }))
                     {
                         <div style="background: #c1cee7; border-radius:10px">
                             <div class="form-group col-md-12">
