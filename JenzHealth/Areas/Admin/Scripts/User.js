@@ -216,5 +216,7 @@ function validatePassword() {
     }
 
 };
-
+function ResetPassword(Id) {
+    $("#UserId").val(Id);
+};
 

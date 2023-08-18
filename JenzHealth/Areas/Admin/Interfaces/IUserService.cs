@@ -34,5 +34,6 @@ namespace WebApp.Areas.Admin.Interfaces
         List<string> GetUserAutoComplete(string term);
         bool CheckIfUsernameExist(string term);
         List<string> GetTailorAutoComplete(string term);
+        bool ResetPassword(UserVM vmodel);
     }
 }

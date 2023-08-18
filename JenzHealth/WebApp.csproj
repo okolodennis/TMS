@@ -553,6 +553,7 @@
     <Content Include="Areas\Admin\Views\ApplicationSettings\_CreateSettlementSetup.cshtml" />
     <Content Include="Areas\Admin\Views\ApplicationSettings\_EditSettlementSetup.cshtml" />
     <Content Include="Areas\Admin\Views\Report\SharedRevenueReport.cshtml" />
+    <Content Include="Areas\Admin\Views\User\_ResetPassword.cshtml" />
     <None Include="BillingDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>BillingDataSet.Designer.cs</LastGenOutput>

@@ -154,7 +154,14 @@ namespace WebApp.Areas.Admin.Services
             _db.SaveChanges();
             return true;
         }
-
+        public bool ResetPassword(UserVM vmodel)
+        {
+            var model = _db.Users.FirstOrDefault(x => x.Id == vmodel.UserId);
+            model.Password = CustomEnrypt.Encrypt(vmodel.Password);
+            _db.Entry(model).State = System.Data.Entity.EntityState.Modified;
+            _db.SaveChanges();
+            return true;
+        }
         /* *************************************************************************** */
         //Role
 

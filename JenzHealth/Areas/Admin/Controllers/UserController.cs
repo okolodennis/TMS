@@ -58,7 +58,7 @@ namespace WebApp.Areas.Admin.Controllers
         }
         #endregion
 
-        public ActionResult Manage(bool? Added,bool? Editted)
+        public ActionResult Manage(bool? Added, bool? Editted, bool? Resetted)
         {
             if (!Nav.CheckAuthorization(Request.Url.AbsolutePath))
             {
@@ -75,6 +75,12 @@ namespace WebApp.Areas.Admin.Controllers
                 ViewBag.ShowAlert = true;
                 TempData["AlertType"] = "alert-success";
                 TempData["AlertMessage"] = "User updated successfully.";
+            }
+            if (Resetted == true)
+            {
+                ViewBag.ShowAlert = true;
+                TempData["AlertType"] = "alert-success";
+                TempData["AlertMessage"] = "Password reset successful.";
             }
             ViewBag.Roles = new SelectList(db.Roles.Where(x => x.IsDeleted == false), "Id", "Description");
             ViewBag.Users = _userService.GetUsers();
@@ -151,7 +157,17 @@ namespace WebApp.Areas.Admin.Controllers
             }
             return RedirectToAction("ChangePassword", new { Updated = hasUpdated });
         }
-
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult ResetPassword(UserVM vmodel)
+        {
+            bool hasSaved = false;
+            if (ModelState.IsValid)
+            {
+                hasSaved = _userService.ResetPassword(vmodel);
+            }
+            return RedirectToAction("Manage", new { Resetted = hasSaved });
+        }
         // Role
         public ActionResult ManageRoles(bool? Added,bool? Editted)
         {

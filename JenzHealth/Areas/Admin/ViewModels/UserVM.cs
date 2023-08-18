@@ -9,6 +9,7 @@ namespace WebApp.Areas.Admin.ViewModels
     public class UserVM
     {
         public int Id { get; set; }
+        public int UserId { get; set; }
         public string Username { get; set; }
         public string Username1 { get; set; }
         public string Firstname { get; set; }

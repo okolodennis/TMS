@@ -23,54 +23,58 @@
                     </button>
                 </h6>
             </div>
-                <table class="file-manager file-manager-list d-none table-responsive">
-                    <thead class="bg-light">
+            <table class="file-manager file-manager-list d-none table-responsive">
+                <thead class="bg-light">
+                    <tr>
+                        <th scope="col">First name</th>
+                        <th scope="col">Last name</th>
+                        <th scope="col">User name</th>
+                        <th scope="col">E-mail</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in ViewBag.Users)
+                    {
                         <tr>
-                            <th scope="col">First name</th>
-                            <th scope="col">Last name</th>
-                            <th scope="col">User name</th>
-                            <th scope="col">E-mail</th>
-                            <th scope="col">Role</th>
-                            <th scope="col">Actions</th>
+                            <td>@row.Firstname</td>
+                            <td>@row.Lastname</td>
+                            <td>@row.Username</td>
+                            <td>@row.Email</td>
+                            <td>@row.Role</td>
+                            <td>
+                                <button type="button" class="btn btn-outline-accent" onclick="Edit(@row.Id)" data- toggle="modal" data-target="#Edit">
+                                    <i class="dropdown-icon lnr-pencil"> </i><span>Edit</span>
+                                </button>
+                                <button type="button" class="btn btn-outline-danger" onclick="Prompt(@row.Id)">
+                                    <i class="dropdown-icon lnr-trash"> </i><span>Delete</span>
+                                </button>
+                                @if (row.IsActive == true)
+                                {
+                                    <button type="button" class="btn btn-outline-warning" onclick="Deactivate(@row.Id)">
+                                        <i class="dropdown-icon ion-android-close"> </i><span>Deactivate</span>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-outline-java" onclick="Activate(@row.Id)">
+                                        <i class="dropdown-icon ion-android-done-all"> </i><span>Activate</span>
+                                    </button>
+                                }
+                                <button type="button" class="btn btn-outline-secondary" onclick="ResetPassword(@row.Id)" data-toggle="modal" data-target="#ResetPassword">
+                                    <i class="dropdown-icon lnr-pencil"> </i><span>Reset Password</span>
+                                </button>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var row in ViewBag.Users)
-                        {
-                            <tr>
-                                <td>@row.Firstname</td>
-                                <td>@row.Lastname</td>
-                                <td>@row.Username</td>
-                                <td>@row.Email</td>
-                                <td>@row.Role</td>
-                                <td>
-                                    <button type="button" class="btn btn-outline-accent" onclick="Edit(@row.Id)" data-toggle="modal" data-target="#Edit">
-                                        <i class="dropdown-icon lnr-pencil"> </i><span>Edit</span>
-                                    </button>
-                                    <button type="button" class="btn btn-outline-danger" onclick="Prompt(@row.Id)">
-                                        <i class="dropdown-icon lnr-trash"> </i><span>Delete</span>
-                                    </button>
-                                    @if (row.IsActive == true)
-                                    {
-                                        <button type="button" class="btn btn-outline-warning" onclick="Deactivate(@row.Id)">
-                                            <i class="dropdown-icon ion-android-close"> </i><span>Deactivate</span>
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        <button type="button" class="btn btn-outline-java" onclick="Activate(@row.Id)">
-                                            <i class="dropdown-icon ion-android-done-all"> </i><span>Activate</span>
-                                        </button>
-                                    }
-                                </td>
-                            </tr>
-                        }
+                    }
 
-                    </tbody>
-                </table>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+@Html.Partial("_ResetPassword")
 @section Scripts{
     <script src="~/Areas/Admin/Scripts/User.js"></script>
 }
