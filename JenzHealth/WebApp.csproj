@@ -149,6 +149,7 @@
     <Content Include="Areas\Admin\Scripts\Customer.js" />
     <Content Include="Areas\Admin\Scripts\ClothStatus.js" />
     <Content Include="Areas\Admin\Scripts\LabPreparation.js" />
+    <Content Include="Areas\Admin\Scripts\EarnedRevenueReport.js" />
     <Content Include="Areas\Admin\Scripts\TakeMeasurement.js" />
     <Content Include="Areas\Admin\Scripts\Deposite.js" />
     <Content Include="Areas\Admin\Scripts\ClothType.js" />
@@ -330,6 +331,7 @@
     <Compile Include="Areas\Admin\ViewModels\Report\BillDetailsVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\Report\SettingsDataSetVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\ClothTypeVM.cs" />
+    <Compile Include="Areas\Admin\ViewModels\EarnedRevenueReportVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\SharedRevenueReportVM.cs" />
     <Compile Include="BillingDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -552,8 +554,9 @@
     <Content Include="Areas\Admin\Views\ApplicationSettings\ManageSettlementSetup.cshtml" />
     <Content Include="Areas\Admin\Views\ApplicationSettings\_CreateSettlementSetup.cshtml" />
     <Content Include="Areas\Admin\Views\ApplicationSettings\_EditSettlementSetup.cshtml" />
-    <Content Include="Areas\Admin\Views\Report\SharedRevenueReport.cshtml" />
+    <Content Include="Areas\Admin\Views\Report\EarnedRevenueReport.cshtml" />
     <Content Include="Areas\Admin\Views\User\_ResetPassword.cshtml" />
+    <Content Include="Areas\Admin\Views\Report\SharedRevenueReport.cshtml" />
     <None Include="BillingDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>BillingDataSet.Designer.cs</LastGenOutput>

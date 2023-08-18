@@ -96,6 +96,21 @@ namespace WebApp.Areas.Admin.Controllers
             }
             return View();
         }
+        public ActionResult EarnedRevenueReport()
+        {
+            if (!Nav.CheckAuthorization(Request.Url.AbsolutePath))
+            {
+                throw new UnauthorizedAccessException();
+            }
+            var model = new EarnedRevenueReportVM();
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult EarnedRevenueReport(EarnedRevenueReportVM vmodel)
+        {
+            var model = _paymentService.GetEarnedRevenueReport(vmodel);
+            return View(model);
+        }
         public ActionResult SharedRevenueReport()
         {
             if (!Nav.CheckAuthorization(Request.Url.AbsolutePath))

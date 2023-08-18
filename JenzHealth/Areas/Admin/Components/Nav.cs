@@ -74,6 +74,7 @@ namespace WebApp.Areas.Admin.Components
             // Report
             new Menu(url: "#",stringText:"Report Management", icon: "money", isMenu: true,claim: "Report", childMenus: new List<Menu>(){
                // new Menu(url: "/Admin/Report/ClothCollectors",stringText:"Cloth Collectors", icon: null ?? defaultIcon, isMenu: true,claim: "report.labresultcollectors", childMenus: null),
+                new Menu(url: "/Admin/Report/EarnedRevenueReport",stringText:"Earned Revenue Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.earnedrevenuereport", childMenus: null),
                 new Menu(url: "/Admin/Report/SharedRevenueReport",stringText:"Shared Revenue Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.sharedrevenuereport", childMenus: null),
             }),
 
@@ -151,6 +152,7 @@ namespace WebApp.Areas.Admin.Components
              // Report
             new Menu(url: "#",stringText:"Report Management", icon: "money", isMenu: true,claim: "Report", childMenus: new List<Menu>(){
                 //new Menu(url: "/Admin/Report/ClothCollectors",stringText:"Cloth Collectors", icon: null ?? defaultIcon, isMenu: true,claim: "report.labresultcollectors", childMenus: null),
+                new Menu(url: "/Admin/Report/EarnedRevenueReport",stringText:"Earned Revenue Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.earnedrevenuereport", childMenus: null),
                 new Menu(url: "/Admin/Report/SharedRevenueReport",stringText:"Shared Revenue Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.sharedrevenuereport", childMenus: null),
             }),
 

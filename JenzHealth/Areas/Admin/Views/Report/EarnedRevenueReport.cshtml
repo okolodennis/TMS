@@ -1,0 +1,141 @@
+﻿@model WebApp.Areas.Admin.ViewModels.EarnedRevenueReportVM
+@{
+    ViewBag.Title = "Earned Revenue Report";
+}
+<!-- Page Header -->
+<div class="page-header row no-gutters py-4">
+    <div class="col-12 col-sm-11 text-center text-sm-left mb-0">
+        <span class="text-uppercase page-subtitle">Report Management</span>
+        <h3 class="page-title">Earned Revenue Report</h3>
+    </div>
+    <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
+        <button type="button" id="close" class="btn btn-white fa-pull-right" title="Click to close all">close</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card card-small mb-4">
+            <div class="card-header border-bottom">
+                <h6 class="m-0">
+                    Summaries
+                </h6>
+                <br />
+                <div class="m-0">
+                    @using (Html.BeginForm("EarnedRevenueReport", "Report", FormMethod.Post, new { area = "Admin", @class = "validate", novalidate = true }))
+                    {
+                        <div class="row">
+                       
+                            <div class="form-group col-md-12">
+                                <label for="socialGitHub" class="fa-pull-right">Date range</label>
+                                <div id="analytics-overview-date-range" class="input-daterange input-group input-group-sm ml-auto">
+                                    <input type="text" class="input-sm form-control" autocomplete="off" name="StartDate" placeholder="Start Date" id="analytics-overview-date-range-1">
+                                    <input type="text" class="input-sm form-control" autocomplete="off" name="EndDate" placeholder="End Date" id="analytics-overview-date-range-2">
+                                    <span class="input-group-append">
+                                        <span class="input-group-text">
+                                            <i class="material-icons">&#xE916;</i>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <button class="btn btn-primary">
+                                    <i class="material-icons">search</i> Search
+                                </button>
+                            </div>
+                            <div class="col">
+                                <div class="d-flex ml-lg-auto my-auto">
+                                    <div class="btn-group btn-group-sm mr-2 ml-lg-auto" role="group" aria-label="Table row actions">
+                                        <button type="button" class="btn btn-white" onclick="window.location.reload(true);">
+                                            <i class="fa fa-1x fa-retweet"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class=" m-2 row">
+                <div class="form-group col-md-6">
+                    <label for="socialGitHub">Tailor's Name</label>
+                    <div class="input-group input-group-seamless">
+                        @Html.EditorFor(model => model.TailorName, new { htmlAttributes = new { @class = "form-control", disabled = "disabled", placeholder = "" } })
+                    </div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="socialGitHub">From</label>
+                    <div class="input-group input-group-seamless">
+                        @Html.EditorFor(model => model.StartDateString, new { htmlAttributes = new { @class = "form-control", disabled = "disabled", placeholder = "" } })
+                    </div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="socialGitHub">To</label>
+                    <div class="input-group input-group-seamless">
+                        @Html.EditorFor(model => model.EndDateString, new { htmlAttributes = new { @class = "form-control", disabled = "disabled", placeholder = "" } })
+                    </div>
+                </div>
+            </div>
+            <div class=" m-2">
+                <table class="transaction-history datatable dataTable table table-responsive-md table-sm table-bordered  table-hover" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th scope="col">Cloth Type</th>
+                            <th scope="col">Quantity</th>
+                            <th class="sum" scope="col">Unit Service Charge</th>
+                            <th class="sum" scope="col">Total Service Charge</th>
+                            <th scope="col">Bill Number</th>
+                            <th scope="col">Final Receipt Number</th>
+                            <th scope="col">Date</th>
+                            <th class="sum" scope="col">Owner Share</th>
+                            <th class="sum" scope="col">Partner Share</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr class="text-center p-2 bg-light">
+                            <th></th>
+                            <th>Total: @Model.TotalQuantity</th>
+                            <th>Total: ₦@Model.TotalUnitCharge.ToString("#,##0.##").00</th>
+                            <th>Total: ₦@Model.TotalTotalCharge.ToString("#,##0.##").00</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th>Total: ₦@Model.TotalOwnerShare.ToString("#,##0.##").00</th>
+                            <th>Total: ₦@Model.TotalPartnerShare.ToString("#,##0.##").00</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        @{
+                            if (Model.TableData != null)
+                            {
+                                foreach (var row in Model.TableData)
+                                {
+                                    <tr>
+                                        <td>@row.ClothType</td>
+                                        <td>@row.Quantity</td>
+                                        <td>₦@row.UnitCharge.ToString("#,##0.##").00</td>
+                                        <td>₦@row.TotalCharge.ToString("#,##0.##").00</td>
+                                        <td>@row.BillNumber</td>
+                                        <td>@row.FinalReceiptNo</td>
+                                        <td>@row.Date.ToShortDateString()</td>
+                                        <td>₦@row.OwnerShare.ToString("#,##0.##").00</td>
+                                        <td>₦@row.PartnerShare.ToString("#,##0.##").00</td>
+
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/Areas/Admin/Scripts/EarnedRevenueReport.js"></script>
+    <script src="~/Scripts/jquery.autocomplete.js"></script>
+}
+
