@@ -17,5 +17,6 @@ namespace WebApp.Areas.Admin.Interfaces
         CustomerVM GetCustomer(string unqiueID);
         CustomerVM SearchCustomerWithIDorPhoneNumber(string value);
         List<string> GetCustomerOrPhoneAutoComplete(string term);
+        CustomerReportVM CustomerReport(CustomerReportVM vmodel);
     }
 }

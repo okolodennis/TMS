@@ -143,6 +143,8 @@
     <Content Include="Areas\Admin\Scripts\AntiBiotic.js" />
     <Content Include="Areas\Admin\Scripts\Billings.js" />
     <Content Include="Areas\Admin\Scripts\CashCollections.js" />
+    <Content Include="Areas\Admin\Scripts\CustomerReport.js" />
+    <Content Include="Areas\Admin\Scripts\PaymentReport.js" />
     <Content Include="Areas\Admin\Scripts\SettlementSetup.js" />
     <Content Include="Areas\Admin\Scripts\Compute.js" />
     <Content Include="Areas\Admin\Scripts\ComputeNonTemplated.js" />
@@ -320,6 +322,8 @@
     <Compile Include="Areas\Admin\Services\ActivityService.cs" />
     <Compile Include="Areas\Admin\Services\ReportService.cs" />
     <Compile Include="Areas\Admin\ViewModels\BilledClothes.cs" />
+    <Compile Include="Areas\Admin\ViewModels\CustomerReportVM.cs" />
+    <Compile Include="Areas\Admin\ViewModels\PaymentReportVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\SettlementSetupVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\ClothTypeMeasurementVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\ClocthCollectionVM.cs" />
@@ -557,6 +561,8 @@
     <Content Include="Areas\Admin\Views\Report\EarnedRevenueReport.cshtml" />
     <Content Include="Areas\Admin\Views\User\_ResetPassword.cshtml" />
     <Content Include="Areas\Admin\Views\Report\SharedRevenueReport.cshtml" />
+    <Content Include="Areas\Admin\Views\Report\PaymentReport.cshtml" />
+    <Content Include="Areas\Admin\Views\Report\CustomerReport.cshtml" />
     <None Include="BillingDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>BillingDataSet.Designer.cs</LastGenOutput>

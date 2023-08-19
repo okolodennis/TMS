@@ -96,6 +96,36 @@ namespace WebApp.Areas.Admin.Controllers
             }
             return View();
         }
+        public ActionResult CustomerReport()
+        {
+            if (!Nav.CheckAuthorization(Request.Url.AbsolutePath))
+            {
+                throw new UnauthorizedAccessException();
+            }
+            var model = new CustomerReportVM();
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult CustomerReport(CustomerReportVM vmodel)
+        {
+            var model = _customerService.CustomerReport(vmodel);
+            return View(model);
+        }
+        public ActionResult PaymentReport()
+        {
+            if (!Nav.CheckAuthorization(Request.Url.AbsolutePath))
+            {
+                throw new UnauthorizedAccessException();
+            }
+            var model = new PaymentReportVM();
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult PaymentReport(PaymentReportVM vmodel)
+        {
+            var model = _paymentService.GetPaymentReport(vmodel);
+            return View(model);
+        }
         public ActionResult EarnedRevenueReport()
         {
             if (!Nav.CheckAuthorization(Request.Url.AbsolutePath))

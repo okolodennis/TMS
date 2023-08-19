@@ -37,5 +37,6 @@ namespace WebApp.Areas.Admin.Interfaces
         List<string> GetBillNumberAutoComplete(string term);
         List<string> GetRecieptNumberAutoComplete(string term);
         EarnedRevenueReportVM GetEarnedRevenueReport(EarnedRevenueReportVM vmodel);
+        PaymentReportVM GetPaymentReport(PaymentReportVM vmodel);
     }
 }

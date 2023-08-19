@@ -1,12 +1,12 @@
-﻿@model WebApp.Areas.Admin.ViewModels.EarnedRevenueReportVM
+﻿@model WebApp.Areas.Admin.ViewModels.CustomerReportVM
 @{
-    ViewBag.Title = "Earned Revenue Report";
+    ViewBag.Title = "Customer Report";
 }
 <!-- Page Header -->
 <div class="page-header row no-gutters py-4">
     <div class="col-12 col-sm-11 text-center text-sm-left mb-0">
         <span class="text-uppercase page-subtitle">Report Management</span>
-        <h3 class="page-title">Earned Revenue Report</h3>
+        <h3 class="page-title">Customer Report</h3>
     </div>
     <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
         <button type="button" id="close" class="btn btn-white fa-pull-right" title="Click to close all">close</button>
@@ -21,7 +21,7 @@
                 </h6>
                 <br />
                 <div class="m-0">
-                    @using (Html.BeginForm("EarnedRevenueReport", "Report", FormMethod.Post, new { area = "Admin", @class = "validate", novalidate = true }))
+                    @using (Html.BeginForm("CustomerReport", "Report", FormMethod.Post, new { area = "Admin", @class = "validate", novalidate = true }))
                     {
                         <div class="row">
                             <div class="form-group col-sm-12">
@@ -43,7 +43,7 @@
                                     <i class="material-icons">search</i> Search
                                 </button>
                                 <button class="btn btn-secondary">
-                                    Print
+                                  Print
                                 </button>
                             </div>
                         </div>
@@ -55,14 +55,12 @@
                     <thead>
                         <tr>
                             <th scope="col">S/N</th>
-                            <th scope="col">Customer Name</th>
-                            <th scope="col">Bill Number</th>
-                            @*<th scope="col">Cloth Type</th>
-                            <th scope="col">Quantity</th>*@
-                            <th scope="col">Receipt Number</th>
-                            <th scope="col">Amount</th>
+                            <th scope="col">Customer Number</th>
+                            <th scope="col">Sur Name</th>
+                            <th scope="col">First Name</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Registered By</th>
                             <th scope="col">Date</th>
-                            <th class="sum" scope="col">Cumulative Amount</th>
                         </tr>
                     </thead>
                     <tfoot>
@@ -71,9 +69,9 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th>Total: ₦@Model.TotalAmount.ToString("#,##0.##").00</th>
                             <th></th>
-                            <th>Total: ₦@Model.TotalCumulativeAmount.ToString("#,##0.##").00</th>
+                            <th></th>
+                            <th></th>
                         </tr>
                     </tfoot>
                     <tbody>
@@ -84,14 +82,12 @@
                                 {
                                     <tr>
                                         <td>@row.Count</td>
-                                        <td>@row.CustomerName</td>
-                                        <td>@row.BillNumber</td>
-                                        @*<td>@row.ClothType</td>
-                                        <td>@row.Quantity</td>*@
-                                        <td>@row.ReceiptNo</td>
-                                        <td>₦@row.Amount.ToString("#,##0.##").00</td>
-                                        <td>@row.Date.ToShortDateString()</td>
-                                        <td>₦@row.CumulativeAmount.ToString("#,##0.##").00</td>
+                                        <td>@row.CustomerUniqueID</td>
+                                        <td>@row.Lastname</td>
+                                        <td>@row.Firstname</td>
+                                        <td>@row.PhoneNumber</td>
+                                        <td>@row.RegisteredBy</td>
+                                        <td>@row.DateCreated.ToShortDateString()</td>
 
                                     </tr>
                                 }
@@ -105,6 +101,6 @@
     </div>
 </div>
 @section Scripts{
-    <script src="~/Areas/Admin/Scripts/EarnedRevenueReport.js"></script>
+    <script src="~/Areas/Admin/Scripts/CustomerReport.js"></script>
 }
 

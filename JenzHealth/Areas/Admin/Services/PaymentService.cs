@@ -508,96 +508,89 @@ namespace WebApp.Areas.Admin.Services
 
             return shift;
         }
-        public EarnedRevenueReportVM GetEarnedRevenueReport(EarnedRevenueReportVM vmodel)
+        public PaymentReportVM GetPaymentReport(PaymentReportVM vmodel)
         {
 
             NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
-            var model = new EarnedRevenueReportVM();
-            List<EarnedRevenueReportVM> records = new List<EarnedRevenueReportVM>();
-            List<string> cashCollections = new List<string>();
+            var model = new PaymentReportVM();
+            List<PaymentReportVM> records = new List<PaymentReportVM>();
+            List<CashCollection> cashCollections = new List<CashCollection>();
 
             if (vmodel.StartDate != null && vmodel.EndDate != null)
             {
                 var startDate = new DateTime(vmodel.StartDate.Value.Year, vmodel.StartDate.Value.Month, vmodel.StartDate.Value.Day, DateTime.MinValue.Hour, DateTime.MinValue.Minute, DateTime.MinValue.Second);
                 var endDate = new DateTime(vmodel.EndDate.Value.Year, vmodel.EndDate.Value.Month, vmodel.EndDate.Value.Day, DateTime.MaxValue.Hour, DateTime.MaxValue.Minute, DateTime.MaxValue.Second);
 
-                model.StartDateString = startDate.ToShortDateString();
-                model.EndDateString = endDate.ToShortDateString();
-                cashCollections = _db.CashCollections.Where(x => x.DatePaid >= startDate && x.DatePaid <= endDate && !x.IsDeposit && !x.IsDeleted && !x.IsCancelled).Select(o => o.BillInvoiceNumber).ToList();
-            }
-            else
-            {
-                cashCollections = _db.CashCollections.Where(x => !x.IsDeposit && !x.IsDeleted && !x.IsCancelled).Select(o => o.BillInvoiceNumber).ToList();
+                cashCollections = _db.CashCollections.Where(x => x.DatePaid >= startDate && x.DatePaid <= endDate && !x.IsDeleted && !x.IsCancelled).ToList();
             }
 
-            var Tailor = _db.Users.FirstOrDefault(x => x.Username == vmodel.Tailor && !x.IsDeleted);
-            if (Tailor != null)
+            int count = 0;
+            foreach (var item in cashCollections)
             {
-                model.TailorName = Tailor?.Lastname + " " + Tailor?.Firstname;
-                var getAssignedTailor = _db.AssignedTailorToBilledClothes.Where(x => x.IsReady && x.TailorId == Tailor.Id).Select(o => o.Billing.InvoiceNumber).ToList();
-                var transactions = getAssignedTailor.Intersect(cashCollections);
-                //cashCollections.Join(_db.AssignedTailorToBilledClothes.Where(x=>x.IsReady ), cash => cash.BillInvoiceNumber, asstailor => asstailor.Billing.InvoiceNumber, (cash, asstailor) => new );
-
-                //var transactions = _db.AssignedTailorToBilledClothes.Where(x =>  x.TailorId == Tailor.Id)
-                //    .Join(_db.CashCollections.Where(x => !x.IsDeleted && !x.IsCancelled),
-                //    asstailor => asstailor.Billing.InvoiceNumber, cash => cash.BillInvoiceNumber, (asstailor, cash) => new 
-                //    {
-                //        asstailor.BillingId,
-                //        asstailor.Billing.ClothTypeID,
-                //        cash.BillInvoiceNumber,
-                //        asstailor.TailorId,
-                //        cash.BalanceAmount,
-                //        cash.DatePaid,
-                //        cash.PaymentReciept,
-                //        cash.IsDeposit
-                //    });
-
-                foreach (var item in transactions)
+                count = count + 1;
+                var record = new PaymentReportVM()
                 {
-                    var billings = _db.Billings.Where(x => x.InvoiceNumber == item && x.IsDeleted == false).ToList();
-                    foreach (var billing in billings)
-                    {
-                        var clothTypeId = billing.ClothTypeID;
-                        var getSettlement = _db.SettlementSetups.FirstOrDefault(x => x.TailorID == Tailor.Id && x.ClothTypeID == clothTypeId && x.IsActive && !x.IsDeleted);
-                        var tailorAssignment = _db.AssignedTailorToBilledClothes.FirstOrDefault(x => x.BillingId == billing.Id && x.IsReady);
-                        var Quantity = tailorAssignment.Quantity;
-
-                        if (getSettlement != null)
-                        {
-                            var BillInvoiceNumber = billing.InvoiceNumber;
-                            var clothType = _db.ClothTypes.FirstOrDefault(x => x.Id == clothTypeId);
-                            var TotalCharge = (clothType.CostPrice * Quantity);
-                            var partnerShare = (TotalCharge * (getSettlement.PartnerPercent / 100));
-                            var record = new EarnedRevenueReportVM()
-                            {
-                                Quantity = Quantity,
-                                BillNumber = BillInvoiceNumber,
-                                ClothType = clothType.Name,
-                                UnitCharge = clothType.CostPrice,
-                                TotalCharge = TotalCharge,
-                                FinalReceiptNo = _db.CashCollections.FirstOrDefault(x => x.BillInvoiceNumber == billing.InvoiceNumber && !x.IsDeposit && !x.IsDeleted && !x.IsCancelled)?.PaymentReciept,
-                                Date = _db.CashCollections.FirstOrDefault(x => x.BillInvoiceNumber == billing.InvoiceNumber && !x.IsDeposit && !x.IsDeleted && !x.IsCancelled).DatePaid,
-                                PartnerShare = partnerShare,
-                                OwnerShare = (TotalCharge - partnerShare),
-                            };
-
-                            records.Add(record);
-                        }
-                    }
-                }
+                    Count = count,
+                    CustomerName = _db.Billings.FirstOrDefault(x => x.InvoiceNumber == item.BillInvoiceNumber).CustomerName,
+                    BillNumber = item.BillInvoiceNumber,
+                    ReceiptNo = item.PaymentReciept,
+                    Amount = item.AmountPaid,
+                    Cash = item.PaymentType == PaymentType.CASH ? item.AmountPaid : 0,
+                    POS = item.PaymentType == PaymentType.POS ? item.AmountPaid : 0,
+                    ETransfer = item.PaymentType == PaymentType.EFT ? item.AmountPaid : 0,
+                    Date = item.DatePaid,
+                };
+                record.CumulativeAmount = records.Sum(x => x.Amount) == 0 ? record.Amount : (records.Sum(x => x.Amount) + record.Amount);
+                records.Add(record);
                 model.TableData = records;
-                model.TotalUnitCharge = records.Sum(x=>x.UnitCharge);
-                model.TotalOwnerShare = records.Sum(x=>x.OwnerShare);
-                model.TotalPartnerShare = records.Sum(x=>x.PartnerShare);
-                model.TotalTotalCharge = records.Sum(x=>x.TotalCharge);
-                model.TotalQuantity = records.Sum(x=>x.Quantity);
+                model.TotalAmount = records.Sum(x => x.Amount);
+                model.TotalCumulativeAmount = records.Sum(x => x.CumulativeAmount);
+                model.TotalCash = records.Sum(x => x.Cash);
+                model.TotalPOS = records.Sum(x => x.POS);
+                model.TotalETransfer = records.Sum(x => x.ETransfer);
 
+            }
+            return model;
+        }
+        public EarnedRevenueReportVM GetEarnedRevenueReport(EarnedRevenueReportVM vmodel)
+        {
+
+            NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
+            var model = new EarnedRevenueReportVM();
+            List<EarnedRevenueReportVM> records = new List<EarnedRevenueReportVM>();
+            List<CashCollection> cashCollections = new List<CashCollection>();
+
+            if (vmodel.StartDate != null && vmodel.EndDate != null)
+            {
+                var startDate = new DateTime(vmodel.StartDate.Value.Year, vmodel.StartDate.Value.Month, vmodel.StartDate.Value.Day, DateTime.MinValue.Hour, DateTime.MinValue.Minute, DateTime.MinValue.Second);
+                var endDate = new DateTime(vmodel.EndDate.Value.Year, vmodel.EndDate.Value.Month, vmodel.EndDate.Value.Day, DateTime.MaxValue.Hour, DateTime.MaxValue.Minute, DateTime.MaxValue.Second);
+
+                cashCollections = _db.CashCollections.Where(x => x.DatePaid >= startDate && x.DatePaid <= endDate && !x.IsDeposit && !x.IsDeleted && !x.IsCancelled).ToList();
+            }
+            int count = 0;
+            foreach (var item in cashCollections)
+            {
+                count = count + 1;
+                var record = new EarnedRevenueReportVM()
+                {
+                    Count = count,
+                    CustomerName = _db.Billings.FirstOrDefault(x => x.InvoiceNumber == item.BillInvoiceNumber).CustomerName,
+                    BillNumber = item.BillInvoiceNumber,
+                    ReceiptNo = item.PaymentReciept,
+                    Amount = item.NetAmount,
+                    Date = item.DatePaid,
+                };
+                record.CumulativeAmount = records.Sum(x => x.Amount) == 0 ? record.Amount : (records.Sum(x => x.Amount) + record.Amount);
+                records.Add(record);
+                model.TableData = records;
+                model.TotalAmount = records.Sum(x => x.Amount);
+                model.TotalCumulativeAmount = records.Sum(x => x.CumulativeAmount);
+           
             }
             return model;
         }
        public SharedRevenueReportVM GetSharedRevenueReport(SharedRevenueReportVM vmodel)
         {
-
             NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
             var model = new SharedRevenueReportVM();
             List<SharedRevenueReportVM> records = new List<SharedRevenueReportVM>();

@@ -1,12 +1,12 @@
-﻿@model WebApp.Areas.Admin.ViewModels.EarnedRevenueReportVM
+﻿@model WebApp.Areas.Admin.ViewModels.PaymentReportVM
 @{
-    ViewBag.Title = "Earned Revenue Report";
+    ViewBag.Title = "Payment Report";
 }
 <!-- Page Header -->
 <div class="page-header row no-gutters py-4">
     <div class="col-12 col-sm-11 text-center text-sm-left mb-0">
         <span class="text-uppercase page-subtitle">Report Management</span>
-        <h3 class="page-title">Earned Revenue Report</h3>
+        <h3 class="page-title">Payment Report</h3>
     </div>
     <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
         <button type="button" id="close" class="btn btn-white fa-pull-right" title="Click to close all">close</button>
@@ -21,7 +21,7 @@
                 </h6>
                 <br />
                 <div class="m-0">
-                    @using (Html.BeginForm("EarnedRevenueReport", "Report", FormMethod.Post, new { area = "Admin", @class = "validate", novalidate = true }))
+                    @using (Html.BeginForm("PaymentReport", "Report", FormMethod.Post, new { area = "Admin", @class = "validate", novalidate = true }))
                     {
                         <div class="row">
                             <div class="form-group col-sm-12">
@@ -39,7 +39,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-8">
-                                <button class="btn btn-primary">
+                                <button class="btn btn-primary" type="submit">
                                     <i class="material-icons">search</i> Search
                                 </button>
                                 <button class="btn btn-secondary">
@@ -62,6 +62,9 @@
                             <th scope="col">Receipt Number</th>
                             <th scope="col">Amount</th>
                             <th scope="col">Date</th>
+                            <th scope="col">Cash</th>
+                            <th scope="col">POS</th>
+                            <th scope="col">E-Transfer</th>
                             <th class="sum" scope="col">Cumulative Amount</th>
                         </tr>
                     </thead>
@@ -73,6 +76,9 @@
                             <th></th>
                             <th>Total: ₦@Model.TotalAmount.ToString("#,##0.##").00</th>
                             <th></th>
+                            <th>Total: ₦@Model.TotalCash.ToString("#,##0.##").00</th>
+                            <th>Total: ₦@Model.TotalPOS.ToString("#,##0.##").00</th>
+                            <th>Total: ₦@Model.TotalETransfer.ToString("#,##0.##").00</th>
                             <th>Total: ₦@Model.TotalCumulativeAmount.ToString("#,##0.##").00</th>
                         </tr>
                     </tfoot>
@@ -82,18 +88,21 @@
                             {
                                 foreach (var row in Model.TableData)
                                 {
-                                    <tr>
-                                        <td>@row.Count</td>
-                                        <td>@row.CustomerName</td>
-                                        <td>@row.BillNumber</td>
-                                        @*<td>@row.ClothType</td>
-                                        <td>@row.Quantity</td>*@
-                                        <td>@row.ReceiptNo</td>
-                                        <td>₦@row.Amount.ToString("#,##0.##").00</td>
-                                        <td>@row.Date.ToShortDateString()</td>
-                                        <td>₦@row.CumulativeAmount.ToString("#,##0.##").00</td>
+                                                <tr>
+                                                    <td>@row.Count</td>
+                                                    <td>@row.CustomerName</td>
+                                                    <td>@row.BillNumber</td>
+                                                    @*<td>@row.ClothType</td>
+                                                    <td>@row.Quantity</td>*@
+                                                    <td>@row.ReceiptNo</td>
+                                                    <td>₦@row.Amount.ToString("#,##0.##").00</td>
+                                                    <td>@row.Date.ToShortDateString()</td>
+                                                    <td>₦@row.Cash.ToString("#,##0.##").00</td>
+                                                    <td>₦@row.POS.ToString("#,##0.##").00</td>
+                                                    <td>₦@row.ETransfer.ToString("#,##0.##").00</td>
+                                                    <td>₦@row.CumulativeAmount.ToString("#,##0.##").00</td>
 
-                                    </tr>
+                                                </tr>
                                 }
                             }
                         }
@@ -105,6 +114,6 @@
     </div>
 </div>
 @section Scripts{
-    <script src="~/Areas/Admin/Scripts/EarnedRevenueReport.js"></script>
+    <script src="~/Areas/Admin/Scripts/PaymentReport.js"></script>
 }
 

@@ -74,6 +74,8 @@ namespace WebApp.Areas.Admin.Components
             // Report
             new Menu(url: "#",stringText:"Report Management", icon: "money", isMenu: true,claim: "Report", childMenus: new List<Menu>(){
                // new Menu(url: "/Admin/Report/ClothCollectors",stringText:"Cloth Collectors", icon: null ?? defaultIcon, isMenu: true,claim: "report.labresultcollectors", childMenus: null),
+                new Menu(url: "/Admin/Report/CustomerReport",stringText:"Customer Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.customerreport", childMenus: null),
+                new Menu(url: "/Admin/Report/PaymentReport",stringText:"Payment Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.paymentreport", childMenus: null),
                 new Menu(url: "/Admin/Report/EarnedRevenueReport",stringText:"Earned Revenue Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.earnedrevenuereport", childMenus: null),
                 new Menu(url: "/Admin/Report/SharedRevenueReport",stringText:"Shared Revenue Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.sharedrevenuereport", childMenus: null),
             }),
@@ -152,6 +154,8 @@ namespace WebApp.Areas.Admin.Components
              // Report
             new Menu(url: "#",stringText:"Report Management", icon: "money", isMenu: true,claim: "Report", childMenus: new List<Menu>(){
                 //new Menu(url: "/Admin/Report/ClothCollectors",stringText:"Cloth Collectors", icon: null ?? defaultIcon, isMenu: true,claim: "report.labresultcollectors", childMenus: null),
+                new Menu(url: "/Admin/Report/CustomerReport",stringText:"Customer Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.customerreport", childMenus: null),
+                new Menu(url: "/Admin/Report/PaymentReport",stringText:"Payment Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.paymentrevenuereport", childMenus: null),
                 new Menu(url: "/Admin/Report/EarnedRevenueReport",stringText:"Earned Revenue Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.earnedrevenuereport", childMenus: null),
                 new Menu(url: "/Admin/Report/SharedRevenueReport",stringText:"Shared Revenue Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.sharedrevenuereport", childMenus: null),
             }),
@@ -333,9 +337,12 @@ namespace WebApp.Areas.Admin.Components
         public static void AssignPermission(string permission, int roleID, bool isAssigned)
         {
             var RolePermission = db.RolePermissions.Where(p => p.RoleID == roleID && p.PermissionID == db.Permissions.FirstOrDefault(x => x.Description == permission).Id).FirstOrDefault();
-            RolePermission.IsAssigned = isAssigned;
-            db.Entry(RolePermission).State = System.Data.Entity.EntityState.Modified;
-            db.SaveChanges();
+            if (RolePermission != null)
+            {
+                RolePermission.IsAssigned = isAssigned;
+                db.Entry(RolePermission).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
+            }
         }
 
         public static bool CheckAuthorization(string resourceUrl)

@@ -73,7 +73,8 @@ namespace WebApp.Areas.Admin.Services
                 Address = vmodel.Address,
                 Gender = vmodel.Gender,
                 IsDeleted = false,
-                DateCreated = DateTime.Now
+                DateCreated = DateTime.Now,
+                CreatedByID = Global.AuthenticatedUserID,
             };
             _db.Customers.Add(model);
             _db.SaveChanges();
@@ -99,7 +100,41 @@ namespace WebApp.Areas.Admin.Services
             }).FirstOrDefault();
             return model;
         }
+        public CustomerReportVM CustomerReport(CustomerReportVM vmodel)
+        {
 
+            var model = new CustomerReportVM();
+            List<CustomerReportVM> records = new List<CustomerReportVM>();
+            List<Customer> lists = new List<Customer>();
+
+            if (vmodel.StartDate != null && vmodel.EndDate != null)
+            {
+                var startDate = new DateTime(vmodel.StartDate.Value.Year, vmodel.StartDate.Value.Month, vmodel.StartDate.Value.Day, DateTime.MinValue.Hour, DateTime.MinValue.Minute, DateTime.MinValue.Second);
+                var endDate = new DateTime(vmodel.EndDate.Value.Year, vmodel.EndDate.Value.Month, vmodel.EndDate.Value.Day, DateTime.MaxValue.Hour, DateTime.MaxValue.Minute, DateTime.MaxValue.Second);
+
+                lists = _db.Customers.Where(x => x.DateCreated >= startDate && x.DateCreated <= endDate && !x.IsDeleted).ToList();
+            }
+            int count = 0;
+            foreach (var b in lists)
+            {
+                count = count + 1;
+                var record = new CustomerReportVM()
+                {
+                    CustomerUniqueID = b.CustomerUniqueID,
+                    Count = count,
+                    Firstname = b.Firstname,
+                    Lastname = b.Lastname,
+                    Gender = b.Gender,
+                    PhoneNumber = b.PhoneNumber,
+                    DateCreated = b.DateCreated,
+                    RegisteredBy = b.CreatedBy?.Username,
+                };
+                records.Add(record);
+                model.TableData = records;
+               
+            }
+            return model;
+        }
         // Editting and updating Customer
         public bool EditCustomer(CustomerVM vmodel)
         {
