@@ -534,13 +534,13 @@ namespace WebApp.Areas.Admin.Services
                     CustomerName = _db.Billings.FirstOrDefault(x => x.InvoiceNumber == item.BillInvoiceNumber).CustomerName,
                     BillNumber = item.BillInvoiceNumber,
                     ReceiptNo = item.PaymentReciept,
-                    Amount = item.AmountPaid,
+                  //  Amount = item.AmountPaid,
                     Cash = item.PaymentType == PaymentType.CASH ? item.AmountPaid : 0,
                     POS = item.PaymentType == PaymentType.POS ? item.AmountPaid : 0,
                     ETransfer = item.PaymentType == PaymentType.EFT ? item.AmountPaid : 0,
                     Date = item.DatePaid,
                 };
-                record.CumulativeAmount = records.Sum(x => x.Amount) == 0 ? record.Amount : (records.Sum(x => x.Amount) + record.Amount);
+                record.CumulativeAmount = record.Cash + record.POS + record.ETransfer;
                 records.Add(record);
                 model.TableData = records;
                 model.TotalAmount = records.Sum(x => x.Amount);
@@ -584,7 +584,6 @@ namespace WebApp.Areas.Admin.Services
                 records.Add(record);
                 model.TableData = records;
                 model.TotalAmount = records.Sum(x => x.Amount);
-                model.TotalCumulativeAmount = records.Sum(x => x.CumulativeAmount);
            
             }
             return model;
@@ -729,7 +728,8 @@ namespace WebApp.Areas.Admin.Services
                 AmountToRefund = vmodel.AmountToRefund,
                 Comment = vmodel.Comment,
                 DateCreated = DateTime.Now,
-                IsDeletetd = false
+                IsDeletetd = false,
+                RefundedByID = Global.AuthenticatedUserID
             };
             _db.Refunds.Add(model);
             _db.SaveChanges();
