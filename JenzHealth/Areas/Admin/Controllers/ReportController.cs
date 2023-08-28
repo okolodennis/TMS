@@ -13,6 +13,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using WebApp.Areas.Admin.ViewModels.Report;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace WebApp.Areas.Admin.Controllers
 {
@@ -360,6 +363,56 @@ namespace WebApp.Areas.Admin.Controllers
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
+        #endregion
+        #region PDF Reports
+        //[AllowAnonymous]
+        //public ActionResult StaffOffDutyExportToPDF(OffDutyVM svm)
+        //{
+        //    byte[] bytes;
+        //    string mimeType;
+        //    using (var reportViewer = new ReportViewer())
+        //    {
+        //        reportViewer.ProcessingMode = ProcessingMode.Local;
+        //        string path = Server.MapPath("~/Areas/Admin/Reports/StaffOffDutyReport.rdlc");
+        //        reportViewer.LocalReport.ReportEmbeddedResource = path;
+        //        reportViewer.LocalReport.ReportPath = path;
+        //        reportViewer.LocalReport.EnableExternalImages = true;
+        //        using (FileStream stream = new FileStream(path, FileMode.Open))
+        //        {
+        //            reportViewer.LocalReport.LoadReportDefinition(stream);
+        //        }
+        //        var StaffOffDutyDataset = _reportService.StaffOffDutyReport(svm).TableData;
+        //        var ApplicationSettingsDataSet = _settingService.ApplicationSettings();
+        //        if (StaffOffDutyDataset != null)
+        //        {
+        //            reportViewer.LocalReport.DataSources.Add(new ReportDataSource("DataSet1", StaffOffDutyDataset));
+        //            reportViewer.LocalReport.DataSources.Add(new ReportDataSource("DataSet2", ApplicationSettingsDataSet));
+        //        }
+        //        Warning[] warnings;
+        //        string[] streamids;
+        //        string encoding;
+        //        string extension;
+        //        string deviceInfo = "<DeviceInfo><ColorDepth>32</ColorDepth><DpiX>350</DpiX><DpiY>350</DpiY><OutputFormat>EXCEL</OutputFormat>" +
+        //"  <PageWidth>11in</PageWidth>" +
+        // "  <PageHeight>8.5in</PageHeight>" +
+        // "  <MarginTop>0.25in</MarginTop>" +
+        // "  <MarginLeft>0.2in</MarginLeft>" +
+        //  "  <MarginRight>0.2in</MarginRight>" +
+        //  "  <MarginBottom>0.2in</MarginBottom>" +
+        //"</DeviceInfo>";
+        //        bytes = reportViewer.LocalReport.Render("PDF", deviceInfo, out mimeType, out encoding, out extension, out streamids, out warnings);
+        //    }
+        //    var cd = new System.Net.Mime.ContentDisposition
+        //    {
+        //        FileName = string.Format("StaffOffDutyReport.pdf"),
+        //        Inline = true,
+        //    };
+        //    var result = new HttpResponseMessage(HttpStatusCode.OK);
+        //    Stream stream1 = new MemoryStream(bytes);
+        //    result.Content = new StreamContent(stream1);
+        //    result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
+        //    return File(bytes, mimeType, "StaffOffDutyReport.pdf");
+        //}
         #endregion
     }
 }

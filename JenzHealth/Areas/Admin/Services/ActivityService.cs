@@ -49,18 +49,18 @@ namespace WebApp.Areas.Admin.Services
             {
                 if (Global.AuthenticatedUserID == tailor.Id || Global.AuthenticatedUserRoleID != 3)
                 {
-                    var model = _db.AssignedTailorToBilledClothes.Where(x => x.TailorId == tailor.Id).OrderByDescending(o => o.Id).Select(b => new ClothStatusVM()
+                    List<ClothStatusVM> model = _db.AssignedTailorToBilledClothes.Where(x => x.TailorId == tailor.Id).OrderByDescending(o => o.Id).Select(b => new ClothStatusVM()
                     {
                         Id = b.Id,
                         CustomerName = _db.Billings.FirstOrDefault(o => o.InvoiceNumber == b.Billing.InvoiceNumber).CustomerName,
-                        Phone = _db.Billings.FirstOrDefault(o => o.InvoiceNumber == b.Billing.InvoiceNumber).CustomerPhoneNumber,
+                        CollectionDate = b.CollectionDate,
                         BillNumber = b.Billing.InvoiceNumber,
                         ClothType = b.Billing.ClothType.Name,
                         Quantity = b.Quantity,
                         Status = b.IsReady ? "Ready" : "Not Ready",
                         IsReady = b.IsReady,
                     }).ToList();
-
+                    model.ForEach(x => x.CollectionDateString = x.CollectionDate.ToShortDateString());
                     return model;
                 }
                 else

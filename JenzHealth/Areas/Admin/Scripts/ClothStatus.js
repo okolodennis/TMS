@@ -30,9 +30,9 @@ $(".Search").on("change", function () {
                         counter++;
                         let html = "";
                         if (data.IsReady)
-                            html = "<tr id='" + data.Id + "' ><td>" + counter + "</td><td>" + data.BillNumber + "</td><td>" + data.CustomerName + "</td><td>" + data.Phone + "</td><td>" + data.ClothType + "</td><td>" + data.Quantity + "</td><td>" + data.Status + "</td><td><input type='checkbox' class='chk' disabled checked /></td></tr>";
+                            html = "<tr id='" + data.Id + "' ><td>" + counter + "</td><td>" + data.BillNumber + "</td><td>" + data.CustomerName + "</td><td>" + data.ClothType + "</td><td>" + data.Quantity + "</td><td>" + data.CollectionDateString + "</td><td>" + data.Status + "</td><td><input type='checkbox' class='chk' disabled checked /></td></tr>";
                         else
-                            html = "<tr id='" + data.Id + "' ><td>" + counter + "</td><td>" + data.BillNumber + "</td><td>" + data.CustomerName + "</td><td>" + data.Phone + "</td><td>" + data.ClothType + "</td><td>" + data.Quantity + "</td><td>" + data.Status + "</td><td><input type='checkbox' class='chk' /></td></tr>";
+                            html = "<tr id='" + data.Id + "' ><td>" + counter + "</td><td>" + data.BillNumber + "</td><td>" + data.CustomerName + "</td><td>" + data.ClothType + "</td><td>" + data.Quantity + "</td><td>" + data.CollectionDateString + "</td><td>" + data.Status + "</td><td><input type='checkbox' class='chk' /></td></tr>";
                         $("#ServiceBody").append(html);
                         $("#FinishBtn").addClass("d-block");
 

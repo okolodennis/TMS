@@ -96,6 +96,7 @@
     <Reference Include="PowerfulExtensions_4.5, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\PowerfulExtensions.1.0.5\lib\net45\PowerfulExtensions_4.5.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -382,6 +383,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>TemplatedDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="TMSDBDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TMSDBDataSet.xsd</DependentUpon>
     </Compile>
     <Content Include="Areas\Admin\Views\web.config" />
     <Compile Include="App_Start\SearchBotFilter.cs" />
@@ -678,6 +684,17 @@
     <Content Include="TemplatedDataSet.xss">
       <DependentUpon>TemplatedDataSet.xsd</DependentUpon>
     </Content>
+    <Content Include="TMSDBDataSet.xsc">
+      <DependentUpon>TMSDBDataSet.xsd</DependentUpon>
+    </Content>
+    <None Include="TMSDBDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>TMSDBDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="TMSDBDataSet.xss">
+      <DependentUpon>TMSDBDataSet.xsd</DependentUpon>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -698,6 +715,10 @@
   <ItemGroup>
     <EmbeddedResource Include="Areas\Admin\Reports\Laboratory\TemplatedLabResult.rdlc" />
     <EmbeddedResource Include="Areas\Admin\Reports\Laboratory\NonTemplatedLabResult.rdlc" />
+    <EmbeddedResource Include="Areas\Admin\Reports\Payment\CustomerReport.rdlc" />
+    <EmbeddedResource Include="Areas\Admin\Reports\Payment\SharedRevenueReport.rdlc" />
+    <EmbeddedResource Include="Areas\Admin\Reports\Payment\EarnedRevenueReport.rdlc" />
+    <EmbeddedResource Include="Areas\Admin\Reports\Payment\PaymentReport.rdlc" />
     <EmbeddedResource Include="Areas\Admin\Reports\Payment\PaymentReciept.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>

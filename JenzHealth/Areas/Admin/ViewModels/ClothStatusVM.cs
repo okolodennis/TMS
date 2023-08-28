@@ -19,6 +19,8 @@ namespace WebApp.Areas.Admin.ViewModels
         public string CustomerName { get; set; }
         public string Status { get; set; }
         public bool IsReady { get; set; }
+        public string CollectionDateString { get; set; }
+        public DateTime CollectionDate { get; set; }
     }
 
 }

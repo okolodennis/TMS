@@ -345,16 +345,18 @@ namespace WebApp.Areas.Admin.Services
                             TransactionReferenceNumber = vmodel.TransactionReferenceNumber,
                             DatePaid = DateTime.Now,
                             IsDeleted = false,
-                            AmountPaid = vmodel.AmountPaid,
+                            AmountPaid = vmodel.AmountToDeposit != 0 ? vmodel.AmountToDeposit : vmodel.PartPaymentID == null ? vmodel.AmountPaid : _db.PartPayments.FirstOrDefault(x => x.Id == vmodel.PartPaymentID).PartPaymentAmount,
+                          //  AmountPaid = vmodel.AmountPaid,
                             WaivedAmount = vmodel.WaivedAmount,
                             BalanceAmount = vmodel.NetAmount - vmodel.WaivedAmount,
                             NetAmount = vmodel.NetAmount,
                             PaymentType = vmodel.PaymentType,
                             PartPaymentID = vmodel.PartPaymentID,
-                            InstallmentType = "FULL",
+                            InstallmentType = vmodel.AmountToDeposit != 0 ? "DEPOSIT" : vmodel.PartPaymentID == null ? "FULL" : "PART",
                             ShiftID = shift.Id,
                             PaymentReciept = String.Format("PR{0}", paymentCount.ToString("D6")),
-                            CollectedByID = _userService.GetCurrentUser().Id
+                            CollectedByID = _userService.GetCurrentUser().Id,
+                            IsDeposit = vmodel.AmountToDeposit != 0 ? true : false
                         };
 
                         _db.CashCollections.Add(unbilledCashCollection);
@@ -534,17 +536,17 @@ namespace WebApp.Areas.Admin.Services
                     CustomerName = _db.Billings.FirstOrDefault(x => x.InvoiceNumber == item.BillInvoiceNumber).CustomerName,
                     BillNumber = item.BillInvoiceNumber,
                     ReceiptNo = item.PaymentReciept,
-                  //  Amount = item.AmountPaid,
                     Cash = item.PaymentType == PaymentType.CASH ? item.AmountPaid : 0,
                     POS = item.PaymentType == PaymentType.POS ? item.AmountPaid : 0,
                     ETransfer = item.PaymentType == PaymentType.EFT ? item.AmountPaid : 0,
                     Date = item.DatePaid,
+                    Amount = item.AmountPaid
                 };
-                record.CumulativeAmount = record.Cash + record.POS + record.ETransfer;
+                record.CumulativeAmount = records.Sum(x => x.Amount) == 0 ? record.Amount : (records.Sum(x => x.Amount) + record.Amount);
+              //  record.CumulativeAmount = record.Cash + record.POS + record.ETransfer;
                 records.Add(record);
                 model.TableData = records;
                 model.TotalAmount = records.Sum(x => x.Amount);
-                model.TotalCumulativeAmount = records.Sum(x => x.CumulativeAmount);
                 model.TotalCash = records.Sum(x => x.Cash);
                 model.TotalPOS = records.Sum(x => x.POS);
                 model.TotalETransfer = records.Sum(x => x.ETransfer);
