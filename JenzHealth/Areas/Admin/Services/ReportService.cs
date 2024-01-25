@@ -12,23 +12,18 @@ namespace WebApp.Areas.Admin.Services
     public class ReportService : IReportService
     {
         private readonly DatabaseEntities _db;
-        readonly ISeedService _seedService;
         readonly IPaymentService _paymentService;
-        readonly ILaboratoryService _laboratoryService;
         public ReportService()
         {
             _db = new DatabaseEntities();
-            _seedService = new SeedService();
             _paymentService = new PaymentService();
-            _laboratoryService = new LaboratoryService();
         }
 
-        public ReportService(DatabaseEntities db, PaymentService paymentService, LaboratoryService laboratoryService, SeedService seedService)
+        public ReportService(DatabaseEntities db, PaymentService paymentService)
+            
         {
             _db = db;
-            _seedService = seedService;
             _paymentService = paymentService;
-            _laboratoryService = laboratoryService;
         }
 
        

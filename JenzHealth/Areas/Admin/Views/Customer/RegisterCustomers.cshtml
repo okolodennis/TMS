@@ -1,11 +1,11 @@
 ﻿@{
-    ViewBag.Title = "Manage Customers";
+    ViewBag.Title = "Register Customer";
 }
 <!-- Page Header -->
 <div class="page-header row no-gutters py-4">
     <div class="col-12 col-sm-11 text-center text-sm-left mb-0">
-        <span class="text-uppercase page-subtitle">Customer management</span>
-        <h3 class="page-title">Manage Customers</h3>
+        <span class="text-uppercase page-subtitle">Customer Management</span>
+        <h3 class="page-title">Register Customers</h3>
     </div>
     <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
         <button type="button" id="close" class="btn btn-white fa-pull-right" title="Click to close all">close</button>
@@ -16,8 +16,11 @@
         <div class="card card-small mb-4">
             <div class="card-header border-bottom">
                 <h6 class="m-0">
-                    Active Customers
-                 
+                    Registered Customers
+                    <button class="btn btn-primary fa-pull-right" data-toggle="modal"
+                            data-target="#Create">
+                        <i class="material-icons">add</i> Add Customer
+                    </button>
                 </h6>
             </div>
                 <table class="file-manager file-manager-list d-none table-responsive">
@@ -30,7 +33,7 @@
                             <th scope="col" class="border-0 d-none">Email</th>
                             <th scope="col" class="border-0">Phone number</th>
                             <th scope="col" class="border-0 d-none">Address</th>
-                            <th scope="col" class="border-0">Actions</th>
+                          
                         </tr>
                     </thead>
                     <tbody>
@@ -44,14 +47,7 @@
                             <td class="d-none">@row.Email</td>
                             <td>@row.PhoneNumber</td>
                             <td class="d-none">@row.Address</td>
-                            <td>
-                                <button type="button" onclick="Edit(@row.Id)" class="btn btn-outline-accent" data-toggle="modal" data-target="#Edit">
-                                    <i class="dropdown-icon lnr-pencil"> </i><span>Edit</span>
-                                </button>
-                                <button type="button" onclick="Prompt(@row.Id)" class="btn btn-outline-danger">
-                                    <i class="dropdown-icon lnr-trash"> </i><span>Delete</span>
-                                </button>
-                            </td>
+                           
                         </tr>
                         }
                     </tbody>
@@ -62,4 +58,4 @@
 @section Scripts{
     <script src="~/Areas/Admin/Scripts/Customer.js"></script>
 }
-@Html.Partial("_EditCustomer")
+@Html.Partial("_CreateCustomer")

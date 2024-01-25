@@ -11,6 +11,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using WebApp.Areas.Admin.ViewModels.Report;
+using Newtonsoft.Json;
 
 namespace WebApp.Areas.Admin.Controllers
 {
@@ -49,7 +50,7 @@ namespace WebApp.Areas.Admin.Controllers
         IActivityService _activityService;
         public ActivityController()
         {
-            _activityService = new ActivityService(new DatabaseEntities(), new LaboratoryService());
+            _activityService = new ActivityService(new DatabaseEntities());
         }
         public ActivityController(ActivityService activityService)
         {
@@ -145,8 +146,11 @@ namespace WebApp.Areas.Admin.Controllers
             return View("ComputeMeasurement", _activityService.SetupMeasurementCollection(billNumber));
         }
 
+       [HttpPost]
         public JsonResult UpdateComputedMeausurement(List<MeasurementSetupVM> results)
         {
+            var form = HttpContext.Request.Form;
+            var getDatas = HttpContext.Request;
             _activityService.UpdateComputedMeasurement(results);
             return Json("Success", JsonRequestBehavior.AllowGet);
         }

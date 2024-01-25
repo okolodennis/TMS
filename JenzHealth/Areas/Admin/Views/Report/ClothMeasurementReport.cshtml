@@ -1,0 +1,114 @@
+﻿@model WebApp.Areas.Admin.ViewModels.ClothMeasurementReportVM
+@{
+    ViewBag.Title = "Cloth Measurement Report";
+    int count1 = 0;
+}
+<!-- Page Header -->
+<div class="page-header row no-gutters py-4">
+    <div class="col-12 col-sm-11 text-center text-sm-left mb-0">
+        <span class="text-uppercase page-subtitle">Report Management</span>
+        <h3 class="page-title">Cloth Measurement Report</h3>
+    </div>
+    <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
+        <button type="button" id="close" class="btn btn-white fa-pull-right" title="Click to close all">close</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card card-small mb-4">
+            <div class="card-header border-bottom">
+                <h6 class="m-0">
+                    Report Search
+                </h6>
+                <br />
+                <div class="m-0">
+                    @using (Html.BeginForm("ClothMeasurementReport", "Report", FormMethod.Post, new { area = "Admin", @class = "validate", novalidate = true }))
+                    {
+                    <div class="row mb-2">
+                        <div class="form-group col-md-8">
+                            <label for="socialGitHub">Customer number or Phone number</label>
+                            <div class="input-group input-group-seamless">
+                                @Html.EditorFor(model => model.CustomerNumber, new { htmlAttributes = new { @class = "form-control CustomerUnique Search", autocomplete = "off", placeholder = "Enter Customer number or Phone number"} })
+                                <div class="invalid-feedback">
+                                    Customer number or phone number required
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Cloth Type</label>
+                            @Html.DropDownListFor(model => model.ClothTypeId, (IEnumerable<SelectListItem>)ViewBag.ClothType, "-- Select Cloth Type --", new { @class = "form-control" })
+                        </div>
+                    </div>
+                        <div class="row mb-2">
+                            <div class="col-md-4">
+                                <label>Start Date</label>
+                                <div class="input-group">
+                                    @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", autoComplete = "Off", placeholder = "DD/MM/YYYY" } })
+
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>End Date</label>
+                                <div class="input-group">
+                                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", autoComplete = "Off", placeholder = "DD/MM/YYYY" } })
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <button class="btn btn-primary">
+                                    <i class="material-icons">search</i> Search
+                                </button>
+                                @Html.HiddenFor(m => m.exportfiletype, new { id = "exportfiletype", @class = "form-control", Name = "exportfiletype" })
+                                @*<a class="btn btn-secondary" id="pdf" data-form-method="post" href="#">Print</a>*@
+                            </div>
+                        </div>
+                        }
+                    </div>
+            </div>
+                    <div class=" m-2">
+                        <table class="transaction-history datatable dataTable table table-responsive-md table-sm table-bordered  table-hover" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th scope="col">S/N</th>
+                                    <th scope="col">Customer Name</th>
+                                    <th scope="col">Customer ID</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr class="text-center p-2 bg-light">
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                @{
+                                    if (Model.TableData != null)
+                                    {
+                                        foreach (var row in Model.TableData)
+                                        {
+                                            count1 = count1 + 1;
+                                            <tr>
+                                                <td>@count1</td>
+                                                <td>@row.CustomerName</td>
+                                                <td>@row.CustomerNumber</td>
+                                                <td> <a class="btn btn-secondary" target="_blank" href="/Admin/Report/CustomerMeasurementExportToPDF?CustomerNumber=@row.CustomerNumber&ClothTypeID=@Model.ClothTypeId&StartDate=@Model.StartDate&EndDate=@Model.EndDate">View</a></td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                    </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/Areas/Admin/Scripts/ClothMeasurementReport.js"></script>
+}
+

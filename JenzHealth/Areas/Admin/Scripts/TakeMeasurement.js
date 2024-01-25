@@ -57,29 +57,38 @@ $("#FinishBtn").click(function () {
                         }
                     });
 
-
                     const billingid = tbody.parentElement.parentElement.parentElement.getElementsByClassName("BillingID")[0]?.value;
 
-                    const payload = {
-                        BillNumber: $("#billnumber").val(),
-                        ClothTypeId: clothTypeId,
-                        Parameters: paramters,
-                        BillingID: billingid,
-                        TailorAssignments: tailorAssignments
-                    }
-                    
-                    if (payload.ClothTypeId != undefined) {
-                        payloads.push(payload);
+                    if (clothTypeId != undefined) {
+                        let styleImageFile = $("#StyleImageFile-" + clothTypeId);
+                        let fabricsImageFile = $("#FabricsImageFile-" + clothTypeId);
+
+                        convertFileToBase64(styleImageFile[0].files[0], function (styleImageFileBase64) {
+                            convertFileToBase64(fabricsImageFile[0].files[0], function (fabricsImageFileBase64) {
+                                const payload = {
+                                    BillNumber: $("#billnumber").val(),
+                                    ClothTypeId: clothTypeId,
+                                    Parameters: paramters,
+                                    BillingID: billingid,
+                                    TailorAssignments: tailorAssignments,
+                                   // StyleImageFileBase64: styleImageFileBase64,
+                                  //  FabricsImageFileBase64: fabricsImageFileBase64,
+                                }
+                                if (payload.ClothTypeId != undefined) {
+                                    payloads.push(payload);
+                                }
+                            })
+                        })                            
                     }
                 });
-
+                console.log(JSON.stringify({ results: payloads }))
                 if (ShouldSave) {
-                    //Send ajax call to server
                     $.ajax({
                         url: 'UpdateComputedMeausurement',
-                        method: 'Post',
-                        dataType: "json",
-                        data: { results: payloads },
+                        method: 'POST',
+                       // processData: false,
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify({ results: payloads }),
                         success: function (response) {
                             Swal.fire({
                                 title: 'Measurement computed successfully',
@@ -140,6 +149,14 @@ document.addEventListener("keyup change", function (e) {
     }
 })
 
+
+function convertFileToBase64(file, callback) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        callback(e.target.result);
+    };
+    reader.readAsDataURL(file);
+}
 $(function () {
     $(".tailorAutoComplete").autoComplete({
         resolver: "custom",
@@ -198,7 +215,7 @@ function AssignTailor(clothTypeId) {
 
         }
     }
-  
+
 };
 
 function Delete(e) {
@@ -230,3 +247,75 @@ $(function () {
         minLength: 1
     });
 });
+
+function readURL(input, StyleImage) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $(StyleImage).attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+};
+
+function StyleImage(clothTypeId) {
+    let StyleImageFile = "StyleImageFile-" + clothTypeId;
+    let StyleImage = "#StyleImage-" + clothTypeId;
+
+    FileUploadPath = document.getElementById(StyleImageFile).value;
+    var fuData = document.getElementById(StyleImageFile);
+    var Extension = FileUploadPath.substring(FileUploadPath.lastIndexOf('.') + 1).toLowerCase();
+    if (Extension == "gif" || Extension == "png" || Extension == "bmp"
+        || Extension == "jpeg" || Extension == "jpg") {
+        if (fuData.files && fuData.files[0]) {
+            var size = fuData.files[0].size;
+            if (size > 204800) {
+                alert("Maximum file size should not exceeds 20KB");
+                return;
+            }
+        }
+    }
+    else {
+        alert("Image only allows file types of GIF, PNG, JPG, JPEG and BMP. ");
+        return;
+    }
+    readURL(fuData, StyleImage);
+    // $("#logofilename").text(fuData.files[0].name);
+    // $('.img-responsive').attr('src', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==');
+};
+
+function readURLL(input, FabricsImage) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $(FabricsImage).attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+};
+
+function FabricsImage(clothTypeId) {
+    let FabricsImageFile = "FabricsImageFile-" + clothTypeId;
+    let FabricsImage = "#FabricsImage-" + clothTypeId;
+
+    FileUploadPath = document.getElementById(FabricsImageFile).value;
+    var fuData = document.getElementById(FabricsImageFile);
+    var Extension = FileUploadPath.substring(FileUploadPath.lastIndexOf('.') + 1).toLowerCase();
+    if (Extension == "gif" || Extension == "png" || Extension == "bmp"
+        || Extension == "jpeg" || Extension == "jpg") {
+        if (fuData.files && fuData.files[0]) {
+            var size = fuData.files[0].size;
+            if (size > 204800) {
+                alert("Maximum file size should not exceeds 20KB");
+                return;
+            }
+        }
+    }
+    else {
+        alert("Image only allows file types of GIF, PNG, JPG, JPEG and BMP. ");
+        return;
+    }
+    readURLL(fuData, FabricsImage);
+    // $("#logofilename").text(fuData.files[0].name);
+    // $('.img-responsive').attr('src', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==');
+};

@@ -13,7 +13,7 @@
         <button type="button" id="close" class="btn btn-white fa-pull-right" title="Click to close all">close</button>
     </div>
 </div>
-@using (Html.BeginForm("TakeMeasurement", "Activity", FormMethod.Post, new { area = "Admin", @class = "validate", id = "WaiverForm", novalidate = true }))
+@using (Html.BeginForm("TakeMeasurement", "Activity", FormMethod.Post, new { area = "Admin", @class = "validate", id = "WaiverForm", novalidate = true, enctype = "multipart/form-data"  }))
 {
     <div class="row">
         <div class="col">

@@ -13,6 +13,7 @@ namespace WebApp.DAL.DataConnection
         public DatabaseEntities() : base("name=DatabaseEntities")
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<DatabaseEntities, WebApp.DAL.Migrations.Configuration>());
+            base.Configuration.ProxyCreationEnabled = true;
         }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -23,13 +24,7 @@ namespace WebApp.DAL.DataConnection
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<Permission> Permissions { get; set; }
         public virtual DbSet<RolePermission> RolePermissions { get; set; }
-        public virtual DbSet<RevenueDepartment> RevenueDepartments { get; set; }
-        public virtual DbSet<ServiceDepartment> ServiceDepartments { get; set; }
-        public virtual DbSet<Priviledge> Priviledges { get; set; }
-        public virtual DbSet<Template> Templates { get; set; }
-        public virtual DbSet<Vendor> Vendors { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
-        public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<Billing> Billings { get; set; }
         public virtual DbSet<Waiver> Waivers { get; set; }
         public virtual DbSet<PartPayment> PartPayments { get; set; }
@@ -37,17 +32,6 @@ namespace WebApp.DAL.DataConnection
         public virtual DbSet<CashCollection> CashCollections { get; set; }
         public virtual DbSet<Shift> Shifts { get; set; }
         public virtual DbSet<Refund> Refunds { get; set; }
-        public virtual DbSet<Specimen> Specimens { get; set; }
-        public virtual DbSet<AntiBiotic> AntiBiotics { get; set; }
-        public virtual DbSet<Organism> Organisms { get; set; }
-        public virtual DbSet<ServiceParameter> ServiceParameters { get; set; }
-        public virtual DbSet<ServiceParameterSetup> ServiceParameterSetups { get; set; }
-        public virtual DbSet<ServiceParameterRangeSetup> ServiceParameterRangeSetups { get; set; }
-        public virtual DbSet<SpecimenCollection> SpecimenCollections { get; set; }
-        public virtual DbSet<SpecimenCollectionCheckList> SpecimenCollectionCheckLists { get; set; }
-        public virtual DbSet<TemplatedLabPreparation> TemplatedLabPreparations { get; set; }
-        public virtual DbSet<NonTemplatedLabPreparation> NonTemplatedLabPreparations { get; set; }
-        public virtual DbSet<NonTemplatedLabResultOrganismXAntibiotics> NonTemplatedLabResultOrganismXAntibiotics { get; set; }
         public virtual DbSet<ClothType> ClothTypes { get; set; }
         public virtual DbSet<Measurement> Measurements { get; set; }
         public virtual DbSet<ClothTypeMeasurement> ClothTypeMeasurements { get; set; }

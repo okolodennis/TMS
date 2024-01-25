@@ -121,6 +121,23 @@
                                         <p class="form-text text-muted m-0">Setup your finance configuration.</p>
                                     </div>
                                 </div>
+                                <hr />
+
+                                <h6 class="mx-4">Revenue Sharing Pattern</h6>
+                                <div class="form-group col-md-12">
+                                    <div class="input-group">
+                                        <span style="margin:10px;">
+                                            @*<input type="radio" id="PaymentCompleted" name="PaymentCompleted" class="share" checked>*@
+                                            @Html.CheckBoxFor(model => model.PaymentCompleted, new { @class = "", id = "PaymentCompleted" })
+                                            <label for="PaymentCompleted"><b>Share when the cloth is ready and payment completed</b></label>
+                                            <br />
+                                            @*<input type="radio" class="share" id="ClothReady" name="ClothReady">*@
+                                            @Html.CheckBoxFor(model => model.ClothReady, new { @class = "", id = "ClothReady" })
+                                            <label for="ClothReady"><b>Share only when the cloth is ready</b></label>
+
+                                        </span>
+                                    </div>
+                                </div>
 
                                 <div class="form-row mx-4">
                                     <label for="conversationsEmailsToggle" class="col col-form-label">

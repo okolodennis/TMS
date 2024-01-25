@@ -17,5 +17,8 @@ namespace WebApp.Areas.Admin.Interfaces
         void UpdateComputedMeasurement(List<MeasurementSetupVM> vmodel);
         List<RequestTrackerVM> TrackRequest(RequestTrackerVM vmodel);
         bool SaveClothCollector(RequestTrackerVM vmodel);
+        ClothStatusReportVM GetClothStatusReport(ClothStatusReportVM vmodel);
+        ClothMeasurementReportVM GetClothMeasurementReport(ClothMeasurementReportVM vmodel);
+        List<CustomerMeasurementVM> GetCustomerMeasurement(string CustomerNumber, int ClothTypeID, DateTime StartDate, DateTime EndDate);
     }
 }

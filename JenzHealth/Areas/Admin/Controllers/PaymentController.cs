@@ -49,23 +49,20 @@ namespace WebApp.Areas.Admin.Controllers
         DatabaseEntities db = new DatabaseEntities();
         IPaymentService _paymentService;
         ICustomerService _customerService;
-        ISeedService _seedService;
         IApplicationSettingsService _settingsService;
         public PaymentController()
         {
             _paymentService = new PaymentService(db, new UserService());
             _customerService = new CustomerService(db);
-            _seedService = new SeedService(db);
             _settingsService = new ApplicationSettingsService(db);
         }
         public PaymentController(
             PaymentService paymentService,
-            CustomerService customerService,
-            SeedService seedService)
+            CustomerService customerService
+            )
         {
             _paymentService = paymentService;
             _customerService = customerService;
-            _seedService = seedService;
         }
         #endregion
 
@@ -316,11 +313,6 @@ namespace WebApp.Areas.Admin.Controllers
         {
            // var model = _seedService.GetService(servicename);
             var model = _settingsService.GetClothType(servicename);
-            return Json(model, JsonRequestBehavior.AllowGet);
-        }
-        public JsonResult GetServiceAutoComplete(string query)
-        {
-            var model = _seedService.GetServiceAutoComplete(query);
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 

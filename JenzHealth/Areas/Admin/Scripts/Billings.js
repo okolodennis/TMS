@@ -70,7 +70,9 @@ $(".Search").on("change", function () {
         let searchby = $("#SearchBy").val();
 
         if (searchby == "New") {
-            var username = $("#CustomerUniqueID").val();
+            var searchValue = $("#CustomerUniqueID").val();
+            var username = searchValue.split("|")[0];
+
             if (username === "") {
                 $("#CustomerUniqueID").addClass("is-invalid");
             } else {

@@ -13,14 +13,18 @@ namespace WebApp.DAL.Entity
         public int Id { get; set; }
         public int? BillingId { get; set; }
         public int TailorId { get; set; }
+        public int? TakenById { get; set; }
         public int Quantity { get; set; }
         public DateTime DateAssigned { get; set; }
         public DateTime CollectionDate { get; set; }
         public bool IsReady { get; set; }
-
+        public string StyleImageFile { get; set; }
+        public string FabricsImageFile { get; set; }
         [ForeignKey("BillingId")]
-        public Billing Billing { get; set; }
+        public virtual Billing Billing { get; set; }
         [ForeignKey("TailorId")]
-        public User Tailor { get; set; }
+        public virtual User Tailor { get; set; }
+        [ForeignKey("TakenById")]
+        public virtual User TakenBy { get; set; }
     }
 }

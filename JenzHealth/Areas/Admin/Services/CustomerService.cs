@@ -205,7 +205,7 @@ namespace WebApp.Areas.Admin.Services
         public List<string> GetCustomerOrPhoneAutoComplete(string term)
         {
             List<string> list;
-            list = _db.Customers.Where(x => !x.IsDeleted && (x.CustomerUniqueID.StartsWith(term) || x.CustomerUniqueID.EndsWith(term) || x.PhoneNumber.StartsWith(term) || x.PhoneNumber.EndsWith(term))).Select(b => b.CustomerUniqueID).ToList();
+            list = _db.Customers.Where(x => !x.IsDeleted && (x.CustomerUniqueID.StartsWith(term) || x.CustomerUniqueID.EndsWith(term) || x.PhoneNumber.StartsWith(term) || x.PhoneNumber.EndsWith(term))).Select(b => b.CustomerUniqueID + " | " + b.Lastname + " " + b.Firstname).ToList();
             return list;
         }
 

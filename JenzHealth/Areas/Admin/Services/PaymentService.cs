@@ -611,28 +611,14 @@ namespace WebApp.Areas.Admin.Services
                 cashCollections = _db.CashCollections.Where(x => !x.IsDeposit && !x.IsDeleted && !x.IsCancelled).Select(o => o.BillInvoiceNumber).ToList();
             }
 
+            //Search For Tailor
             var Tailor = _db.Users.FirstOrDefault(x => x.Username == vmodel.Tailor && !x.IsDeleted);
             if (Tailor != null)
             {
                 model.TailorName = Tailor?.Lastname + " " + Tailor?.Firstname;
                 var getAssignedTailor = _db.AssignedTailorToBilledClothes.Where(x => x.IsReady && x.TailorId == Tailor.Id).Select(o => o.Billing.InvoiceNumber).ToList();
                 var transactions = getAssignedTailor.Intersect(cashCollections);
-                //cashCollections.Join(_db.AssignedTailorToBilledClothes.Where(x=>x.IsReady ), cash => cash.BillInvoiceNumber, asstailor => asstailor.Billing.InvoiceNumber, (cash, asstailor) => new );
-
-                //var transactions = _db.AssignedTailorToBilledClothes.Where(x =>  x.TailorId == Tailor.Id)
-                //    .Join(_db.CashCollections.Where(x => !x.IsDeleted && !x.IsCancelled),
-                //    asstailor => asstailor.Billing.InvoiceNumber, cash => cash.BillInvoiceNumber, (asstailor, cash) => new 
-                //    {
-                //        asstailor.BillingId,
-                //        asstailor.Billing.ClothTypeID,
-                //        cash.BillInvoiceNumber,
-                //        asstailor.TailorId,
-                //        cash.BalanceAmount,
-                //        cash.DatePaid,
-                //        cash.PaymentReciept,
-                //        cash.IsDeposit
-                //    });
-
+        
                 foreach (var item in transactions)
                 {
                     var billings = _db.Billings.Where(x => x.InvoiceNumber == item && x.IsDeleted == false).ToList();

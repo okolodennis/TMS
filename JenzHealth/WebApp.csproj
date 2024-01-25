@@ -144,6 +144,8 @@
     <Content Include="Areas\Admin\Scripts\AntiBiotic.js" />
     <Content Include="Areas\Admin\Scripts\Billings.js" />
     <Content Include="Areas\Admin\Scripts\CashCollections.js" />
+    <Content Include="Areas\Admin\Scripts\ClothMeasurementReport.js" />
+    <Content Include="Areas\Admin\Scripts\ClothStatusReport.js" />
     <Content Include="Areas\Admin\Scripts\CustomerReport.js" />
     <Content Include="Areas\Admin\Scripts\PaymentReport.js" />
     <Content Include="Areas\Admin\Scripts\SettlementSetup.js" />
@@ -193,6 +195,7 @@
     <Content Include="Content\images\background.jpg" />
     <Content Include="Content\images\background_tailor.jpg" />
     <Content Include="Content\images\background_tailor1.jpg" />
+    <Content Include="Content\images\images.png" />
     <Content Include="Content\images\labLogo.jpg" />
     <Content Include="Content\images\Labrole.jpg" />
     <Content Include="Content\images\LoginBody.jpg" />
@@ -215,6 +218,7 @@
     <Content Include="Scripts\customLadda.js" />
     <Content Include="Scripts\dataTables.responsive.min.js" />
     <Content Include="Scripts\dropzone.min.js" />
+    <Content Include="Scripts\Editor.js" />
     <Content Include="Scripts\extras.1.3.1.min.js" />
     <Content Include="Scripts\fullcalendar.min.js" />
     <Content Include="Scripts\General.js" />
@@ -292,6 +296,7 @@
     <Content Include="Scripts\shards.min.js" />
     <Content Include="Scripts\spin.js" />
     <Content Include="Scripts\SweetAlert.js" />
+    <Content Include="Scripts\Tinymc.js" />
     <Content Include="Scripts\toastr.min.js" />
     <Content Include="Scripts\UrlSearch.js" />
     <Content Include="Scripts\Validation.js" />
@@ -323,12 +328,15 @@
     <Compile Include="Areas\Admin\Services\ActivityService.cs" />
     <Compile Include="Areas\Admin\Services\ReportService.cs" />
     <Compile Include="Areas\Admin\ViewModels\BilledClothes.cs" />
+    <Compile Include="Areas\Admin\ViewModels\ClothMeasurementReportVM.cs" />
+    <Compile Include="Areas\Admin\ViewModels\ClothStatusVM.cs" />
+    <Compile Include="Areas\Admin\ViewModels\CustomerMeasurementVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\CustomerReportVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\PaymentReportVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\SettlementSetupVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\ClothTypeMeasurementVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\ClocthCollectionVM.cs" />
-    <Compile Include="Areas\Admin\ViewModels\ClothStatusVM.cs" />
+    <Compile Include="Areas\Admin\ViewModels\ClothStatusReportVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\MeasurementSetupVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\Report\RequestTrackerVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\ResultApprovalVM.cs" />
@@ -399,10 +407,8 @@
     <Compile Include="Areas\Admin\Controllers\CustomerController.cs" />
     <Compile Include="Areas\Admin\Controllers\ErrorController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
-    <Compile Include="Areas\Admin\Controllers\LaboratoryController.cs" />
     <Compile Include="Areas\Admin\Controllers\PaymentController.cs" />
     <Compile Include="Areas\Admin\Controllers\ReportController.cs" />
-    <Compile Include="Areas\Admin\Controllers\SeedController.cs" />
     <Compile Include="Areas\Admin\Controllers\UserController.cs" />
     <Compile Include="Areas\Admin\Helpers\CustomData.cs" />
     <Compile Include="Areas\Admin\Helpers\CustomDecrypt.cs" />
@@ -412,15 +418,11 @@
     <Compile Include="Areas\Admin\Helpers\HtmlConverter.cs" />
     <Compile Include="Areas\Admin\Interfaces\IApplicationSettingsService.cs" />
     <Compile Include="Areas\Admin\Interfaces\ICustomerService.cs" />
-    <Compile Include="Areas\Admin\Interfaces\ILaboratoryService.cs" />
     <Compile Include="Areas\Admin\Interfaces\IPaymentService.cs" />
-    <Compile Include="Areas\Admin\Interfaces\ISeedService.cs" />
     <Compile Include="Areas\Admin\Interfaces\IUserService.cs" />
     <Compile Include="Areas\Admin\Services\ApplicationSettingsService.cs" />
     <Compile Include="Areas\Admin\Services\CustomerService.cs" />
-    <Compile Include="Areas\Admin\Services\LaboratoryService.cs" />
     <Compile Include="Areas\Admin\Services\PaymentService.cs" />
-    <Compile Include="Areas\Admin\Services\SeedService.cs" />
     <Compile Include="Areas\Admin\Services\UserService.cs" />
     <Compile Include="Areas\Admin\ViewModels\AntiBioticVM.cs" />
     <Compile Include="Areas\Admin\ViewModels\ApplicationSettingsVM.cs" />
@@ -475,29 +477,11 @@
     <Content Include="Areas\Admin\Views\User\_TreeViewPermission.cshtml" />
     <Content Include="Areas\Admin\Views\User\ManagePermissions.cshtml" />
     <Content Include="Areas\Admin\Views\User\ChangePassword.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\ManageRevenueDepartments.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_CreateRevenueDepartment.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_EditRevenueDepartment.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\ManageServiceDepartments.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_CreateServiceDepartment.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_EditServiceDepartment.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\ManagePriviledges.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_CreatePriviledge.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_EditPriviledge.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\ManageTemplates.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_CreateTemplate.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_EditTemplate.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\ManageVendors.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_CreateVendor.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_EditVendor.cshtml" />
     <Content Include="Areas\Admin\Views\Error\Error.cshtml" />
     <Content Include="Areas\Admin\Views\Error\Unauthorized.cshtml" />
-    <Content Include="Areas\Admin\Views\Customer\ManageCustomers.cshtml" />
+    <Content Include="Areas\Admin\Views\Customer\RegisterCustomers.cshtml" />
     <Content Include="Areas\Admin\Views\Customer\_CreateCustomer.cshtml" />
     <Content Include="Areas\Admin\Views\Customer\_EditCustomer.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\ManageServices.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_CreateService.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_EditService.cshtml" />
     <Content Include="Content\fonts\flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2" />
     <Content Include="Areas\Admin\Views\Payment\Billings.cshtml" />
     <Content Include="Areas\Admin\Views\Payment\Waivers.cshtml" />
@@ -522,22 +506,6 @@
     <Content Include="Areas\Admin\Views\Payment\TransactionDetails.cshtml" />
     <Content Include="Areas\Admin\Views\Payment\Refunds.cshtml" />
     <Content Include="Areas\Admin\Views\Payment\RecieptCancellations.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\ManageSpecimens.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_CreateSpecimen.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_EditSpecimen.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\ManageAntiBiotics.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\ManageOrganisms.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_CreateOrganism.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_EditOrganism.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_CreateAntiBiotic.cshtml" />
-    <Content Include="Areas\Admin\Views\Seed\_EditAntiBiotic.cshtml" />
-    <Content Include="Areas\Admin\Views\Laboratory\ParameterSetups.cshtml" />
-    <Content Include="Areas\Admin\Views\Laboratory\RangeSetups.cshtml" />
-    <Content Include="Areas\Admin\Views\Laboratory\SpecimenCollections.cshtml" />
-    <Content Include="Areas\Admin\Views\Laboratory\Preparations.cshtml" />
-    <Content Include="Areas\Admin\Views\Laboratory\Prepare.cshtml" />
-    <Content Include="Areas\Admin\Views\Laboratory\ComputeTemplatedServicePreparation.cshtml" />
-    <Content Include="Areas\Admin\Views\Laboratory\ComputeNonTemplatedServicePreparation.cshtml" />
     <Content Include="CustomerDataSet.xsc">
       <DependentUpon>CustomerDataSet.xsd</DependentUpon>
     </Content>
@@ -558,7 +526,6 @@
     <Content Include="Areas\Admin\Views\Activity\RequestTracker.cshtml" />
     <Content Include="Areas\Admin\Views\Activity\_ViewRequestTracker.cshtml" />
     <Content Include="Areas\Admin\Views\Activity\ComputeMeasurement.cshtml" />
-    <Content Include="Areas\Admin\Views\Laboratory\ResultApproval.cshtml" />
     <Content Include="Areas\Admin\Views\Activity\ClothStatus.cshtml" />
     <Content Include="Areas\Admin\Views\Activity\_ClothCollector.cshtml" />
     <Content Include="Areas\Admin\Views\ApplicationSettings\ManageSettlementSetup.cshtml" />
@@ -569,6 +536,9 @@
     <Content Include="Areas\Admin\Views\Report\SharedRevenueReport.cshtml" />
     <Content Include="Areas\Admin\Views\Report\PaymentReport.cshtml" />
     <Content Include="Areas\Admin\Views\Report\CustomerReport.cshtml" />
+    <Content Include="Areas\Admin\Views\Report\ClothStatusReport.cshtml" />
+    <Content Include="Areas\Admin\Views\Report\ClothMeasurementReport.cshtml" />
+    <Content Include="Areas\Admin\Views\Customer\ManageCustomers.cshtml" />
     <None Include="BillingDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>BillingDataSet.Designer.cs</LastGenOutput>
@@ -704,6 +674,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\Uploads\" />
     <Folder Include="Views\Home\" />
   </ItemGroup>
   <ItemGroup>
@@ -713,12 +684,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Areas\Admin\Reports\Laboratory\TemplatedLabResult.rdlc" />
-    <EmbeddedResource Include="Areas\Admin\Reports\Laboratory\NonTemplatedLabResult.rdlc" />
-    <EmbeddedResource Include="Areas\Admin\Reports\Payment\CustomerReport.rdlc" />
-    <EmbeddedResource Include="Areas\Admin\Reports\Payment\SharedRevenueReport.rdlc" />
-    <EmbeddedResource Include="Areas\Admin\Reports\Payment\EarnedRevenueReport.rdlc" />
-    <EmbeddedResource Include="Areas\Admin\Reports\Payment\PaymentReport.rdlc" />
+    <EmbeddedResource Include="Areas\Admin\Reports\ClothMeasurementReport.rdlc" />
+    <EmbeddedResource Include="Areas\Admin\Reports\ClothStatus1.rdlc" />
+    <EmbeddedResource Include="Areas\Admin\Reports\CustomerReport.rdlc" />
+    <EmbeddedResource Include="Areas\Admin\Reports\SharedRevenueReport.rdlc" />
+    <EmbeddedResource Include="Areas\Admin\Reports\EarnedRevenueReport.rdlc" />
+    <EmbeddedResource Include="Areas\Admin\Reports\PaymentReport.rdlc" />
     <EmbeddedResource Include="Areas\Admin\Reports\Payment\PaymentReciept.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>

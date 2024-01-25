@@ -118,47 +118,50 @@
                 <div id="ServiceTableLoader" style="display:none" class="col text-center">
                     <img src="~/Content/images/Spinner.gif" style="width:50px;height:50px" />
                 </div>
-                <div id="serviceTableDiv">
-                    <table class="file-manager file-manager-list2 d-none table-responsive">
-                        <thead class="bg-light">
-                            <tr>
-                                <th scope="col" class="border-0"></th>
-                                <th scope="col" class="border-0">Cloth Type/Product</th>
-                                <th scope="col" class="border-0">Quantity</th>
-                                <th scope="col" class="border-0">Price (₦)</th>
-                                <th scope="col" class="border-0">Gross Amount (₦)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ServiceBody">
-                        </tbody>
-                        <tfoot style="border-top: 2px solid black; border-bottom: 2px solid black;background-color:#dcdfe1" class="text-center">
-                            <tr>
-                                <th colspan="3"></th>
-                                <th> Net Amount (₦)</th>
-                                <td id="NetAmount">₦0.00</td>
-                            </tr>
-                            <tr>
-                                <th colspan="3"></th>
-                                <th>Waived Amount (₦)</th>
-                                <td id="WaiveAmount">₦0.00</td>
-                            </tr>
-                            @*<tr>
-                                    <th colspan="3"></th>
-                                    <th>Deposited Amount (₦)</th>
-                                    <td id="DepositAmount">₦0.00</td>
-                                </tr>*@
-                            <tr>
-                                <th colspan="3"></th>
-                                <th>Total Paid Amount (₦)</th>
-                                <td id="PaidAmount">₦0.00</td>
-                            </tr>
-                            <tr>
-                                <th colspan="3"></th>
-                                <th> Amount To Pay (₦)</th>
-                                <td id="BalanceAmount">₦0.00</td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                <div class="row">
+                    <div class="col-md-12" id="serviceTableDiv">
+                        <table class="file-manager file-manager-list2 d-none table-responsive">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th scope="col" class="border-0"></th>
+                                    <th scope="col" class="border-0">Cloth Type/Product</th>
+                                    <th scope="col" class="border-0">Quantity</th>
+                                    <th scope="col" class="border-0">Price (₦)</th>
+                                    <th scope="col" class="border-0">Gross Amount (₦)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ServiceBody">
+                            </tbody>
+                            <tfoot style="border-top: 2px solid black; border-bottom: 2px solid black;background-color:#dcdfe1" class="text-center">
+                                <tr>
+
+                                    <td colspan="3"></td>
+                                    <td> Net Amount (₦)</td>
+                                    <td id="NetAmount">₦0.00</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3"></td>
+                                    <td>Waived Amount (₦)</td>
+                                    <td id="WaiveAmount">₦0.00</td>
+                                </tr>
+                                @*<tr>
+                        <th colspan="3"></th>
+                        <th>Deposited Amount (₦)</th>
+                        <td id="DepositAmount">₦0.00</td>
+                    </tr>*@
+                                <tr>
+                                    <td colspan="3"></td>
+                                    <td>Total Paid Amount (₦)</td>
+                                    <td id="PaidAmount">₦0.00</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3"></td>
+                                    <td> Amount To Pay (₦)</td>
+                                    <td id="BalanceAmount">₦0.00</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

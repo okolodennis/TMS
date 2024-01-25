@@ -24,6 +24,7 @@ namespace WebApp.Areas.Admin.ViewModels
         public DateTime DateCreated { get; set; }
         public int? RoleID { get; set; }
         public string Role { get; set; }
+        public bool IsCreateShift { get; set; }
 
     }
 }

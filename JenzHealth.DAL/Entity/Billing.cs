@@ -29,13 +29,13 @@ namespace WebApp.DAL.Entity
         public DateTime? DateCollected { get; set; }
         public int? IssuerID { get; set; }
         [ForeignKey("IssuerID")]
-        public User Issuer { get; set; }
+        public virtual User Issuer { get; set; }
         [ForeignKey("ClothTypeID")]
-        public ClothType ClothType { get; set; }
+        public virtual ClothType ClothType { get; set; }
         [ForeignKey("ServiceID")]
-        public Service Service { get; set; }
+        public virtual Service Service { get; set; }
         public int? BilledByID { get; set; }
         [ForeignKey("BilledByID")]
-        public User BilledBy { get; set; }
+        public virtual User BilledBy { get; set; }
     }
 }

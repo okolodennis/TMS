@@ -54,7 +54,6 @@
     <Compile Include="Entity\AntiBiotic.cs" />
     <Compile Include="Entity\AssignedTailorToBilledCloth.cs" />
     <Compile Include="Entity\SettlementSetup.cs" />
-    <Compile Include="Entity\JobAssignment.cs" />
     <Compile Include="Entity\Booking.cs" />
     <Compile Include="Entity\Billing.cs" />
     <Compile Include="Entity\MeasurementCollection.cs" />

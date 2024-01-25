@@ -55,7 +55,9 @@ namespace WebApp.Areas.Admin.Services
                 LabCount = model.LabCount,
                 SessionTimeOut = model.SessionTimeOut,
                 PaymentCount = model.PaymentCount,
-                ShiftCount = model.ShiftCount
+                ShiftCount = model.ShiftCount,
+                PaymentCompleted = model.PaymentCompleted,
+                ClothReady = model.ClothReady
             };
             return Vmodel;
         }
@@ -72,6 +74,8 @@ namespace WebApp.Areas.Admin.Services
             model.SalesRecieptCopyCount = Vmodel.SalesRecieptCopyCount;
             model.CodeGenSeed = Vmodel.CodeGenSeed;
             model.SessionTimeOut = Vmodel.SessionTimeOut;
+            model.ClothReady = Vmodel.ClothReady;
+            model.PaymentCompleted = Vmodel.PaymentCompleted;
             if (Logo != null)
                 model.Logo = CustomSerializer.Serialize(Logo);
             if (Watermark != null)
@@ -92,6 +96,7 @@ namespace WebApp.Areas.Admin.Services
             {
                Id = b.Id,
                BrandName = b.AppName,
+               InstitutionName = b.AppName,
                Logo = b.Logo == null ? empty : b.Logo,
             //   Watermark = b.Watermark == null ? empty : b.Watermark,
                DateGenerated = DateTime.Now

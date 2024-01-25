@@ -19,5 +19,6 @@ namespace WebApp.Areas.Admin.ViewModels
         public string Religion { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime DateCreated { get; set; }
+      
     }
 }

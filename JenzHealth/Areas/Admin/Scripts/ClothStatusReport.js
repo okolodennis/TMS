@@ -9,7 +9,7 @@ $("#pdf[data-form-method='post']").click(function (event) {
     document.getElementById("exportfiletype").value = 'PDF';
     element.closest("form").each(function () {
         var form = $(this);
-        form.attr("PaymentReport", "Report");
+        form.attr("ClothStatusReport", "Report");
         form.submit();
     });
 });

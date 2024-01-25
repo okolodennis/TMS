@@ -28,5 +28,7 @@ namespace WebApp.DAL.Entity
         public int LabCount { get; set; }
         public int SessionTimeOut { get; set; }
         public bool ExpressWaiver { get; set; }
+        public bool PaymentCompleted { get; set; }
+        public bool ClothReady { get; set; }
     }
 }

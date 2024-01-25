@@ -88,6 +88,7 @@ namespace WebApp.Areas.Admin.Services
                 PhoneNumber = b.PhoneNumber,
                 Address = b.Address,
                 RoleID = b.RoleID,
+                IsCreateShift = b.IsCreateShift
             }).FirstOrDefault();
             return model;
         }
@@ -104,6 +105,7 @@ namespace WebApp.Areas.Admin.Services
             model.Address = vmodel.Address;
             model.RoleID = vmodel.RoleID;
             model.DateModified = DateTime.Now;
+            model.IsCreateShift = vmodel.IsCreateShift;
             _db.Entry(model).State = System.Data.Entity.EntityState.Modified;
             _db.SaveChanges();
             HasSaved = true;

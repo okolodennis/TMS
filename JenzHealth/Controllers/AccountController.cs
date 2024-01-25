@@ -47,11 +47,20 @@ namespace WebApp.Controllers
                     Global.AuthenticatedUserID = Convert.ToInt32(Session["UserId"].ToString());
                     Global.AuthenticatedUserRoleID = Convert.ToInt32(Session["RoleID"].ToString());
                     var UserID = Convert.ToInt32(Session["UserId"]);
-                    var RoleID = db.Users.Where(x => x.Id == UserID).FirstOrDefault().RoleID;
+                    var User = db.Users.FirstOrDefault(x => x.Id == UserID);
+                    var RoleID = User.RoleID;
+                    bool isCreateShift = User.IsCreateShift;
                     var PermissionList = db.RolePermissions.Where(x => x.RoleID == RoleID).ToList();
                     Nav.GetRolePermissionMenu(Nav.ApplicationMenu, PermissionList);
-                    var shift = _userService.GetShift();
-                    Session["ShiftNumber"] = shift.ShiftUniqueID;
+                    if (isCreateShift)
+                    {
+                        var shift = _userService.GetShift();
+                        Session["ShiftNumber"] = shift.ShiftUniqueID;
+                    }
+                    else
+                    {
+                        Session["ShiftNumber"] = "";
+                    }
                 }
                 if (Global.ReturnUrl != null)
                 {

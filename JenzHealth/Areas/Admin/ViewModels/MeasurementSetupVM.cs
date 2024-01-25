@@ -29,6 +29,10 @@ namespace WebApp.Areas.Admin.ViewModels
         public DateTime CollectionDate { get; set; } = DateTime.Now;
         public List<ClothTypeParameter> Parameters { get; set; }
         public List<TailorAssignment> TailorAssignments { get; set; }
+        public HttpPostedFileBase StyleImageFile { get; set; }
+        public string StyleImageFileBase64 { get; set; }
+        public HttpPostedFileBase FabricsImageFile { get; set; }
+        public string FabricsImageFileBase64 { get; set; }
     }
 
     public class ClothTypeParameter

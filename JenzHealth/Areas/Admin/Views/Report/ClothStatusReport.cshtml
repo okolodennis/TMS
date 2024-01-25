@@ -1,0 +1,269 @@
+﻿@model WebApp.Areas.Admin.ViewModels.ClothStatusReportVM
+@{
+    ViewBag.Title = "Cloth Status Report";
+    int count1 = 0;
+    int count2 = 0;
+    int count3 = 0;
+}
+<!-- Page Header -->
+<div class="page-header row no-gutters py-4">
+    <div class="col-12 col-sm-11 text-center text-sm-left mb-0">
+        <span class="text-uppercase page-subtitle">Report Management</span>
+        <h3 class="page-title">Cloth Status Report</h3>
+    </div>
+    <div class="btn-group btn-group-sm" role="group" aria-label="Table row actions">
+        <button type="button" id="close" class="btn btn-white fa-pull-right" title="Click to close all">close</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card card-small mb-4">
+            <div class="card-header border-bottom">
+                <h6 class="m-0">
+                    Report Search
+                </h6>
+                <br />
+                <div class="m-0">
+                    @using (Html.BeginForm("ClothStatusReport", "Report", FormMethod.Post, new { area = "Admin", @class = "validate", novalidate = true }))
+                    {
+                        <div class="row mb-2">
+                            <div class="col-md-4">
+                                <label>Start Date</label>
+                                <div class="input-group">
+                                    @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", autoComplete = "Off", placeholder = "DD/MM/YYYY" } })
+
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>End Date</label>
+                                <div class="input-group">
+                                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", autoComplete = "Off", placeholder = "DD/MM/YYYY" } })
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <button class="btn btn-primary">
+                                    <i class="material-icons">search</i> Search
+                                </button>
+                                @Html.HiddenFor(m => m.exportfiletype, new { id = "exportfiletype", @class = "form-control", Name = "exportfiletype" })
+
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+
+            <ul class="nav nav-tabs">
+                <li class="nav-item " style="font-size: 16px;"><a class="nav-link active" data-toggle="tab" href="#home">Cloth Ready For Collection</a></li>
+                <li class="nav-item" style="font-size: 16px;"><a class="nav-link" data-toggle="tab" href="#menu1">Cloth Due For Collection But Not Ready</a></li>
+                <li class="nav-item" style="font-size: 16px;"><a class="nav-link" data-toggle="tab" href="#menu2">Cloth Collected</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div id="home" class="tab-pane  active">
+                    <div class=" m-2">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h5 class="m-4"><b>Cloth Ready For Collections</b></h5>
+                            </div>
+                            <div class="col-sm-4">
+                            </div>
+                            <div class="col-sm-2">
+                                <a class="m-4 btn btn-secondary" id="pdf" data-form-method="post" href="#">Print</a>
+                            </div>
+                        </div>
+                        <table class="transaction-history datatable dataTable table table-responsive-md table-sm table-bordered  table-hover" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th scope="col">S/N</th>
+                                    <th scope="col">Customer Number</th>
+                                    <th scope="col">Customer ID</th>
+                                    <th scope="col">Phone Number</th>
+                                    <th scope="col">Bill Number</th>
+                                    <th scope="col">Cloth Type</th>
+                                    <th scope="col">Recieved Date</th>
+                                    <th scope="col">Collection Date</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr class="text-center p-2 bg-light">
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                @{
+                                    if (Model.TableData1 != null)
+                                    {
+                                        foreach (var row in Model.TableData1)
+                                        {
+                                            count1 = count1 + 1;
+                                            <tr>
+                                                <td>@count1</td>
+                                                <td>@row.CustomerName</td>
+                                                <td>@row.CustomerNumber</td>
+                                                <td>@row.Phone</td>
+                                                <td>@row.BillNumber</td>
+                                                <td>@row.ClothType</td>
+                                                <td>@row.RecievedDate.ToShortDateString()</td>
+                                                <td>@row.CollectionDate.ToShortDateString()</td>
+
+                                            </tr>
+                                        }
+                                    }
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+                <div id="menu1" class="tab-pane fade">
+                    <div class=" m-2">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h5 class="m-4"><b>Cloth Due For Collection But Not Ready</b></h5>
+                            </div>
+                            <div class="col-sm-4">
+                            </div>
+                            <div class="col-sm-2">
+                                <a class="m-4 btn btn-secondary" id="pdf" data-form-method="post" href="#">Print</a>
+                            </div>
+                        </div>
+                        <table class="transaction-history datatable dataTable table table-responsive-md table-sm table-bordered  table-hover" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th scope="col">S/N</th>
+                                    <th scope="col">Customer Number</th>
+                                    <th scope="col">Customer ID</th>
+                                    <th scope="col">Phone Number</th>
+                                    <th scope="col">Bill Number</th>
+                                    <th scope="col">Cloth Type</th>
+                                    <th scope="col">Recieved Date</th>
+                                    <th scope="col">Collection Date</th>
+                                    <th scope="col">Assigned Tailor</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr class="text-center p-2 bg-light">
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                @{
+                                    if (Model.TableData2 != null)
+                                    {
+                                        foreach (var row in Model.TableData2)
+                                        {
+                                            count2 = count2 + 1;
+                                            <tr>
+                                                <td>@count2</td>
+                                                <td>@row.CustomerName</td>
+                                                <td>@row.CustomerNumber</td>
+                                                <td>@row.Phone</td>
+                                                <td>@row.BillNumber</td>
+                                                <td>@row.ClothType</td>
+                                                <td>@row.RecievedDate.ToShortDateString()</td>
+                                                <td>@row.CollectionDate.ToShortDateString()</td>
+                                                <td>@row.Tailor</td>
+
+                                            </tr>
+                                        }
+                                    }
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+                <div id="menu2" class="tab-pane fade">
+                    <div class=" m-2">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h5 class="m-4"><b>Cloth Collected</b></h5>
+                            </div>
+                            <div class="col-sm-4">
+                            </div>
+                            <div class="col-sm-2">
+                                <a class="m-4 btn btn-secondary" id="pdf" data-form-method="post" href="#">Print</a>
+                            </div>
+                        </div>
+                        <table class="transaction-history datatable dataTable table table-responsive-md table-sm table-bordered  table-hover" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th scope="col">S/N</th>
+                                    <th scope="col">Customer Number</th>
+                                    <th scope="col">Customer ID</th>
+                                    <th scope="col">Phone Number</th>
+                                    <th scope="col">Bill Number</th>
+                                    <th scope="col">Cloth Type</th>
+                                    <th scope="col">Recieved Date</th>
+                                    <th scope="col">Due Collection Date</th>
+                                    <th scope="col">Actual Collection Date</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr class="text-center p-2 bg-light">
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                @{
+                                    if (Model.TableData3 != null)
+                                    {
+                                        foreach (var row in Model.TableData3)
+                                        {
+                                            count3 = count3 + 1;
+                                            <tr>
+                                                <td>@count3</td>
+                                                <td>@row.CustomerName</td>
+                                                <td>@row.CustomerNumber</td>
+                                                <td>@row.Phone</td>
+                                                <td>@row.BillNumber</td>
+                                                <td>@row.ClothType</td>
+                                                <td>@row.RecievedDate.ToShortDateString()</td>
+                                                <td>@row.CollectionDate.ToShortDateString()</td>
+                                                <td>@row.ActualCollectionDate.ToShortDateString()</td>
+
+                                            </tr>
+                                        }
+                                    }
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/Areas/Admin/Scripts/ClothStatusReport.js"></script>
+}
+

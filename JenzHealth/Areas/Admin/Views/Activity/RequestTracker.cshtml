@@ -23,28 +23,35 @@
                 <div class="m-0">
                     @using (Html.BeginForm("RequestTracker", "Activity", FormMethod.Post, new { area = "Admin", @class = "validate", novalidate = true }))
                     {
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label for="socialGitHub">Customer number or Phone number</label>
+                            @Html.EditorFor(model => model.CustomerUniqueID, new { htmlAttributes = new { @class = "form-control CustomerUnique Search", autocomplete = "off", placeholder = "Enter Customer number or Phone number" } })
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="socialGitHub">Receipt Number</label>
+                            @Html.EditorFor(model => model.ReceiptNumber, new { htmlAttributes = new { @class = "form-control RecieptNumberAutoComplete", autocomplete = "off", placeholder = "Enter Receipt Number" } })
+                        </div>
+                    </div>
+
                         <div class="row">
-                            <div class="form-group col-md-8">
-                                <label for="socialGitHub">Search By</label>
-                                <div class="input-group input-group-seamless">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text">
-                                            <i class="material-icons">bloodtype</i>
-                                        </div>
-                                    </div>
-                                    @Html.EditorFor(model => model.BillNumber, new { htmlAttributes = new { @class = "form-control BillNumberAutoComplete", autocomplete = "off", placeholder = "Enter bill number" } })
+                            <div class="form-group col-md-4">
+                                <label for="socialGitHub">Bill Number</label>
+                                    @Html.EditorFor(model => model.BillNumber, new { htmlAttributes = new { @class = "form-control BillNumberAutoComplete", autocomplete = "off", placeholder = "Enter Bill Number" } })
+                                </div>
+                            <div class="col-md-4">
+                                <label>Start Date</label>
+                                <div class="input-group">
+                                    @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", autoComplete = "Off", placeholder = "DD/MM/YYYY" } })
+
                                 </div>
                             </div>
-                            <div class="form-group col-md-4">
-                                <label for="socialGitHub" class="fa-pull-right">Date range</label>
-                                <div id="analytics-overview-date-range" class="input-daterange input-group input-group-sm ml-auto">
-                                    <input type="text" class="input-sm form-control" name="StartDate" placeholder="Start Date" id="analytics-overview-date-range-1">
-                                    <input type="text" class="input-sm form-control" name="EndDate" placeholder="End Date" id="analytics-overview-date-range-2">
-                                    <span class="input-group-append">
-                                        <span class="input-group-text">
-                                            <i class="material-icons">&#xE916;</i>
-                                        </span>
-                                    </span>
+                            <div class="col-md-4">
+                                <label>End Date</label>
+                                <div class="input-group">
+                                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", autoComplete = "Off", placeholder = "DD/MM/YYYY" } })
+
                                 </div>
                             </div>
                         </div>
@@ -54,16 +61,6 @@
                                     <i class="material-icons">search</i> Search
                                 </button>
                             </div>
-                            <div class="col">
-                                <div class="d-flex ml-lg-auto my-auto">
-                                    <div class="btn-group btn-group-sm mr-2 ml-lg-auto" role="group" aria-label="Table row actions">
-                                        <button type="button" class="btn btn-white" onclick="window.location.reload(true);">
-                                            <i class="fa fa-1x fa-retweet"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
                     }
                 </div>
@@ -74,6 +71,9 @@
                         <th scope="col">S/N</th>
                         <th scope="col">Bill Number</th>
                         <th scope="col">Customer Name</th>
+                        <th scope="col">Total Amount</th>
+                        <th scope="col">Total Deposit</th>
+                        <th scope="col">Balance</th>
                         <th scope="col">Payment Completed</th>
                         <th scope="col">Is Cloth Ready</th>
                         <th scope="col">Cloth Collected</th>
@@ -94,30 +94,38 @@
                                     <td>@counter</td>
                                     <td>@row.BillNumber</td>
                                     <td>@row.CustomerName</td>
+                                    <td>@row.TotalAmount</td>
+                                    <td>@row.TotalDeposit</td>
+                                    <td>@row.Balance</td>
                                     <td>
                                         @if (row.HasCompletedPayment)
                                         {
-                                            <i class='fa fa-check fa-2x text-success'></i>
+                                            @*<i class='fa fa-check fa-2x text-success'></i>*@
+                                            <span>Yes</span>
                                         }
                                         else
-                                        { <i class='fa fa-times fa-2x text-danger'></i>}
+                                        { @*<i class='fa fa-times fa-2x text-danger'></i>*@
+                                        <span>No</span>
+                                    }
                                     </td>
                                     <td>
                                         @if (row.IsClothReady)
                                         {
-                                            <i class='fa fa-check fa-2x text-success'></i>
+                                            <span>Yes</span>
                                         }
                                         else
-                                        { <i class='fa fa-times fa-2x text-danger'></i>}
+                                        {
+                                            <span>No</span>
+                                        }
                                     </td>
                                     <td>
                                         @if (row.ClothCollected)
                                         {
-                                            <i class='fa fa-check fa-2x text-success'></i>
+                                            <span>Yes</span>
                                         }
                                         else
                                         {
-                                            <i class='fa fa-times fa-2x text-danger'></i>
+                                            <span>No</span>
                                         }
                                     </td>
                                     @{

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebApp.Areas.Admin.ViewModels
 {
@@ -17,8 +18,10 @@ namespace WebApp.Areas.Admin.ViewModels
         public string BillNumber { get; set; }
         public string ReceiptNo { get; set; }
         public DateTime Date { get; set; }
+        [DataType(DataType.Date)]
         public DateTime? StartDate { get; set; }
         public string StartDateString { get; set; }
+        [DataType(DataType.Date)]
         public DateTime? EndDate { get; set; }
         public string EndDateString { get; set; }
         public decimal Amount { get; set; }
@@ -26,5 +29,7 @@ namespace WebApp.Areas.Admin.ViewModels
         public decimal TotalCumulativeAmount { get; set; }
         public decimal CumulativeAmount { get; set; }
         public IList<EarnedRevenueReportVM> TableData { get; set; }
+        public string exportfiletype { get; set; }
+        public string caller { get; set; }
     }
 }

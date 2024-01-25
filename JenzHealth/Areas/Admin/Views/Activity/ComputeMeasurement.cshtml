@@ -51,8 +51,8 @@
                     {
                         <div class="row px-3">
                             <div class="col-sm-3 pl-4 sc-stats__title">
-                             <h5>Cloth: @billedClothType.ClothType</h5>
-                             <h1 class="text-danger"> <span class="BilledQuantity-@billedClothType.ClothTypeId">@billedClothType.BilledQuantity</span></h1>
+                                <h5>Cloth: @billedClothType.ClothType</h5>
+                                <h1 class="text-danger"> <span class="BilledQuantity-@billedClothType.ClothTypeId">@billedClothType.BilledQuantity</span></h1>
                             </div>
 
                             <div class="col-md-9">
@@ -78,7 +78,7 @@
                                     <div class="form-group col-sm-6">
                                         <label for="labnote">Tailor</label>
                                         <div class="input-group input-group-seamless">
-                                            <input type="text" class="form-control Tailor-@billedClothType.ClothTypeId tailorAutoComplete" value="@billedClothType.Tailor"  />
+                                            <input type="text" class="form-control Tailor-@billedClothType.ClothTypeId tailorAutoComplete" value="@billedClothType.Tailor" />
                                             <input type="text" class="form-control d-none BillingID" value="@billedClothType.BillingID" required />
                                             <input type="text" class="form-control d-none ClothTypeId-@billedClothType.ClothTypeId" value="@billedClothType.ClothTypeId" required />
                                             <div class="invalid-feedback">
@@ -124,13 +124,13 @@
                                         <tbody id="AssignBody-@billedClothType.ClothTypeId">
                                             @foreach (var item in billedClothType.TailorAssignments)
                                             {
-                                            <tr>
-                                                <td><button class='btn btn-danger' onclick='Delete(this)'>Remove</button></td>
-                                                <td>@item.Tailor</td>
-                                                <td>@item.Quantity</td>
-                                                <td>@item.CollectionDate.ToShortDateString()</td>
-                                                <td class='d-none'>@billedClothType.ClothTypeId</td>
-                                            </tr>
+                                                <tr>
+                                                    <td><button class='btn btn-danger' onclick='Delete(this)'>Remove</button></td>
+                                                    <td>@item.Tailor</td>
+                                                    <td>@item.Quantity</td>
+                                                    <td>@item.CollectionDate.ToShortDateString()</td>
+                                                    <td class='d-none'>@billedClothType.ClothTypeId</td>
+                                                </tr>
                                             }
                                         </tbody>
                                         <tfoot class="p-2">
@@ -144,8 +144,37 @@
                                         </tfoot>
                                     </table>
                                 </div>
+                                <div class="row mt-3">
+                                    <div class="position-relative form-group col-sm-6">
+                                        <label for="LogoInp" class="col-form-label">Style Image</label><span class="text-danger">*</span>
+                                        <small class="form-text text-muted">Image proportion should not pass 540px x 360px</small>
+                                        <img class="img-responsive img-thumbnail" id="StyleImage-@billedClothType.ClothTypeId" src="#" onerror="this.src='/Content/images/images.png'" alt="" />
+
+                                        <div class="col-sm-8 mt-2 col-sm-offset-5 file-inputbtn">
+                                            <span class="btn btn-secondary btn-file">
+                                                <span class="fileupload-new" aria-label="Style Image"><i class="glyphicon glyphicon-folder-open"></i></span>
+                                                <span class="fileupload-exists"></span>
+                                                <input class="btnfil form-control" type="file" name="StyleImageFile" data-val="true" data-val-required="This field is required" onchange="StyleImage(@billedClothType.ClothTypeId)" id="StyleImageFile-@billedClothType.ClothTypeId" />
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="position-relative form-group col-sm-6">
+                                        <label for="FabricsImage" class="col-form-label">Fabrics Image</label><span class="text-danger">*</span>
+                                        <small class="form-text text-muted">Image proportion should not pass 540px x 360px</small>
+                                        <img class="img-responsive img-thumbnail" id="FabricsImage-@billedClothType.ClothTypeId" src="#" onerror="this.src='/Content/images/images.png'" alt="" />
+
+                                        <div class="col-sm-8 mt-2 col-sm-offset-5 file-inputbtn">
+                                            <span class="btn btn-secondary btn-file">
+                                                <span class="fileupload-new" aria-label="Fabrics Image"><i class="glyphicon glyphicon-folder-open"></i></span>
+                                                <span class="fileupload-exists"></span>
+                                                <input class="btnfil form-control" type="file"  name="FabricsImageFile" data-val="true" data-val-required="This field is required" onchange="FabricsImage(@billedClothType.ClothTypeId)" id="FabricsImageFile-@billedClothType.ClothTypeId" />
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div><hr  class="border border-5" />
+                        </div><hr class="border border-5" />
                     }
                 </div>
             </div>
@@ -167,6 +196,8 @@
 @section Scripts{
     <script src="~/Scripts/jquery.autocomplete.js"></script>
     <script src="~/Areas/Admin/Scripts/TakeMeasurement.js"></script>
+    @*<script src="~/Scripts/Tinymc.js"  referrerpolicy="origin"></script>
+    <script src="~/Scripts/Editor.js"></script>*@
 }
 
 

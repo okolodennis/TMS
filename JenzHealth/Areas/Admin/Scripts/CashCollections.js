@@ -114,7 +114,9 @@ $(".Search").on("change", function () {
 
         let searchby = $("input[name='CollectionType']:checked").val();
         if (searchby == "UNBILLED") {
-            var username = $("#CustomerUniqueID").val();
+            var searchValue = $("#CustomerUniqueID").val();
+            var username = searchValue.split("|")[0];
+           
             if (username === "") {
                 $("#CustomerUniqueID").addClass("is-invalid");
             } else {

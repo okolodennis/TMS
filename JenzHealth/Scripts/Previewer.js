@@ -37,3 +37,18 @@ $("#WatermarkInp").change(function () {
     readWatermarkURL(this);
 });
 
+$("#PaymentCompleted").click(function (e) {
+    if ($("#PaymentCompleted").is(":checked")) {
+        $("#ClothReady").prop("checked", false);
+        $("#ClothReady").prop("value", true);
+    }
+  
+});
+
+$("#ClothReady").click(function (e) {
+    if ($("#ClothReady").is(":checked")) {
+        $("#PaymentCompleted").prop("checked", false);
+        $("#PaymentCompleted").prop("value", true);
+    }
+  
+});

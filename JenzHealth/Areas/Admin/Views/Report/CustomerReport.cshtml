@@ -23,17 +23,19 @@
                 <div class="m-0">
                     @using (Html.BeginForm("CustomerReport", "Report", FormMethod.Post, new { area = "Admin", @class = "validate", novalidate = true }))
                     {
-                        <div class="row">
-                            <div class="form-group col-sm-12">
-                                <label for="socialGitHub" class="">Date range</label>
-                                <div id="analytics-overview-date-range" class="input-daterange input-group">
-                                    <input type="text" class="input-sm form-control" autocomplete="off" name="StartDate" placeholder="Start Date" id="analytics-overview-date-range-1">
-                                    <input type="text" class="input-sm form-control" autocomplete="off" name="EndDate" placeholder="End Date" id="analytics-overview-date-range-2">
-                                    <span class="input-group-append">
-                                        <span class="input-group-text">
-                                            <i class="material-icons">&#xE916;</i>
-                                        </span>
-                                    </span>
+                        <div class="row mb-2">
+                            <div class="col-md-4">
+                                <label>Start Date</label>
+                                <div class="input-group">
+                                    @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", autoComplete = "Off", placeholder = "DD/MM/YYYY" } })
+
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>End Date</label>
+                                <div class="input-group">
+                                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", autoComplete = "Off", placeholder = "DD/MM/YYYY" } })
+
                                 </div>
                             </div>
                         </div>
@@ -42,9 +44,8 @@
                                 <button class="btn btn-primary">
                                     <i class="material-icons">search</i> Search
                                 </button>
-                                <button class="btn btn-secondary">
-                                  Print
-                                </button>
+                                @Html.HiddenFor(m => m.exportfiletype, new { id = "exportfiletype", @class = "form-control", Name = "exportfiletype" })
+                                <a class="btn btn-secondary" id="pdf" data-form-method="post" href="#">Print</a>
                             </div>
                         </div>
                     }

@@ -56,7 +56,24 @@ namespace WebApp.Areas.Admin.Controllers
         }
         #endregion
         // Vendor
-        public ActionResult ManageCustomers(bool? Added, bool? Editted, string uID)
+        public ActionResult ManageCustomers(bool? Editted, string uID)
+        {
+            if (!Nav.CheckAuthorization(Request.Url.AbsolutePath))
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            if (Editted == true)
+            {
+                ViewBag.ShowAlert = true;
+                TempData["AlertType"] = "alert-success";
+                TempData["AlertMessage"] = "Customer updated successfully.";
+            }
+            ViewBag.GenderList = new SelectList(CustomData.GenderList, "Value", "Text");
+            ViewBag.Customers = _customerService.GetCustomers();
+            return View();
+        }
+        public ActionResult RegisterCustomers(bool? Added, string uID)
         {
             if (!Nav.CheckAuthorization(Request.Url.AbsolutePath))
             {
@@ -69,12 +86,7 @@ namespace WebApp.Areas.Admin.Controllers
                 TempData["AlertType"] = "alert-success";
                 TempData["AlertMessage"] = "Customer with unique ID -  " + uID + "   - added successfully.";
             }
-            if (Editted == true)
-            {
-                ViewBag.ShowAlert = true;
-                TempData["AlertType"] = "alert-success";
-                TempData["AlertMessage"] = "Customer updated successfully.";
-            }
+           
             ViewBag.GenderList = new SelectList(CustomData.GenderList, "Value", "Text");
             ViewBag.Customers = _customerService.GetCustomers();
             return View();

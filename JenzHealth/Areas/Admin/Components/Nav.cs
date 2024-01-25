@@ -23,17 +23,18 @@ namespace WebApp.Areas.Admin.Components
            
 
                  // Customer
-            new Menu(url: "#",stringText:"Customer Management", icon: "accessible", isMenu: true,claim: "customer", childMenus: new List<Menu>(){
-                new Menu(url: "/Admin/Customer/ManageCustomers",stringText:"Customers", icon: null ?? defaultIcon, isMenu: true,claim: "customer.managecustomers", childMenus: null),
+                new Menu(url: "#",stringText:"Customer Management", icon: "accessible", isMenu: true,claim: "customer", childMenus: new List<Menu>(){
+                new Menu(url: "/Admin/Customer/RegisterCustomers",stringText:"Register Customer", icon: null ?? defaultIcon, isMenu: true,claim: "customer.registercustomers", childMenus: null),
+                new Menu(url: "/Admin/Customer/ManageCustomers",stringText:"Manage Customer", icon: null ?? defaultIcon, isMenu: true,claim: "customer.managecustomers", childMenus: null),
             }),
 
               // Account
                 new Menu(url: "#",stringText:"Account Management", icon: "money", isMenu: true,claim: "account", childMenus: new List<Menu>(){
                 new Menu(url: "/Admin/Payment/Billings",stringText:"Billings", icon: null ?? defaultIcon, isMenu: true,claim: "account.billing", childMenus: null),
-                new Menu(url: "/Admin/Payment/CashCollections",stringText:"Cash Collections", icon: null ?? defaultIcon, isMenu: true,claim: "account.cashcollection", childMenus: null),
+                new Menu(url: "/Admin/Payment/CashCollections",stringText:"Payment", icon: null ?? defaultIcon, isMenu: true,claim: "account.cashcollection", childMenus: null),
             //  new Menu(url: "/Admin/Payment/DepositeCollections",stringText:"Deposite Collections", icon: null ?? defaultIcon, isMenu: true,claim: "account.depositecollection", childMenus: null),
                 new Menu(url: "/Admin/Payment/Transactions",stringText:"Transactions", icon: null ?? defaultIcon, isMenu: true,claim: "account.transactions", childMenus: null),
-                new Menu(url: "/Admin/Payment/PartPayment",stringText:"Part Payment", icon: null ?? defaultIcon, isMenu: true,claim: "account.partpayment", childMenus: null),
+                //new Menu(url: "/Admin/Payment/PartPayment",stringText:"Part Payment", icon: null ?? defaultIcon, isMenu: true,claim: "account.partpayment", childMenus: null),
                 new Menu(url: "/Admin/Payment/Waivers",stringText:"Waivers", icon: null ?? defaultIcon, isMenu: true,claim: "account.waivers", childMenus: null),
                 new Menu(url: "/Admin/Payment/Refunds",stringText:"Refunds", icon: null ?? defaultIcon, isMenu: true,claim: "account.refunds", childMenus: null),
                 new Menu(url: "/Admin/Payment/RecieptCancellations",stringText:"Reciept Cancellation", icon: null ?? defaultIcon, isMenu: true,claim: "account.recieptcancellation", childMenus: null),
@@ -72,12 +73,14 @@ namespace WebApp.Areas.Admin.Components
 
               
             // Report
-            new Menu(url: "#",stringText:"Report Management", icon: "money", isMenu: true,claim: "Report", childMenus: new List<Menu>(){
+            new Menu(url: "#",stringText:"Reports", icon: "money", isMenu: true,claim: "Report", childMenus: new List<Menu>(){
                // new Menu(url: "/Admin/Report/ClothCollectors",stringText:"Cloth Collectors", icon: null ?? defaultIcon, isMenu: true,claim: "report.labresultcollectors", childMenus: null),
                 new Menu(url: "/Admin/Report/CustomerReport",stringText:"Customer Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.customerreport", childMenus: null),
                 new Menu(url: "/Admin/Report/PaymentReport",stringText:"Payment Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.paymentreport", childMenus: null),
                 new Menu(url: "/Admin/Report/EarnedRevenueReport",stringText:"Earned Revenue Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.earnedrevenuereport", childMenus: null),
                 new Menu(url: "/Admin/Report/SharedRevenueReport",stringText:"Shared Revenue Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.sharedrevenuereport", childMenus: null),
+                new Menu(url: "/Admin/Report/ClothStatusReport",stringText:"Cloth Status Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.clothstatusreport", childMenus: null),
+                new Menu(url: "/Admin/Report/ClothMeasurementReport",stringText:"Cloth Measurement Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.clothmeasurementreport", childMenus: null),
             }),
 
               // User
@@ -87,10 +90,10 @@ namespace WebApp.Areas.Admin.Components
             }),
 
             // Settings
-            new Menu(url: "#",stringText:"Settings Management", icon: "settings", isMenu: true,claim: "settings", childMenus: new List<Menu>(){
+            new Menu(url: "#",stringText:"Settings", icon: "settings", isMenu: true,claim: "settings", childMenus: new List<Menu>(){
                 new Menu(url: "/Admin/ApplicationSettings/Manage",stringText:"Basic", icon: null ?? defaultIcon, isMenu: true,claim: "settings.manageapplicationsettings", childMenus: null),
-                new Menu(url: "/Admin/ApplicationSettings/ManageClothTypes",stringText:"Cloth Type Setup", icon: null ?? defaultIcon, isMenu: true,claim: "settings.clothtype", childMenus: null),
-                new Menu(url: "/Admin/ApplicationSettings/ManageMeasurements",stringText:"Measurement Setup ", icon: null ?? defaultIcon, isMenu: true,claim: "settings.measurement", childMenus: null),
+                new Menu(url: "/Admin/ApplicationSettings/ManageClothTypes",stringText:"Register Cloth Type", icon: null ?? defaultIcon, isMenu: true,claim: "settings.clothtype", childMenus: null),
+                new Menu(url: "/Admin/ApplicationSettings/ManageMeasurements",stringText:"Register Measurement", icon: null ?? defaultIcon, isMenu: true,claim: "settings.measurement", childMenus: null),
                 new Menu(url: "/Admin/ApplicationSettings/ManageClothTypeMeasurements",stringText:"Cloth Type Measurement Setup", icon: null ?? defaultIcon, isMenu: true,claim: "settings.clothtypemeasurement", childMenus: null),
                 new Menu(url: "/Admin/ApplicationSettings/ManageSettlementSetup",stringText:"Settlement Setup", icon: null ?? defaultIcon, isMenu: true,claim: "settings.settlementsetup", childMenus: null),
 
@@ -103,14 +106,15 @@ namespace WebApp.Areas.Admin.Components
 
           
              // Customer
-            new Menu(url: "#",stringText:"Customer Management", icon: "accessible", isMenu: true,claim: "customer", childMenus: new List<Menu>(){
-                new Menu(url: "/Admin/Customer/ManageCustomers",stringText:"Customers", icon: null ?? defaultIcon, isMenu: true,claim: "customer.managecustomers", childMenus: null),
+                new Menu(url: "#",stringText:"Customer Management", icon: "accessible", isMenu: true,claim: "customer", childMenus: new List<Menu>(){
+                new Menu(url: "/Admin/Customer/RegisterCustomers",stringText:"Register Customer", icon: null ?? defaultIcon, isMenu: true,claim: "customer.registercustomers", childMenus: null),
+                new Menu(url: "/Admin/Customer/ManageCustomers",stringText:"Manage Customer", icon: null ?? defaultIcon, isMenu: true,claim: "customer.managecustomers", childMenus: null),
             }),
 
                // Account
                 new Menu(url: "#",stringText:"Account Management", icon: "money", isMenu: true,claim: "account", childMenus: new List<Menu>(){
                 new Menu(url: "/Admin/Payment/Billings",stringText:"Billings", icon: null ?? defaultIcon, isMenu: true,claim: "account.billing", childMenus: null),
-                new Menu(url: "/Admin/Payment/CashCollections",stringText:"Cash Collections", icon: null ?? defaultIcon, isMenu: true,claim: "account.cashcollection", childMenus: null),
+                new Menu(url: "/Admin/Payment/CashCollections",stringText:"Payment", icon: null ?? defaultIcon, isMenu: true,claim: "account.cashcollection", childMenus: null),
             //  new Menu(url: "/Admin/Payment/DepositeCollections",stringText:"Deposite Collections", icon: null ?? defaultIcon, isMenu: true,claim: "account.depositecollection", childMenus: null),
                 new Menu(url: "/Admin/Payment/Transactions",stringText:"Transactions", icon: null ?? defaultIcon, isMenu: true,claim: "account.transactions", childMenus: null),
                 new Menu(url: "/Admin/Payment/PartPayment",stringText:"Part Payment", icon: null ?? defaultIcon, isMenu: true,claim: "account.partpayment", childMenus: null),
@@ -152,12 +156,14 @@ namespace WebApp.Areas.Admin.Components
             //}),
 
              // Report
-            new Menu(url: "#",stringText:"Report Management", icon: "money", isMenu: true,claim: "Report", childMenus: new List<Menu>(){
+            new Menu(url: "#",stringText:"Reports", icon: "money", isMenu: true,claim: "Report", childMenus: new List<Menu>(){
                 //new Menu(url: "/Admin/Report/ClothCollectors",stringText:"Cloth Collectors", icon: null ?? defaultIcon, isMenu: true,claim: "report.labresultcollectors", childMenus: null),
                 new Menu(url: "/Admin/Report/CustomerReport",stringText:"Customer Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.customerreport", childMenus: null),
                 new Menu(url: "/Admin/Report/PaymentReport",stringText:"Payment Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.paymentrevenuereport", childMenus: null),
                 new Menu(url: "/Admin/Report/EarnedRevenueReport",stringText:"Earned Revenue Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.earnedrevenuereport", childMenus: null),
                 new Menu(url: "/Admin/Report/SharedRevenueReport",stringText:"Shared Revenue Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.sharedrevenuereport", childMenus: null),
+                new Menu(url: "/Admin/Report/ClothStatusReport",stringText:"Cloth Status Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.clothstatusreport", childMenus: null),
+                new Menu(url: "/Admin/Report/ClothMeasurementReport",stringText:"Cloth Measurement Report", icon: null ?? defaultIcon, isMenu: true,claim: "report.clothmeasurementreport", childMenus: null),
             }),
 
               // User
@@ -167,10 +173,10 @@ namespace WebApp.Areas.Admin.Components
             }),
 
             // Settings
-            new Menu(url: "#",stringText:"Settings Management", icon: "settings", isMenu: true,claim: "settings", childMenus: new List<Menu>(){
+            new Menu(url: "#",stringText:"Settings", icon: "settings", isMenu: true,claim: "settings", childMenus: new List<Menu>(){
                 new Menu(url: "/Admin/ApplicationSettings/Manage",stringText:"Basic", icon: null ?? defaultIcon, isMenu: true,claim: "settings.manageapplicationsettings", childMenus: null),
-                new Menu(url: "/Admin/ApplicationSettings/ManageClothTypes",stringText:"Cloth Type Setup", icon: null ?? defaultIcon, isMenu: true,claim: "settings.clothtype", childMenus: null),
-                new Menu(url: "/Admin/ApplicationSettings/ManageMeasurements",stringText:"Measurement Setup ", icon: null ?? defaultIcon, isMenu: true,claim: "settings.measurement", childMenus: null),
+                new Menu(url: "/Admin/ApplicationSettings/ManageClothTypes",stringText:"Register Cloth Type", icon: null ?? defaultIcon, isMenu: true,claim: "settings.clothtype", childMenus: null),
+                new Menu(url: "/Admin/ApplicationSettings/ManageMeasurements",stringText:"Register Measurement", icon: null ?? defaultIcon, isMenu: true,claim: "settings.measurement", childMenus: null),
                 new Menu(url: "/Admin/ApplicationSettings/ManageClothTypeMeasurements",stringText:"Cloth Type Measurement Setup", icon: null ?? defaultIcon, isMenu: true,claim: "settings.clothtypemeasurement", childMenus: null),
                 new Menu(url: "/Admin/ApplicationSettings/ManageSettlementSetup",stringText:"Settlement Setup", icon: null ?? defaultIcon, isMenu: true,claim: "settings.settlementsetup", childMenus: null),
 
